@@ -1,0 +1,110 @@
+---
+interface Props {
+  appStoreUrl?: string;
+  googlePlayUrl?: string;
+  webUrl?: string;
+  name?: string;
+  size?: 'sm' | 'md';
+}
+
+const { appStoreUrl, googlePlayUrl, webUrl, name, size = 'md' } = Astro.props;
+const suffix = name ? ` — ${name}` : '';
+---
+
+{
+  (appStoreUrl || googlePlayUrl || webUrl) && (
+    <div class:list={['stores', size]}>
+      {appStoreUrl && (
+        <a class="store" href={appStoreUrl} rel="noopener" aria-label={`Download on the App Store${suffix}`}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M16.37 12.73c-.02-2.1 1.72-3.12 1.8-3.17-.98-1.43-2.5-1.63-3.05-1.65-1.3-.13-2.53.76-3.19.76-.66 0-1.67-.74-2.75-.72-1.41.02-2.72.82-3.45 2.09-1.47 2.55-.38 6.33 1.06 8.4.7 1.01 1.54 2.15 2.63 2.11 1.06-.04 1.46-.68 2.73-.68 1.28 0 1.64.68 2.75.66 1.14-.02 1.86-1.03 2.55-2.05.8-1.17 1.13-2.31 1.15-2.37-.03-.01-2.21-.85-2.23-3.38ZM14.27 6.55c.58-.71.98-1.69.87-2.67-.84.03-1.86.56-2.46 1.27-.54.62-1.01 1.62-.89 2.58.94.07 1.9-.48 2.48-1.18Z" />
+          </svg>
+          <span>
+            <small>Download on the</small>App Store
+          </span>
+        </a>
+      )}
+      {googlePlayUrl && (
+        <a class="store" href={googlePlayUrl} rel="noopener" aria-label={`Get it on Google Play${suffix}`}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#34d399" d="M4.2 2.6 13.6 12l-9.4 9.4a1.6 1.6 0 0 1-.7-1.3V3.9c0-.5.3-1 .7-1.3Z" />
+            <path fill="#60a5fa" d="m16.7 8.9-3.1 3.1-9.4-9.4c.4-.3 1-.3 1.5 0l11 6.3Z" />
+            <path fill="#f87171" d="m16.7 15.1-11 6.3c-.5.3-1.1.3-1.5 0l9.4-9.4 3.1 3.1Z" />
+            <path fill="#fbbf24" d="m20.2 10.6-3.5-1.7-3.1 3.1 3.1 3.1 3.5-1.7c1.1-.6 1.1-2.2 0-2.8Z" />
+          </svg>
+          <span>
+            <small>Get it on</small>Google Play
+          </span>
+        </a>
+      )}
+      {webUrl && (
+        <a class="store web" href={webUrl} aria-label={`Play in your browser${suffix}`}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+          </svg>
+          <span>
+            <small>Play it</small>In browser
+          </span>
+        </a>
+      )}
+    </div>
+  )
+}
+
+<style>
+  .stores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .store {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.9rem 0.45rem 0.7rem;
+    border-radius: 10px;
+    background: #000;
+    border: 1px solid #3a4066;
+    color: #fff;
+    fill: #fff;
+    text-decoration: none;
+    font-weight: 650;
+    font-size: 0.95rem;
+    line-height: 1.1;
+    transition: border-color 0.15s;
+  }
+  .store:hover {
+    border-color: var(--muted);
+  }
+  .store svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: none;
+  }
+  .store span {
+    display: flex;
+    flex-direction: column;
+  }
+  .store small {
+    font-size: 0.65rem;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+  .web {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+    fill: var(--accent-ink);
+  }
+  .web:hover {
+    border-color: var(--accent);
+  }
+  .sm .store {
+    padding: 0.35rem 0.7rem 0.35rem 0.55rem;
+    font-size: 0.82rem;
+  }
+  .sm .store svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+</style>

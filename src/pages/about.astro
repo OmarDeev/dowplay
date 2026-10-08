@@ -1,0 +1,773 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AppCard from '../components/AppCard.astro';
+import ContactForm from '../components/ContactForm.astro';
+import GameGrid from '../components/GameGrid.astro';
+import StoreButtons from '../components/StoreButtons.astro';
+import { ABOUT } from '../config/about';
+import { SITE } from '../config/site';
+import { absoluteUrl, getApps, getGames } from '../lib/content';
+import { mobileAppList, organization } from '../lib/schema';
+
+const apps = await getApps();
+const games = await getGames();
+const { hero, intro, values, services, genres, process, contact } = ABOUT;
+
+// Numbers are computed from your content, so they're always accurate
+const stats = [
+  { value: apps.length, label: apps.length === 1 ? 'Mobile game' : 'Mobile games' },
+  { value: games.length, label: games.length === 1 ? 'Web game' : 'Web games' },
+  { value: 3, label: 'Platforms' },
+].filter((s) => s.value > 0);
+
+const socials = Object.entries(SITE.social).filter(([, url]) => url);
+
+const aboutPage = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  url: absoluteUrl('/about'),
+  name: `About ${SITE.name}`,
+  description: hero.lead,
+  mainEntity: { '@id': `${SITE.url}/#organization` },
+};
+---
+
+<BaseLayout
+  title={`About ${SITE.name} — Mobile & HTML5 Game Development Studio`}
+  description={`${SITE.name} is an independent game studio: mobile game development for iOS & Android, HTML5 web games, game design and live ops. See our games and get in touch.`}
+  image={hero.image}
+  imageAlt={hero.imageAlt}
+  jsonLd={[organization(), aboutPage, ...(apps.length ? [mobileAppList(apps)] : [])]}
+>
+  <!-- 1. Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">{hero.eyebrow}</span>
+        <h1>{hero.titleStart} <span class="hl">{hero.titleHighlight}</span>.</h1>
+        <p class="lead">{hero.lead}</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#games">Explore our games</a>
+          <a class="btn btn-ghost" href="#contact">Contact us</a>
+        </div>
+        {
+          stats.length > 0 && (
+            <dl class="stats">
+              {stats.map((s) => (
+                <div>
+                  <dt>{s.label}</dt>
+                  <dd>{s.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )
+        }
+      </div>
+      <div class="hero-art">
+        <div class="frame">
+          <Image
+            src={hero.image}
+            alt={hero.imageAlt}
+            widths={[370, 560, 740]}
+            sizes="(max-width: 900px) 80vw, 400px"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+        <span class="float f1">iOS</span>
+        <span class="float f2">Android</span>
+        <span class="float f3">HTML5</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Introduction -->
+  <section class="container block intro" aria-labelledby="intro-title">
+    <div class="intro-text">
+      <span class="eyebrow">{intro.eyebrow}</span>
+      <h2 id="intro-title">{intro.title}</h2>
+      {intro.paragraphs.map((p) => <p>{p}</p>)}
+    </div>
+    <ul class="values" role="list">
+      {
+        values.map((v, i) => (
+          <li>
+            <span class="v-num">0{i + 1}</span>
+            <h3>{v.title}</h3>
+            <p>{v.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- 3. Services -->
+  <section class="container block" id="services" aria-labelledby="services-title">
+    <div class="center-head">
+      <span class="eyebrow">What we do</span>
+      <h2 id="services-title">Our services</h2>
+      <p>Everything it takes to turn an idea into a game people play — on phones, tablets and the web.</p>
+    </div>
+    <div class="services">
+      {
+        services.map((s, i) => (
+          <article class:list={['service', { flip: i % 2 === 1 }]}>
+            <div class="service-img">
+              <Image
+                src={s.image}
+                alt={s.imageAlt}
+                width={Math.min(s.image.width, 1120)}
+                widths={[480, 740, 1120].filter((w) => w <= s.image.width)}
+                sizes="(max-width: 900px) 100vw, 560px"
+              />
+            </div>
+            <div class="service-text">
+              <span class="s-num">0{i + 1}</span>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+              <ul class="ticks">
+                {s.bullets.map((b) => (
+                  <li>{b}</li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 4. Games -->
+  <section class="container block" id="games" aria-labelledby="games-title">
+    <div class="center-head">
+      <span class="eyebrow">{genres.eyebrow}</span>
+      <h2 id="games-title">{genres.title}</h2>
+      <p>{genres.text}</p>
+    </div>
+    <ul class="bento" role="list">
+      {
+        genres.items.map((g, i) => (
+          <li class:list={['tile', { big: i === 0 }]}>
+            <Image
+              src={g.image}
+              alt={g.imageAlt}
+              widths={i === 0 ? [480, 740] : [320, 480]}
+              sizes={i === 0 ? '(max-width: 760px) 100vw, 560px' : '(max-width: 760px) 50vw, 300px'}
+            />
+            <div class="tile-text">
+              <h3>{g.title}</h3>
+              <p>{g.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      apps.length > 0 && (
+        <div class="sub" id="portfolio">
+          <div class="section-head">
+            <h3>Published on the stores</h3>
+            <StoreButtons
+              appStoreUrl={SITE.appStoreDeveloperUrl || undefined}
+              googlePlayUrl={SITE.googlePlayDeveloperUrl || undefined}
+              size="sm"
+            />
+          </div>
+          <ul class="apps" role="list">
+            {apps.map((app) => (
+              <li>
+                <AppCard app={app} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    {
+      games.length > 0 && (
+        <div class="sub">
+          <div class="section-head">
+            <h3>Play in your browser</h3>
+            <a href="/">All web games →</a>
+          </div>
+          <GameGrid games={games.slice(0, 4)} />
+        </div>
+      )
+    }
+  </section>
+
+  <!-- 5. Process -->
+  <section class="container block" aria-labelledby="process-title">
+    <div class="center-head">
+      <span class="eyebrow">How we work</span>
+      <h2 id="process-title">From idea to launch</h2>
+    </div>
+    <ol class="process">
+      {
+        process.map((step, i) => (
+          <li>
+            <span class="p-num">{i + 1}</span>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <!-- 6. Contact -->
+  <section class="container block" id="contact" aria-labelledby="contact-title">
+    <div class="contact">
+      <div class="contact-info">
+        <span class="eyebrow">{contact.eyebrow}</span>
+        <h2 id="contact-title">{contact.title}</h2>
+        <p>{contact.text}</p>
+        <ul class="channels" role="list">
+          <li>
+            <span class="ch-label">Email</span>
+            <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          </li>
+          {
+            (SITE.appStoreDeveloperUrl || SITE.googlePlayDeveloperUrl) && (
+              <li>
+                <span class="ch-label">Our games</span>
+                <StoreButtons
+                  appStoreUrl={SITE.appStoreDeveloperUrl || undefined}
+                  googlePlayUrl={SITE.googlePlayDeveloperUrl || undefined}
+                  size="sm"
+                />
+              </li>
+            )
+          }
+          {
+            socials.length > 0 && (
+              <li>
+                <span class="ch-label">Follow us</span>
+                <span class="socials">
+                  {socials.map(([name, url]) => (
+                    <a href={url} rel="noopener me" class="chip">
+                      {name}
+                    </a>
+                  ))}
+                </span>
+              </li>
+            )
+          }
+        </ul>
+      </div>
+      <div class="contact-form">
+        <ContactForm topics={contact.topics} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(2.5rem, 7vw, 5rem) clamp(2rem, 5vw, 3rem);
+    background:
+      radial-gradient(700px 380px at 82% 30%, rgb(139 114 255 / 0.28), transparent 70%),
+      radial-gradient(500px 260px at 0% 100%, rgb(200 255 61 / 0.08), transparent 70%);
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    align-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+  h1 {
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    margin: 0.7rem 0 1rem;
+  }
+  .hl {
+    color: var(--accent);
+  }
+  .lead {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 54ch;
+    margin: 0 0 1.75rem;
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.75rem;
+    margin: 2.5rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+  .stats div {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .stats dt {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .stats dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 750;
+    font-size: 2.4rem;
+    line-height: 1.1;
+  }
+  .hero-art {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 400px);
+  }
+  .frame {
+    border-radius: 28px;
+    overflow: hidden;
+    aspect-ratio: 2 / 3;
+    transform: rotate(2.5deg);
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 0.08),
+      0 40px 80px -30px rgb(80 60 220 / 0.7);
+  }
+  .frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .float {
+    position: absolute;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: rgb(11 13 23 / 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    font-weight: 700;
+    font-size: 0.85rem;
+    box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.8);
+  }
+  .float::before {
+    content: '';
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-right: 0.45rem;
+    border-radius: 50%;
+    background: var(--accent);
+    vertical-align: 0.05em;
+  }
+  .f1 {
+    top: 12%;
+    left: -12%;
+  }
+  .f2 {
+    top: 46%;
+    right: -10%;
+  }
+  .f2::before {
+    background: #34d399;
+  }
+  .f3 {
+    bottom: 10%;
+    left: -6%;
+  }
+  .f3::before {
+    background: #ff4fd8;
+  }
+
+  /* ---------- Shared ---------- */
+  .block {
+    margin-top: clamp(4rem, 9vw, 6.5rem);
+    scroll-margin-top: 5rem;
+  }
+  .center-head {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 2.5rem;
+  }
+  .center-head h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin: 0.5rem 0 0.75rem;
+  }
+  .center-head p {
+    color: var(--muted);
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  /* ---------- Intro ---------- */
+  .intro {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  .intro-text h2 {
+    font-size: clamp(1.8rem, 3.6vw, 2.5rem);
+    margin: 0.5rem 0 1.25rem;
+  }
+  .intro-text p {
+    color: #c9cde6;
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+  }
+  .values {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .values li {
+    padding: 1.4rem;
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+  }
+  .values li:nth-child(2),
+  .values li:nth-child(3) {
+    background: var(--bg-elev);
+  }
+  .v-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .values h3 {
+    font-size: 1.15rem;
+    margin: 0.5rem 0 0.4rem;
+  }
+  .values p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* ---------- Services ---------- */
+  .services {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+  }
+  .service {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: center;
+  }
+  .service.flip .service-img {
+    order: 2;
+  }
+  .service-img {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--line);
+  }
+  .service-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+  }
+  .service:hover .service-img img {
+    transform: scale(1.03);
+  }
+  .s-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--accent);
+  }
+  .service-text h3 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin: 0.4rem 0 0.75rem;
+  }
+  .service-text p {
+    color: var(--muted);
+    margin: 0 0 1.25rem;
+    font-size: 1.05rem;
+  }
+  .ticks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .ticks li {
+    position: relative;
+    padding-left: 1.6rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  .ticks li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.2em;
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 50%;
+    background: rgb(200 255 61 / 0.15)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c8ff3d' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E")
+      center / 70% no-repeat;
+  }
+
+  /* ---------- Games ---------- */
+  .bento {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    grid-template-rows: repeat(2, minmax(220px, 1fr));
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .tile {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    min-height: 220px;
+  }
+  .tile.big {
+    grid-row: span 2;
+  }
+  .tile img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+  }
+  .tile:hover img {
+    transform: scale(1.05);
+  }
+  .tile-text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 3rem 1.1rem 1rem;
+    background: linear-gradient(to top, rgb(8 9 18 / 0.92), rgb(8 9 18 / 0.6) 55%, transparent);
+  }
+  .tile h3 {
+    margin: 0 0 0.2rem;
+    font-size: 1.2rem;
+  }
+  .tile.big h3 {
+    font-size: 1.7rem;
+  }
+  .tile p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #c9cde6;
+  }
+  .sub {
+    margin-top: 3rem;
+  }
+  .sub .section-head {
+    flex-wrap: wrap;
+  }
+  .sub h3 {
+    font-size: clamp(1.3rem, 2.6vw, 1.6rem);
+    margin: 0;
+  }
+  .sub .section-head > a {
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .apps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ---------- Process ---------- */
+  .process {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: none;
+  }
+  .process li {
+    position: relative;
+    padding: 1.4rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background: var(--bg-elev);
+  }
+  .process li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 2.15rem;
+    right: -1rem;
+    width: 1rem;
+    height: 2px;
+    background: var(--line);
+  }
+  .p-num {
+    display: grid;
+    place-items: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-family: var(--font-display);
+    font-weight: 800;
+  }
+  .process h3 {
+    font-size: 1.15rem;
+    margin: 0.9rem 0 0.35rem;
+  }
+  .process p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* ---------- Contact ---------- */
+  .contact {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border-radius: 28px;
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(500px 300px at 0% 0%, rgb(139 114 255 / 0.18), transparent 70%),
+      radial-gradient(400px 260px at 100% 100%, rgb(200 255 61 / 0.07), transparent 70%),
+      var(--bg-card);
+  }
+  .contact-info h2 {
+    font-size: clamp(1.8rem, 3.6vw, 2.5rem);
+    margin: 0.5rem 0 1rem;
+  }
+  .contact-info > p {
+    color: var(--muted);
+    margin: 0 0 2rem;
+    font-size: 1.05rem;
+  }
+  .channels {
+    display: grid;
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .channels li {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .ch-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .channels a[href^='mailto'] {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
+  }
+  .socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .socials a {
+    text-decoration: none;
+    text-transform: capitalize;
+  }
+  .contact-form {
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .hero-inner,
+    .intro,
+    .contact {
+      grid-template-columns: 1fr;
+    }
+    .hero-art {
+      width: min(80%, 340px);
+      margin-top: 1rem;
+    }
+    .service,
+    .service.flip {
+      grid-template-columns: 1fr;
+    }
+    .service.flip .service-img {
+      order: 0;
+    }
+    .process {
+      grid-template-columns: 1fr 1fr;
+    }
+    .process li::after {
+      display: none;
+    }
+  }
+  @media (max-width: 760px) {
+    .bento {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: none;
+      grid-auto-rows: 180px;
+    }
+    .tile {
+      min-height: 0;
+    }
+    .tile.big {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+  }
+  @media (max-width: 560px) {
+    .values,
+    .ticks {
+      grid-template-columns: 1fr;
+    }
+    .bento {
+      grid-auto-rows: 150px;
+      gap: 0.75rem;
+    }
+    .tile-text {
+      padding: 2rem 0.8rem 0.75rem;
+    }
+    .tile p {
+      display: none;
+    }
+    .tile.big p {
+      display: block;
+    }
+  }
+  @media (max-width: 420px) {
+    .process {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

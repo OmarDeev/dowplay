@@ -1,0 +1,241 @@
+---
+import { SITE } from '../config/site';
+
+interface Props {
+  topics: string[];
+}
+
+const { topics } = Astro.props;
+const endpoint: string = SITE.contactFormEndpoint;
+---
+
+<!--
+  Without JavaScript the form posts straight to the form service (or the mail app).
+  With JavaScript it submits in the background and shows the result inline.
+-->
+<form
+  class="form"
+  method="POST"
+  action={endpoint || `mailto:${SITE.email}`}
+  enctype={endpoint ? undefined : 'text/plain'}
+  data-endpoint={endpoint}
+  data-email={SITE.email}
+  data-site={SITE.name}
+>
+  <div class="row">
+    <div class="field">
+      <label for="cf-name">Your name</label>
+      <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="100" />
+    </div>
+    <div class="field">
+      <label for="cf-email">Email address</label>
+      <input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="200" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="cf-topic">What is it about?</label>
+    <div class="select">
+      <select id="cf-topic" name="topic">
+        {topics.map((t) => <option value={t}>{t}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="cf-message">Message</label>
+    <textarea id="cf-message" name="message" rows="6" required minlength="10" maxlength="5000"
+      placeholder="Tell us a bit about your idea or question…"></textarea>
+  </div>
+
+  <!-- Spam trap: hidden from people, bots fill it in -->
+  <div class="trap" aria-hidden="true">
+    <label for="cf-gotcha">Leave this field empty</label>
+    <input id="cf-gotcha" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="actions">
+    <button type="submit" class="btn btn-primary">
+      <span class="label">Send message</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"></path></svg>
+    </button>
+    <p class="note">
+      We only use your details to reply. See our <a href="/privacypolicy">privacy policy</a>.
+    </p>
+  </div>
+
+  <p class="status" role="status" aria-live="polite" hidden></p>
+</form>
+
+<script>
+  for (const form of document.querySelectorAll<HTMLFormElement>('form.form')) {
+    const status = form.querySelector<HTMLElement>('.status')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const label = button.querySelector<HTMLElement>('.label')!;
+    const { email, site } = form.dataset;
+
+    const show = (kind: 'ok' | 'error' | 'info', text: string) => {
+      status.hidden = false;
+      status.dataset.kind = kind;
+      status.textContent = text;
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const endpoint = form.dataset.endpoint;
+      const data = new FormData(form);
+      if (data.get('_gotcha')) return;
+
+      const topic = String(data.get('topic') ?? '');
+      const subject = `[${site}] ${topic} — ${data.get('name')}`;
+
+      // No form service configured yet: hand over to the visitor's email app
+      if (!endpoint) {
+        const body = `${data.get('message')}\n\n— ${data.get('name')} (${data.get('email')})`;
+        window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        show('info', `Your email app should open with the message ready to send. If it doesn't, write to us at ${email}.`);
+        return;
+      }
+
+      data.set('_subject', subject);
+      button.disabled = true;
+      label.textContent = 'Sending…';
+      status.hidden = true;
+      try {
+        const res = await fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        show('ok', 'Thanks! Your message has been sent — we will get back to you soon.');
+      } catch {
+        show('error', `Sorry, something went wrong. Please try again or email us at ${email}.`);
+      } finally {
+        button.disabled = false;
+        label.textContent = 'Send message';
+      }
+    });
+  }
+</script>
+
+<style>
+  .form {
+    display: grid;
+    gap: 1.1rem;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.1rem;
+  }
+  .field {
+    display: grid;
+    gap: 0.4rem;
+  }
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.8rem 0.95rem;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 9rem;
+  }
+  ::placeholder {
+    color: #6c7396;
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(200 255 61 / 0.15);
+  }
+  .select {
+    position: relative;
+  }
+  .select select {
+    appearance: none;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+  .select::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid var(--muted);
+    border-bottom: 2px solid var(--muted);
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+  .trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+  .actions svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .actions button:disabled {
+    opacity: 0.7;
+    cursor: progress;
+  }
+  .note {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .note a {
+    color: var(--text);
+  }
+  .status {
+    margin: 0;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .status[data-kind='ok'] {
+    background: rgb(200 255 61 / 0.12);
+    color: var(--accent);
+  }
+  .status[data-kind='info'] {
+    background: rgb(139 114 255 / 0.15);
+    color: #c9bdff;
+  }
+  .status[data-kind='error'] {
+    background: rgb(255 92 92 / 0.12);
+    color: #ff9b9b;
+  }
+  @media (max-width: 560px) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

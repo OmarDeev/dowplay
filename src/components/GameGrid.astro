@@ -1,0 +1,71 @@
+---
+import GameCard from './GameCard.astro';
+import type { Game } from '../lib/content';
+
+interface Props {
+  games: Game[];
+  /** Number of cards to load eagerly (above the fold) */
+  eager?: number;
+  /** Pad the grid with "coming soon" tiles up to this many slots */
+  minSlots?: number;
+}
+
+const { games, eager = 0, minSlots = 0 } = Astro.props;
+const placeholders = Math.max(0, minSlots - games.length);
+---
+
+<ul class="grid" role="list">
+  {
+    games.map((game, i) => (
+      <li data-category={game.data.category} data-search={[game.data.title, ...game.data.tags].join(' ').toLowerCase()}>
+        <GameCard game={game} eager={i < eager} />
+      </li>
+    ))
+  }
+  {
+    Array.from({ length: placeholders }, () => (
+      <li class="soon" aria-hidden="true">
+        <div class="soon-tile">
+          <span>New game coming soon</span>
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: 1.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li[hidden] {
+    display: none;
+  }
+  .soon-tile {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    min-height: 12rem;
+    border-radius: var(--radius);
+    border: 1.5px dashed var(--line);
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 1rem;
+    background: repeating-linear-gradient(-45deg, transparent 0 12px, rgb(255 255 255 / 0.015) 12px 24px);
+  }
+  @media (max-width: 560px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .soon:nth-child(n + 4) {
+      display: none;
+    }
+  }
+</style>

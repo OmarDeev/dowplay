@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GameGrid from '../components/GameGrid.astro';
+import { getGames } from '../lib/content';
+
+const games = (await getGames()).slice(0, 4);
+---
+
+<BaseLayout title="Page not found" description="This page doesn't exist." noindex>
+  <div class="container page">
+    <p class="code" aria-hidden="true">404</p>
+    <h1>Game over — page not found</h1>
+    <p class="lead">The page you're looking for moved or never existed. Try one of these instead:</p>
+    <a class="btn btn-primary" href="/">Back to all games</a>
+    {games.length > 0 && <div class="grid"><GameGrid games={games} /></div>}
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-top: 4rem;
+    text-align: center;
+  }
+  .code {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(5rem, 18vw, 9rem);
+    line-height: 1;
+    margin: 0;
+    color: var(--accent);
+  }
+  h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    margin: 0.5rem 0;
+  }
+  .lead {
+    color: var(--muted);
+    margin: 0 0 1.5rem;
+  }
+  .grid {
+    margin-top: 3rem;
+    text-align: left;
+  }
+</style>

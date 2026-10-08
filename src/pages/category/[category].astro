@@ -1,0 +1,66 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import GameGrid from '../../components/GameGrid.astro';
+import { CATEGORIES, type CategoryKey } from '../../config/categories';
+import { SITE } from '../../config/site';
+import { categoryUrl, getGames, type Game } from '../../lib/content';
+import { breadcrumbs, gameList } from '../../lib/schema';
+
+// Only categories that actually have games get a page (no thin/empty pages for Google)
+export const getStaticPaths = (async () => {
+  const games = await getGames();
+  const keys = [...new Set(games.map((g) => g.data.category))];
+  return keys.map((category) => ({
+    params: { category },
+    props: { category, games: games.filter((g) => g.data.category === category) },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  category: CategoryKey;
+  games: Game[];
+}
+
+const { category, games } = Astro.props;
+const { label, intro } = CATEGORIES[category];
+const crumbs = [
+  { label: 'Games', href: '/' },
+  { label: `${label} games`, href: categoryUrl(category) },
+];
+---
+
+<BaseLayout
+  title={`${label} Games — Play Free Online`}
+  description={`Play free ${label.toLowerCase()} games online at ${SITE.name}. ${intro} No downloads, works on mobile and desktop.`}
+  jsonLd={[breadcrumbs(crumbs), gameList(games)]}
+>
+  <div class="container page">
+    <Breadcrumbs items={crumbs} />
+    <header>
+      <h1>{label} games</h1>
+      <p>{intro} Every game is free and runs right in your browser.</p>
+    </header>
+    <GameGrid games={games} eager={4} />
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-top: 1.5rem;
+  }
+  header {
+    margin: 1rem 0 2rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    margin: 0 0 0.5rem;
+  }
+  header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.1rem;
+    max-width: 65ch;
+  }
+</style>

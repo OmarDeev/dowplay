@@ -1,0 +1,52 @@
+---
+/**
+ * Layout for long legal pages written in Markdown (e.g. src/pages/privacypolicy.md).
+ */
+import type { MarkdownLayoutProps } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+
+type Props = MarkdownLayoutProps<{
+  title: string;
+  description: string;
+  lastUpdated?: string;
+}>;
+
+const { title, description, lastUpdated } = Astro.props.frontmatter;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container page">
+    <h1>{title}</h1>
+    {lastUpdated && <p class="updated">Last updated: {lastUpdated}</p>}
+    <div class="prose legal">
+      <slot />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-top: 3rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    margin: 0 0 0.5rem;
+  }
+  .updated {
+    color: var(--muted);
+    margin: 0 0 2rem;
+  }
+  .legal :global(h2) {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+  .legal :global(h4) {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    margin: 1.3rem 0 0.4rem;
+    color: var(--text);
+  }
+  .legal :global(a) {
+    overflow-wrap: anywhere;
+  }
+</style>

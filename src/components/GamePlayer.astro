@@ -1,0 +1,186 @@
+---
+import { Image } from 'astro:assets';
+import type { Game } from '../lib/content';
+import { gameEmbedUrl } from '../lib/content';
+
+interface Props {
+  game: Game;
+}
+
+const { game } = Astro.props;
+const { title, cover, orientation } = game.data;
+const src = gameEmbedUrl(game);
+---
+
+<!--
+  The game is only loaded when the player presses Play. This keeps the page fast
+  (good Core Web Vitals = better ranking) and stops crawlers from loading game engines.
+-->
+<game-player class:list={['player', orientation]} data-src={src} data-title={title}>
+  <div class="stage">
+    <Image
+      src={cover}
+      alt=""
+      widths={[640, 960, 1280]}
+      sizes="(max-width: 1240px) 100vw, 1200px"
+      loading="eager"
+      fetchpriority="high"
+      class="poster"
+    />
+    <div class="overlay">
+      <button type="button" class="btn btn-primary start" aria-label={`Play ${title}`}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z"></path></svg>
+        Play now
+      </button>
+    </div>
+  </div>
+  <div class="controls">
+    <span class="hint">Free · No download · Works on mobile</span>
+    <button type="button" class="btn btn-ghost fullscreen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"></path></svg>
+      Fullscreen
+    </button>
+  </div>
+</game-player>
+
+<script>
+  class GamePlayer extends HTMLElement {
+    connectedCallback() {
+      const stage = this.querySelector<HTMLElement>('.stage')!;
+      const start = this.querySelector<HTMLButtonElement>('.start')!;
+      const fullscreen = this.querySelector<HTMLButtonElement>('.fullscreen')!;
+      const src = this.dataset.src!;
+
+      const load = () => {
+        if (stage.querySelector('iframe')) return;
+        const frame = document.createElement('iframe');
+        frame.src = src;
+        frame.title = this.dataset.title ?? 'Game';
+        frame.allow = 'autoplay; fullscreen; gamepad; accelerometer; gyroscope; screen-wake-lock';
+        frame.allowFullscreen = true;
+        frame.addEventListener('load', () => frame.focus());
+        stage.replaceChildren(frame);
+        this.classList.add('playing');
+      };
+
+      start.addEventListener('click', load);
+      fullscreen.addEventListener('click', () => {
+        // iPhone Safari has no element fullscreen: open the game on its own page instead
+        if (!document.fullscreenEnabled) {
+          window.location.href = src;
+          return;
+        }
+        load();
+        this.requestFullscreen().catch(() => (window.location.href = src));
+      });
+    }
+  }
+  customElements.define('game-player', GamePlayer);
+</script>
+
+<style>
+  .player {
+    display: block;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: #000;
+    border: 1px solid var(--line);
+  }
+  .stage {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    max-height: 78vh;
+    margin-inline: auto;
+    background: #000;
+  }
+  .portrait .stage {
+    aspect-ratio: 9 / 16;
+    height: min(78vh, 760px);
+  }
+  .poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.55) saturate(1.1);
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle at center, transparent 0 35%, rgb(0 0 0 / 0.45));
+  }
+  .start {
+    font-size: 1.15rem;
+    padding: 1rem 1.8rem;
+    box-shadow: 0 0 0 8px rgb(200 255 61 / 0.15), 0 12px 30px -8px rgb(0 0 0 / 0.8);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .start svg {
+    width: 1.3rem;
+    height: 1.3rem;
+    fill: currentColor;
+  }
+  @keyframes pulse {
+    50% {
+      box-shadow: 0 0 0 14px rgb(200 255 61 / 0.06), 0 12px 30px -8px rgb(0 0 0 / 0.8);
+    }
+  }
+  .stage :global(iframe) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 0.75rem 0.6rem 1.1rem;
+    background: var(--bg-elev);
+    border-top: 1px solid var(--line);
+  }
+  .hint {
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+  .fullscreen {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.88rem;
+  }
+  .fullscreen svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /* Fullscreen: let the game fill the screen */
+  .player:fullscreen {
+    border: 0;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .player:fullscreen .stage {
+    flex: 1;
+    width: 100%;
+    max-height: none;
+    height: auto;
+    aspect-ratio: auto;
+  }
+  @media (max-width: 560px) {
+    .start {
+      font-size: 1rem;
+      padding: 0.75rem 1.3rem;
+    }
+    .hint {
+      display: none;
+    }
+    .controls {
+      justify-content: flex-end;
+    }
+  }
+</style>

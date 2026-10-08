@@ -1,0 +1,266 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import GamePlayer from '../../components/GamePlayer.astro';
+import GameGrid from '../../components/GameGrid.astro';
+import StoreButtons from '../../components/StoreButtons.astro';
+import { CATEGORIES } from '../../config/categories';
+import { absoluteUrl, categoryUrl, gameUrl, getGames, type Game } from '../../lib/content';
+import { breadcrumbs, videoGame } from '../../lib/schema';
+
+export const getStaticPaths = (async () => {
+  const games = await getGames();
+  return games.map((game) => ({ params: { slug: game.id }, props: { game, all: games } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  game: Game;
+  all: Game[];
+}
+
+const { game, all } = Astro.props;
+const { title, description, cover, coverAlt, category, publishedAt, updatedAt, controls, orientation, tags, appStoreUrl, googlePlayUrl } =
+  game.data;
+const { Content } = await render(game);
+const categoryLabel = CATEGORIES[category].label;
+
+// Same category first, then everything else
+const others = all.filter((g) => g.id !== game.id);
+const related = [...others.filter((g) => g.data.category === category), ...others.filter((g) => g.data.category !== category)].slice(0, 4);
+
+const crumbs = [
+  { label: 'Games', href: '/' },
+  { label: `${categoryLabel} games`, href: categoryUrl(category) },
+  { label: title, href: gameUrl(game) },
+];
+
+const ogImage = await getImage({ src: cover, width: 1200, height: 630, fit: 'cover', format: 'jpeg', quality: 82 });
+const jsonLd = [videoGame(game, absoluteUrl(ogImage.src)), breadcrumbs(crumbs)];
+
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const platforms = ['Web browser', appStoreUrl && 'iOS', googlePlayUrl && 'Android'].filter(Boolean).join(', ');
+---
+
+<BaseLayout
+  title={`${title} — Play Free Online`}
+  description={description}
+  image={cover}
+  imageAlt={coverAlt ?? `${title} cover art`}
+  jsonLd={jsonLd}
+>
+  <div class="container page">
+    <Breadcrumbs items={crumbs} />
+
+    <header class="title">
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </header>
+
+    <GamePlayer game={game} />
+
+    <div class="details">
+      <article class="prose">
+        <Content />
+        {
+          controls.length > 0 && (
+            <>
+              <h2>Controls</h2>
+              <table class="controls">
+                <tbody>
+                  {controls.map((c) => (
+                    <tr>
+                      <th scope="row">
+                        <kbd>{c.input}</kbd>
+                      </th>
+                      <td>{c.action}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )
+        }
+      </article>
+
+      <aside class="info" aria-label="Game info">
+        <dl>
+          <div>
+            <dt>Category</dt>
+            <dd><a href={categoryUrl(category)}>{categoryLabel}</a></dd>
+          </div>
+          <div>
+            <dt>Released</dt>
+            <dd><time datetime={publishedAt.toISOString()}>{fmt(publishedAt)}</time></dd>
+          </div>
+          {
+            updatedAt && (
+              <div>
+                <dt>Updated</dt>
+                <dd>
+                  <time datetime={updatedAt.toISOString()}>{fmt(updatedAt)}</time>
+                </dd>
+              </div>
+            )
+          }
+          <div>
+            <dt>Platforms</dt>
+            <dd>{platforms}</dd>
+          </div>
+          <div>
+            <dt>Screen</dt>
+            <dd>{orientation === 'portrait' ? 'Portrait (best on phones)' : 'Landscape'}</dd>
+          </div>
+          <div>
+            <dt>Price</dt>
+            <dd>Free</dd>
+          </div>
+        </dl>
+        {
+          tags.length > 0 && (
+            <ul class="tags" aria-label="Tags">
+              {tags.map((t) => (
+                <li class="chip">{t}</li>
+              ))}
+            </ul>
+          )
+        }
+        {
+          (appStoreUrl || googlePlayUrl) && (
+            <div class="also">
+              <p>Also on mobile</p>
+              <StoreButtons appStoreUrl={appStoreUrl} googlePlayUrl={googlePlayUrl} name={title} size="sm" />
+            </div>
+          )
+        }
+      </aside>
+    </div>
+
+    {
+      related.length > 0 && (
+        <section class="more" aria-labelledby="more-title">
+          <div class="section-head">
+            <h2 id="more-title">More games to play</h2>
+            <a href="/">See all →</a>
+          </div>
+          <GameGrid games={related} />
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-top: 1.5rem;
+  }
+  .title {
+    margin: 1rem 0 1.5rem;
+  }
+  .title h1 {
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    margin: 0 0 0.5rem;
+  }
+  .title p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.1rem;
+    max-width: 70ch;
+  }
+  .details {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    margin-top: 2.5rem;
+    align-items: start;
+  }
+  .details .prose > :global(:first-child) {
+    margin-top: 0;
+  }
+  .controls {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 480px;
+  }
+  .controls th,
+  .controls td {
+    text-align: left;
+    padding: 0.55rem 0.75rem 0.55rem 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .controls th {
+    width: 45%;
+    font-weight: 400;
+  }
+  kbd {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    border-bottom-width: 3px;
+    background: var(--bg-elev);
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+  .info {
+    position: sticky;
+    top: 5.5rem;
+    padding: 1.25rem;
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+  }
+  dl {
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+  dt {
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+    text-align: right;
+    font-weight: 600;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+  }
+  .also p {
+    margin: 1.25rem 0 0.5rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .more {
+    margin-top: 4rem;
+  }
+  .more .section-head a {
+    text-decoration: none;
+    font-weight: 600;
+  }
+  @media (max-width: 900px) {
+    .details {
+      grid-template-columns: 1fr;
+    }
+    .info {
+      position: static;
+      order: -1;
+    }
+  }
+</style>

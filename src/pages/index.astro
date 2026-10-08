@@ -1,0 +1,364 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GameGrid from '../components/GameGrid.astro';
+import { SITE } from '../config/site';
+import { CATEGORIES } from '../config/categories';
+import { getApps, getGames, gameUrl } from '../lib/content';
+import { gameList, organization, website } from '../lib/schema';
+
+const games = await getGames();
+const apps = await getApps();
+const spotlight = games.find((g) => g.data.featured) ?? games[0];
+const categories = [...new Set(games.map((g) => g.data.category))];
+
+const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] : [])];
+---
+
+<BaseLayout jsonLd={jsonLd}>
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="copy">
+        <span class="eyebrow">Free browser games</span>
+        <h1>Play free HTML5 games online — <span class="hl">instantly</span></h1>
+        <p class="lead">
+          No downloads, no sign-ups. {SITE.name} games load in seconds and play great on your phone, tablet or computer.
+        </p>
+        <div class="cta">
+          {spotlight && <a class="btn btn-primary" href={gameUrl(spotlight)}>Play {spotlight.data.title}</a>}
+          <a class="btn btn-ghost" href="#games">Browse all games</a>
+        </div>
+      </div>
+
+      {
+        spotlight ? (
+          <a class="spotlight" href={gameUrl(spotlight)} aria-label={`Play ${spotlight.data.title}`}>
+            <Image
+              src={spotlight.data.cover}
+              alt={spotlight.data.coverAlt ?? `${spotlight.data.title} cover art`}
+              widths={[480, 720, 960]}
+              sizes="(max-width: 900px) 100vw, 560px"
+              loading="eager"
+              fetchpriority="high"
+            />
+            <span class="badge">{spotlight.data.featured ? 'Featured' : 'New'}</span>
+            <span class="go" aria-hidden="true">
+              Play now
+              <svg viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" /></svg>
+            </span>
+          </a>
+        ) : (
+          <div class="spotlight empty" aria-hidden="true">
+            <span>Games are on the way</span>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section id="games" class="container games" aria-labelledby="games-title">
+    <div class="section-head">
+      <h2 id="games-title">All games</h2>
+      {games.length > 0 && <span class="count">{games.length} {games.length === 1 ? 'game' : 'games'}</span>}
+    </div>
+
+    {
+      games.length > 1 && (
+        <div class="toolbar">
+          <label class="search">
+            <span class="visually-hidden">Search games</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+            <input type="search" placeholder="Search games…" data-filter-search autocomplete="off" />
+          </label>
+          {categories.length > 1 && (
+            <div class="filters" role="group" aria-label="Filter by category">
+              <button type="button" class="filter" aria-pressed="true" data-filter-category="">
+                All
+              </button>
+              {categories.map((key) => (
+                <button type="button" class="filter" aria-pressed="false" data-filter-category={key}>
+                  {CATEGORIES[key].label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    <GameGrid games={games} eager={4} minSlots={4} />
+    <p class="no-results" hidden data-filter-empty>No games match your search.</p>
+  </section>
+
+  <section class="container about-teaser">
+    <div class="teaser">
+      <div>
+        <span class="eyebrow">The studio</span>
+        <h2>Made by {SITE.name}</h2>
+        <p>
+          {SITE.name} is an independent game studio. Besides the free web games on this site, we build and publish mobile
+          games for iPhone, iPad and Android{apps.length > 0 ? ` — ${apps.length} so far` : ''}.
+        </p>
+      </div>
+      <a class="btn btn-ghost" href="/about">Meet the studio →</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const search = document.querySelector<HTMLInputElement>('[data-filter-search]');
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter-category]')];
+  const items = [...document.querySelectorAll<HTMLElement>('#games li[data-category]')];
+  const placeholders = [...document.querySelectorAll<HTMLElement>('#games li.soon')];
+  const empty = document.querySelector<HTMLElement>('[data-filter-empty]');
+  let category = '';
+
+  function apply() {
+    const q = (search?.value ?? '').trim().toLowerCase();
+    let shown = 0;
+    for (const li of items) {
+      const match = (!category || li.dataset.category === category) && (!q || li.dataset.search!.includes(q));
+      li.hidden = !match;
+      if (match) shown++;
+    }
+    const filtering = Boolean(q || category);
+    placeholders.forEach((p) => (p.hidden = filtering));
+    if (empty) empty.hidden = shown > 0;
+  }
+
+  search?.addEventListener('input', apply);
+  for (const btn of buttons) {
+    btn.addEventListener('click', () => {
+      category = btn.dataset.filterCategory ?? '';
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      apply();
+    });
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(2.5rem, 7vw, 5rem) clamp(2rem, 5vw, 3.5rem);
+    background:
+      radial-gradient(600px 300px at 85% 20%, rgb(139 114 255 / 0.22), transparent 70%),
+      radial-gradient(500px 260px at 10% 90%, rgb(200 255 61 / 0.1), transparent 70%);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: linear-gradient(to bottom, #000 30%, transparent);
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+  h1 {
+    font-size: clamp(2.2rem, 5.2vw, 3.9rem);
+    margin: 0.6rem 0 1rem;
+  }
+  .hl {
+    color: var(--accent);
+  }
+  .lead {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 46ch;
+    margin: 0 0 1.75rem;
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .spotlight {
+    position: relative;
+    display: block;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    aspect-ratio: 16 / 10;
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.9);
+    transform: rotate(1.5deg);
+    transition: transform 0.3s;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .spotlight:hover {
+    transform: rotate(0deg) scale(1.01);
+  }
+  .spotlight img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    background: rgb(11 13 23 / 0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+  .go {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 8px 20px -6px rgb(0 0 0 / 0.7);
+    transition: transform 0.2s;
+  }
+  .go svg {
+    width: 1rem;
+    height: 1rem;
+    fill: currentColor;
+  }
+  .spotlight:hover .go {
+    transform: scale(1.06);
+  }
+  .spotlight.empty {
+    display: grid;
+    place-items: center;
+    background: var(--bg-card);
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .games {
+    scroll-margin-top: 5rem;
+    padding-top: 1rem;
+  }
+  .count {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .search {
+    position: relative;
+    flex: 0 1 280px;
+  }
+  .search svg {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    width: 1.1rem;
+    height: 1.1rem;
+    transform: translateY(-50%);
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .search input {
+    width: 100%;
+    padding: 0.65rem 1rem 0.65rem 2.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--bg-elev);
+    color: var(--text);
+    font: inherit;
+  }
+  .search input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .filter {
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .filter:hover {
+    color: var(--text);
+  }
+  .filter[aria-pressed='true'] {
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+  }
+  .no-results {
+    color: var(--muted);
+    text-align: center;
+    padding: 2rem 0;
+  }
+
+  .about-teaser {
+    margin-top: 4.5rem;
+  }
+  .teaser {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(400px 200px at 100% 0%, rgb(139 114 255 / 0.18), transparent 70%),
+      var(--bg-card);
+  }
+  .teaser h2 {
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    margin: 0.4rem 0 0.6rem;
+  }
+  .teaser p {
+    margin: 0;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+
+  @media (max-width: 900px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+    }
+    .spotlight {
+      transform: none;
+    }
+  }
+</style>

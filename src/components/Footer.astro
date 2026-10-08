@@ -1,0 +1,136 @@
+---
+import Logo from './Logo.astro';
+import { SITE } from '../config/site';
+import { CATEGORIES } from '../config/categories';
+import { getGames, categoryUrl } from '../lib/content';
+
+const games = await getGames();
+const usedCategories = [...new Set(games.map((g) => g.data.category))];
+
+const socialLabels: Record<keyof typeof SITE.social, string> = {
+  x: 'X (Twitter)',
+  youtube: 'YouTube',
+  instagram: 'Instagram',
+  tiktok: 'TikTok',
+  linkedin: 'LinkedIn',
+  discord: 'Discord',
+};
+const socials = Object.entries(SITE.social).filter(([, url]) => url) as [keyof typeof SITE.social, string][];
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container grid">
+    <div class="brand">
+      <a href="/" aria-label={`${SITE.name} home`}><Logo /></a>
+      <p>{SITE.studioTagline}</p>
+    </div>
+
+    {
+      usedCategories.length > 0 && (
+        <nav aria-label="Game categories">
+          <h2>Games</h2>
+          <ul>
+            {usedCategories.map((key) => (
+              <li>
+                <a href={categoryUrl(key)}>{CATEGORIES[key].label} games</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+
+    <nav aria-label="Studio">
+      <h2>Studio</h2>
+      <ul>
+        <li><a href="/about">About {SITE.name}</a></li>
+        {SITE.appStoreDeveloperUrl && <li><a href={SITE.appStoreDeveloperUrl} rel="noopener">App Store</a></li>}
+        {SITE.googlePlayDeveloperUrl && <li><a href={SITE.googlePlayDeveloperUrl} rel="noopener">Google Play</a></li>}
+        <li><a href="/privacypolicy">Privacy policy</a></li>
+        <li><a href="/about#contact">Contact us</a></li>
+      </ul>
+    </nav>
+
+    {
+      socials.length > 0 && (
+        <nav aria-label="Social">
+          <h2>Follow</h2>
+          <ul>
+            {socials.map(([key, url]) => (
+              <li>
+                <a href={url} rel="noopener me">{socialLabels[key]}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </div>
+  <div class="container legal">
+    <p>© {year} {SITE.name}. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 6rem;
+    border-top: 1px solid var(--line);
+    background: var(--bg-elev);
+    font-size: 0.95rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 2fr repeat(3, 1fr);
+    gap: 2rem;
+    padding-block: 3rem 2rem;
+  }
+  .brand p {
+    color: var(--muted);
+    max-width: 30ch;
+    margin-top: 0.75rem;
+  }
+  .brand a {
+    text-decoration: none;
+  }
+  h2 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 0 0 0.75rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+  nav a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  nav a:hover {
+    color: var(--accent);
+  }
+  .legal {
+    border-top: 1px solid var(--line);
+    padding-block: 1.25rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .legal p {
+    margin: 0;
+  }
+  @media (max-width: 760px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .brand {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

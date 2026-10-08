@@ -1,0 +1,22 @@
+# build output
+dist/
+.astro/
+.wrangler/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+
+# environment variables
+.env
+.env.*
+!.env.example
+.dev.vars*
+
+# macOS
+.DS_Store
+
+# local editor / assistant config
+.claude/

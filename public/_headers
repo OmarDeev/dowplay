@@ -1,0 +1,13 @@
+# Cloudflare response headers — https://developers.cloudflare.com/workers/static-assets/headers/
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Hashed build assets (CSS, JS, images, fonts) never change — cache for a year
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Raw game files: keep them out of Google's index so the SEO pages at /games/<slug> rank instead
+/play/*
+  X-Robots-Tag: noindex
