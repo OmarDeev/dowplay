@@ -17,6 +17,7 @@ const socialLabels: Record<keyof typeof SITE.social, string> = {
 };
 const socials = Object.entries(SITE.social).filter(([, url]) => url) as [keyof typeof SITE.social, string][];
 const year = new Date().getFullYear();
+const showCookieSettings = Boolean(SITE.googleAnalyticsId) && SITE.cookieConsent;
 ---
 
 <footer class="site-footer">
@@ -48,6 +49,15 @@ const year = new Date().getFullYear();
         {SITE.appStoreDeveloperUrl && <li><a href={SITE.appStoreDeveloperUrl} rel="noopener">App Store</a></li>}
         {SITE.googlePlayDeveloperUrl && <li><a href={SITE.googlePlayDeveloperUrl} rel="noopener">Google Play</a></li>}
         <li><a href="/privacypolicy">Privacy policy</a></li>
+        {
+          showCookieSettings && (
+            <li>
+              <button type="button" class="link" data-consent-open>
+                Cookie settings
+              </button>
+            </li>
+          )
+        }
         <li><a href="/about#contact">Contact us</a></li>
       </ul>
     </nav>
@@ -113,8 +123,17 @@ const year = new Date().getFullYear();
     color: var(--text);
     text-decoration: none;
   }
-  nav a:hover {
+  nav a:hover,
+  .link:hover {
     color: var(--accent);
+  }
+  .link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
   }
   .legal {
     border-top: 1px solid var(--line);

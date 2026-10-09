@@ -16,7 +16,7 @@ const src = gameEmbedUrl(game);
   The game is only loaded when the player presses Play. This keeps the page fast
   (good Core Web Vitals = better ranking) and stops crawlers from loading game engines.
 -->
-<game-player class:list={['player', orientation]} data-src={src} data-title={title}>
+<game-player class:list={['player', orientation]} data-src={src} data-title={title} data-id={game.id}>
   <div class="stage">
     <Image
       src={cover}
@@ -44,6 +44,8 @@ const src = gameEmbedUrl(game);
 </game-player>
 
 <script>
+  import { track } from '../lib/analytics';
+
   class GamePlayer extends HTMLElement {
     connectedCallback() {
       const stage = this.querySelector<HTMLElement>('.stage')!;
@@ -61,10 +63,12 @@ const src = gameEmbedUrl(game);
         frame.addEventListener('load', () => frame.focus());
         stage.replaceChildren(frame);
         this.classList.add('playing');
+        track('game_start', { game_name: this.dataset.title ?? '', game_id: this.dataset.id ?? '' });
       };
 
       start.addEventListener('click', load);
       fullscreen.addEventListener('click', () => {
+        track('game_fullscreen', { game_name: this.dataset.title ?? '', game_id: this.dataset.id ?? '' });
         // iPhone Safari has no element fullscreen: open the game on its own page instead
         if (!document.fullscreenEnabled) {
           window.location.href = src;

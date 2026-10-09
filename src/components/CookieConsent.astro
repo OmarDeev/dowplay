@@ -1,0 +1,121 @@
+---
+/**
+ * Cookie banner for Google Analytics (Consent Mode v2). Only rendered when
+ * analytics is enabled and SITE.cookieConsent is on. The visitor's choice is
+ * remembered in localStorage; the footer's "Cookie settings" link reopens it.
+ */
+import { SITE } from '../config/site';
+
+const show = Boolean(SITE.googleAnalyticsId) && SITE.cookieConsent;
+---
+
+{
+  show && (
+    <section class="consent" aria-label="Cookie consent" hidden data-consent>
+      <p>
+        We use cookies to understand how our games are played and improve them. You can change your choice any time
+        under “Cookie settings”. <a href="/privacypolicy">Privacy policy</a>
+      </p>
+      <div class="buttons">
+        <button type="button" class="btn btn-ghost" data-consent-choice="denied">
+          Decline
+        </button>
+        <button type="button" class="btn btn-primary" data-consent-choice="granted">
+          Accept
+        </button>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  const KEY = 'dp-consent';
+  const banner = document.querySelector<HTMLElement>('[data-consent]');
+
+  const stored = (() => {
+    try {
+      return localStorage.getItem(KEY);
+    } catch {
+      return null;
+    }
+  })();
+
+  // Remove Google Analytics cookies (used when the visitor declines after accepting)
+  function clearAnalyticsCookies() {
+    const host = location.hostname;
+    const domains = ['', host, `.${host}`, `.${host.split('.').slice(-2).join('.')}`];
+    for (const cookie of document.cookie.split(';')) {
+      const name = cookie.split('=')[0].trim();
+      if (!name.startsWith('_ga')) continue;
+      for (const d of domains) {
+        document.cookie = `${name}=; Max-Age=0; path=/${d ? `; domain=${d}` : ''}`;
+      }
+    }
+  }
+
+  function choose(choice: 'granted' | 'denied') {
+    try {
+      localStorage.setItem(KEY, choice);
+    } catch {}
+    window.gtag?.('consent', 'update', { analytics_storage: choice });
+    if (choice === 'denied') clearAnalyticsCookies();
+    if (banner) banner.hidden = true;
+  }
+
+  if (banner) {
+    if (!stored) banner.hidden = false;
+    banner.querySelectorAll<HTMLButtonElement>('[data-consent-choice]').forEach((btn) =>
+      btn.addEventListener('click', () => choose(btn.dataset.consentChoice as 'granted' | 'denied')),
+    );
+    document.querySelectorAll('[data-consent-open]').forEach((el) =>
+      el.addEventListener('click', () => {
+        banner.hidden = false;
+        banner.querySelector<HTMLButtonElement>('[data-consent-choice="granted"]')?.focus();
+      }),
+    );
+  }
+</script>
+
+<style>
+  .consent {
+    position: fixed;
+    left: 1rem;
+    bottom: 1rem;
+    z-index: 90;
+    width: min(420px, calc(100vw - 2rem));
+    padding: 1.1rem 1.2rem;
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--bg-card) 94%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--line);
+    box-shadow: 0 20px 50px -20px rgb(0 0 0 / 0.9);
+    animation: rise 0.3s ease-out;
+  }
+  .consent[hidden] {
+    display: none;
+  }
+  p {
+    margin: 0 0 0.9rem;
+    font-size: 0.9rem;
+    color: #c9cde6;
+  }
+  p a {
+    color: var(--text);
+  }
+  .buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
+  .btn {
+    padding: 0.55rem 1.1rem;
+    font-size: 0.9rem;
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+</style>

@@ -3,6 +3,8 @@ import { Font } from 'astro:assets';
 import SEO, { type Props as SEOProps } from '../components/SEO.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Analytics from '../components/Analytics.astro';
+import CookieConsent from '../components/CookieConsent.astro';
 import { SITE } from '../config/site';
 import '../styles/global.css';
 
@@ -14,6 +16,7 @@ type Props = SEOProps;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Analytics />
     <meta name="theme-color" content="#0b0d17" />
     <meta name="color-scheme" content="dark" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -31,5 +34,6 @@ type Props = SEOProps;
       <slot />
     </main>
     <Footer />
+    <CookieConsent />
   </body>
 </html>

@@ -42,6 +42,13 @@ export const SITE = {
 
   // Google Search Console HTML-tag verification code (optional — DNS verification via Cloudflare also works)
   googleSiteVerification: '',
+
+  // Google Analytics 4 Measurement ID, e.g. 'G-ABC123XYZ9'
+  // (analytics.google.com → Admin → Data streams → your web stream). Leave '' to disable analytics.
+  googleAnalyticsId: 'G-39H0BYB9PD',
+  // Show a cookie banner and only set analytics cookies after the visitor accepts
+  // (Google Consent Mode v2). Keep this on if you have visitors from the EU/UK.
+  cookieConsent: true,
 } as const;
 
 export const NAV = [

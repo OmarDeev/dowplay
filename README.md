@@ -70,5 +70,6 @@ The site deploys as a **Cloudflare Worker with static assets** (Cloudflare's rec
 
 - **Google Search Console:** add the domain (DNS verification through Cloudflare is the simplest), then submit `https://<your-domain>/sitemap-index.xml`.
 - **Bing Webmaster Tools:** import the site from Search Console.
-- **Cloudflare Web Analytics:** switch it on in the dashboard. It's free, cookie-less and needs no code.
+- **Google Analytics:** paste your Measurement ID (`G-…`) into `googleAnalyticsId` in `src/config/site.ts`. A cookie banner asks visitors for consent first (Google Consent Mode v2), and a "Cookie settings" link in the footer lets them change their mind. Besides page views, the site sends `game_start`, `game_fullscreen` and `generate_lead` (contact form) events. Find them in GA4 under **Reports → Engagement → Events**.
+- **Cloudflare Web Analytics** (optional): switch it on in the dashboard. It's free, cookie-less and needs no code. It counts every visitor, including those who decline cookies.
 - **app-ads.txt:** if your apps show ads (AdMob, etc.), put your `app-ads.txt` file in `public/`. It's served at `/app-ads.txt`.

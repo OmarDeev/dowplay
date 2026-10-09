@@ -1,0 +1,40 @@
+---
+/**
+ * Google Analytics 4 with Consent Mode v2. Renders nothing until
+ * SITE.googleAnalyticsId is set.
+ *
+ * With cookieConsent on, analytics starts in "denied" mode (no cookies) and is
+ * upgraded when the visitor accepts the banner (see CookieConsent.astro).
+ */
+import { SITE } from '../config/site';
+
+const id: string = SITE.googleAnalyticsId;
+const requireConsent: boolean = SITE.cookieConsent;
+---
+
+{
+  id && (
+    <>
+      <script is:inline define:vars={{ id, requireConsent }}>
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () {
+          window.dataLayer.push(arguments);
+        };
+        var accepted = !requireConsent;
+        try {
+          accepted = accepted || localStorage.getItem('dp-consent') === 'granted';
+        } catch (e) {}
+        // This site shows no ads, so ad-related storage always stays denied
+        gtag('consent', 'default', {
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          analytics_storage: accepted ? 'granted' : 'denied',
+        });
+        gtag('js', new Date());
+        gtag('config', id);
+      </script>
+      <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${id}`} />
+    </>
+  )
+}

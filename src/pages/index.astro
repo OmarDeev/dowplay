@@ -106,38 +106,38 @@ const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] 
       <a class="btn btn-ghost" href="/about">Meet the studio →</a>
     </div>
   </section>
-</BaseLayout>
 
-<script>
-  const search = document.querySelector<HTMLInputElement>('[data-filter-search]');
-  const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter-category]')];
-  const items = [...document.querySelectorAll<HTMLElement>('#games li[data-category]')];
-  const placeholders = [...document.querySelectorAll<HTMLElement>('#games li.soon')];
-  const empty = document.querySelector<HTMLElement>('[data-filter-empty]');
-  let category = '';
-
-  function apply() {
-    const q = (search?.value ?? '').trim().toLowerCase();
-    let shown = 0;
-    for (const li of items) {
-      const match = (!category || li.dataset.category === category) && (!q || li.dataset.search!.includes(q));
-      li.hidden = !match;
-      if (match) shown++;
+  <script>
+    const search = document.querySelector<HTMLInputElement>('[data-filter-search]');
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter-category]')];
+    const items = [...document.querySelectorAll<HTMLElement>('#games li[data-category]')];
+    const placeholders = [...document.querySelectorAll<HTMLElement>('#games li.soon')];
+    const empty = document.querySelector<HTMLElement>('[data-filter-empty]');
+    let category = '';
+  
+    function apply() {
+      const q = (search?.value ?? '').trim().toLowerCase();
+      let shown = 0;
+      for (const li of items) {
+        const match = (!category || li.dataset.category === category) && (!q || li.dataset.search!.includes(q));
+        li.hidden = !match;
+        if (match) shown++;
+      }
+      const filtering = Boolean(q || category);
+      placeholders.forEach((p) => (p.hidden = filtering));
+      if (empty) empty.hidden = shown > 0;
     }
-    const filtering = Boolean(q || category);
-    placeholders.forEach((p) => (p.hidden = filtering));
-    if (empty) empty.hidden = shown > 0;
-  }
-
-  search?.addEventListener('input', apply);
-  for (const btn of buttons) {
-    btn.addEventListener('click', () => {
-      category = btn.dataset.filterCategory ?? '';
-      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-      apply();
-    });
-  }
-</script>
+  
+    search?.addEventListener('input', apply);
+    for (const btn of buttons) {
+      btn.addEventListener('click', () => {
+        category = btn.dataset.filterCategory ?? '';
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        apply();
+      });
+    }
+  </script>
+</BaseLayout>
 
 <style>
   .hero {
