@@ -3,38 +3,47 @@
  * Google Analytics 4 with Consent Mode v2. Renders nothing until
  * SITE.googleAnalyticsId is set.
  *
- * With cookieConsent on, analytics starts in "denied" mode (no cookies) and is
- * upgraded when the visitor accepts the banner (see CookieConsent.astro).
+ * 1. Consent defaults (must run before the Google tag). With cookieConsent on,
+ *    analytics starts "denied" until the visitor accepts the banner
+ *    (see CookieConsent.astro); a stored "Accept" is restored here.
+ * 2. Google's standard gtag.js snippet, exactly as shown in Google Analytics.
  */
 import { SITE } from '../config/site';
 
 const id: string = SITE.googleAnalyticsId;
 const requireConsent: boolean = SITE.cookieConsent;
+
+const analyticsDefault = requireConsent
+  ? `(function(){try{return localStorage.getItem('dp-consent')==='granted'}catch(e){return false}})() ? 'granted' : 'denied'`
+  : `'granted'`;
+
+const consentDefaults = `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': ${analyticsDefault}
+  });
+`;
+
+const googleTag = `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '${id}');
+`;
 ---
 
 {
   id && (
     <>
-      <script is:inline define:vars={{ id, requireConsent }}>
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function () {
-          window.dataLayer.push(arguments);
-        };
-        var accepted = !requireConsent;
-        try {
-          accepted = accepted || localStorage.getItem('dp-consent') === 'granted';
-        } catch (e) {}
-        // This site shows no ads, so ad-related storage always stays denied
-        gtag('consent', 'default', {
-          ad_storage: 'denied',
-          ad_user_data: 'denied',
-          ad_personalization: 'denied',
-          analytics_storage: accepted ? 'granted' : 'denied',
-        });
-        gtag('js', new Date());
-        gtag('config', id);
-      </script>
+      <script is:inline set:html={consentDefaults} />
+      <Fragment set:html="<!-- Google tag (gtag.js) -->" />
       <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${id}`} />
+      <script is:inline set:html={googleTag} />
     </>
   )
 }
