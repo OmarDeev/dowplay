@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Light It Up</title>
+  <meta name="description" content="Build circuits to power a house within a budget. An electrical engineering game for Years 8 to 13.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23ffd15c'/%3E%3Cpath d='M9 9l14 14M9 23L23 9' stroke='%230f2142' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="site-back" href="/games/light-it-up" hidden>← DowPlay</a>
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Light It Up</div>
+    <div class="level-name" id="levelName"></div>
+    <button type="button" class="btn" id="levelsButton">Levels</button>
+  </header>
+
+  <main class="layout">
+    <section class="play" aria-label="Circuit builder">
+      <div class="toolbar" role="toolbar" aria-label="Tools">
+        <div class="tools" id="tools"></div>
+        <div class="toolbar-actions">
+          <button type="button" class="btn" id="undoButton" title="Undo (Ctrl+Z)">Undo</button>
+          <button type="button" class="btn" id="clearButton">Clear</button>
+          <label class="toggle"><input type="checkbox" id="numbersToggle"> <span>Show the numbers</span></label>
+        </div>
+      </div>
+
+      <div class="board-wrap">
+        <svg id="board" tabindex="0" role="application" aria-roledescription="circuit board"
+             aria-label="Circuit board. Arrow keys move the cursor. Shift and an arrow key lays the selected tool."
+             aria-describedby="keyboardHelp">
+          <defs>
+            <radialGradient id="lampGlow">
+              <stop offset="0" stop-color="#ffe9a3" stop-opacity="0.95"/>
+              <stop offset="0.45" stop-color="#ffd15c" stop-opacity="0.45"/>
+              <stop offset="1" stop-color="#ffd15c" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="roomLight" cx="0.5" cy="0.45" r="0.75">
+              <stop offset="0" stop-color="#ffd76e" stop-opacity="0.42"/>
+              <stop offset="1" stop-color="#ffb84a" stop-opacity="0.12"/>
+            </radialGradient>
+          </defs>
+          <g id="rooms"></g>
+          <g id="grid"></g>
+          <g id="wires"></g>
+          <g id="flow"></g>
+          <g id="parts"></g>
+          <g id="labels"></g>
+          <g id="overlay"></g>
+        </svg>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <p class="sr-only" id="keyboardHelp">Keyboard: arrow keys move the cursor, Shift plus an arrow key lays the selected tool along that edge, number keys choose a tool, E chooses the eraser, Ctrl+Z undoes.</p>
+      <p class="sr-only" aria-live="polite" id="announcer"></p>
+    </section>
+
+    <aside class="panel" aria-label="Mission">
+      <section class="card mission">
+        <p class="eyebrow" id="levelMeta"></p>
+        <h1 id="levelTitle"></h1>
+        <p id="story"></p>
+        <p class="goal" id="goal"></p>
+        <ol class="hints" id="hints"></ol>
+        <button type="button" class="btn btn-quiet" id="hintButton">Show a hint</button>
+      </section>
+
+      <section class="card" id="switchCard" hidden>
+        <h2>Switches</h2>
+        <div class="switches" id="switches"></div>
+      </section>
+
+      <section class="card" id="goalsCard">
+        <h2>Goals</h2>
+        <div id="goals"></div>
+      </section>
+
+      <section class="card">
+        <h2>Budget</h2>
+        <div class="budget">
+          <div class="budget-row"><span>Cost</span><strong id="cost"></strong></div>
+          <div class="meter" aria-hidden="true"><div class="meter-fill" id="meterFill"></div><div class="meter-par" id="meterPar"></div></div>
+          <p class="budget-note" id="budgetNote"></p>
+        </div>
+      </section>
+
+      <button type="button" class="btn btn-primary btn-big" id="checkButton">Check my circuit</button>
+    </aside>
+  </main>
+
+  <dialog id="levelsDialog" aria-labelledby="levelsTitle">
+    <form method="dialog" class="dialog-body">
+      <h2 id="levelsTitle">Choose a level</h2>
+      <div class="level-list" id="levelList"></div>
+      <div class="dialog-actions"><button class="btn" value="close">Close</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="winDialog" aria-labelledby="winTitle">
+    <div class="dialog-body">
+      <h2 id="winTitle">Circuit complete!</h2>
+      <p class="stars" id="winStars"></p>
+      <p id="winCost"></p>
+      <h3>What you learned</h3>
+      <p id="winLearn"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="winStay">Improve my design</button>
+        <button type="button" class="btn btn-primary" id="winNext">Next level</button>
+      </div>
+    </div>
+  </dialog>
+
+  <noscript><p class="noscript">Light It Up needs JavaScript turned on.</p></noscript>
+
+  <script src="js/circuit.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/game.js"></script>
+  <script>
+    // Opened on its own on dowplay.com (not inside the site's player)? Show a way back to the website.
+    if (window.top === window.self && location.pathname.startsWith("/play/")) {
+      document.querySelector(".site-back").hidden = false;
+    }
+  </script>
+</body>
+</html>

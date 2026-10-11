@@ -1,22 +1,72 @@
+/*
+ * DowPlay design system: a bright "engineering notebook" look.
+ * White and pale-grey surfaces, deep navy ink, a vivid blue for actions, the brand lime
+ * as a highlighter, and one colour per topic (set with data-topic="…").
+ */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  --bg: #0b0d17;
-  --bg-elev: #111423;
-  --bg-card: #161a2e;
-  --line: #242a47;
-  --text: #eef0fb;
-  --muted: #9ba2c4;
-  --accent: #c8ff3d;
-  --accent-ink: #11160a;
-  --accent-2: #8b72ff;
+  --bg: #f6f8fc; /* page */
+  --bg-soft: #eef2f9; /* bands, hover fills */
+  --surface: #ffffff; /* cards */
+  --line: #e1e6f0;
+  --line-strong: #cbd3e1;
+  --text: #141a2e;
+  --muted: #586179;
+  --faint: #8a93a8;
 
-  --radius: 14px;
-  --radius-lg: 22px;
+  --primary: #3d5afe;
+  --primary-hover: #2c47e8;
+  --primary-soft: #eceffe;
+  --primary-ink: #2639c7; /* blue text on white */
+  --brand: #c8ff3d; /* logo and highlighter */
+  --brand-ink: #11160a;
+  --ok: #128a5a;
+
+  /* Kept for older components */
+  --accent: var(--primary);
+  --accent-ink: #ffffff;
+  --bg-elev: var(--bg-soft);
+  --bg-card: var(--surface);
+
+  --shadow-sm: 0 1px 2px rgb(20 26 46 / 0.06), 0 1px 1px rgb(20 26 46 / 0.04);
+  --shadow: 0 1px 2px rgb(20 26 46 / 0.05), 0 10px 28px -14px rgb(20 26 46 / 0.22);
+  --shadow-lg: 0 2px 4px rgb(20 26 46 / 0.05), 0 28px 60px -24px rgb(20 26 46 / 0.32);
+
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
   --maxw: 1200px;
   --gutter: clamp(1rem, 4vw, 2rem);
 
   --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Graph paper, for hero sections */
+  --grid-paper:
+    linear-gradient(rgb(61 90 254 / 0.06) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, rgb(61 90 254 / 0.06) 1px, transparent 1px) 0 0 / 28px 28px;
+}
+
+/* Topic colours: put data-topic on any element to get --topic, --topic-soft and --topic-ink */
+[data-topic='electricity'] {
+  --topic: #f5a524;
+  --topic-soft: #fff3d6;
+  --topic-ink: #8f5200;
+}
+[data-topic='mechanics'] {
+  --topic: #f0683a;
+  --topic-soft: #ffe9e0;
+  --topic-ink: #ad3a10;
+}
+[data-topic='structures'] {
+  --topic: #3478f6;
+  --topic-soft: #e3edff;
+  --topic-ink: #1a4fbf;
+}
+[data-topic='energy'] {
+  --topic: #18b07a;
+  --topic-soft: #dcf5ea;
+  --topic-ink: #0b7550;
 }
 
 *,
@@ -55,6 +105,7 @@ h3 {
   letter-spacing: -0.02em;
   font-weight: 750;
   text-wrap: balance;
+  color: var(--text);
 }
 
 p {
@@ -62,7 +113,8 @@ p {
 }
 
 a {
-  color: var(--accent);
+  color: var(--primary-ink);
+  text-underline-offset: 3px;
 }
 
 img,
@@ -78,9 +130,14 @@ img {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 3px solid color-mix(in srgb, var(--primary) 55%, transparent);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--brand);
+  color: var(--brand-ink);
 }
 
 .container {
@@ -97,8 +154,8 @@ img {
   z-index: 100;
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--primary);
+  color: #fff;
   font-weight: 700;
 }
 .skip-link:focus {
@@ -117,84 +174,257 @@ img {
   border: 0;
 }
 
+/* Highlighter-pen emphasis in headings */
+.hl,
+mark.hl {
+  color: inherit;
+  background: linear-gradient(transparent 58%, var(--brand) 58%, var(--brand) 92%, transparent 92%);
+  padding: 0 0.08em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
 .eyebrow {
   display: inline-block;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--primary-ink);
+}
+
+/* A small pill above a heading */
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.8rem 0.3rem 0.4rem;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.kicker .dot {
+  display: inline-grid;
+  place-items: center;
+  height: 1.4rem;
+  padding: 0 0.55rem;
+  border-radius: 999px;
+  background: var(--brand);
+  color: var(--brand-ink);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .section-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: end;
   justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
 }
 .section-head h2 {
-  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
   margin: 0;
 }
+.section-head p {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  max-width: 60ch;
+}
+.section-head .more-link {
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.section-head .more-link:hover {
+  text-decoration: underline;
+}
 
+.section {
+  margin-top: clamp(3.5rem, 8vw, 5.5rem);
+  scroll-margin-top: 5rem;
+}
+h2[id],
+[id].section {
+  scroll-margin-top: 5.5rem;
+}
+
+/* ---------- Buttons ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.3rem;
+  padding: 0.75rem 1.35rem;
   border-radius: 999px;
   border: 1px solid transparent;
   font: inherit;
   font-weight: 700;
+  line-height: 1.25;
   text-decoration: none;
   cursor: pointer;
-  transition: transform 0.15s, background-color 0.15s, border-color 0.15s;
+  transition:
+    transform 0.15s,
+    background-color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s,
+    color 0.15s;
 }
 .btn:active {
   transform: scale(0.97);
 }
+.btn svg {
+  width: 1.1em;
+  height: 1.1em;
+  flex: none;
+}
 .btn-primary {
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 6px 16px -8px rgb(61 90 254 / 0.8);
 }
 .btn-primary:hover {
-  background: #d6ff6b;
+  background: var(--primary-hover);
+  box-shadow: 0 10px 22px -10px rgb(61 90 254 / 0.9);
 }
 .btn-ghost {
-  background: transparent;
+  background: var(--surface);
   color: var(--text);
-  border-color: var(--line);
+  border-color: var(--line-strong);
 }
 .btn-ghost:hover {
-  border-color: var(--muted);
+  border-color: var(--text);
+}
+.btn-lime {
+  background: var(--brand);
+  color: var(--brand-ink);
+}
+.btn-lime:hover {
+  background: #d6ff6b;
+}
+.btn-lg {
+  padding: 0.9rem 1.6rem;
+  font-size: 1.05rem;
 }
 
+/* ---------- Chips ---------- */
 .chip {
-  display: inline-block;
-  padding: 0.2rem 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
   border-radius: 999px;
   font-size: 0.78rem;
-  font-weight: 600;
-  background: color-mix(in srgb, var(--accent-2) 18%, transparent);
-  color: #c9bdff;
+  font-weight: 650;
+  background: var(--bg-soft);
+  color: var(--muted);
+}
+.chip[data-topic] {
+  background: var(--topic-soft);
+  color: var(--topic-ink);
+}
+.chip svg {
+  width: 0.95rem;
+  height: 0.95rem;
 }
 
-/* Long-form text (markdown bodies, privacy policy) */
+/* A white card */
+.panel {
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Lists with tick marks */
+.ticks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.ticks li {
+  position: relative;
+  padding-left: 1.75rem;
+}
+.ticks li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.18em;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background: #dcf5ea
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23128a5a' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12.5 4 4 8-9'/%3E%3C/svg%3E")
+    center / 72% no-repeat;
+}
+
+/* ---------- FAQ ---------- */
+.faq {
+  display: grid;
+  gap: 0.6rem;
+}
+.faq details {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0 1.2rem;
+  box-shadow: var(--shadow-sm);
+}
+.faq summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  font-weight: 700;
+}
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+.faq summary::after {
+  content: '';
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg) translateY(-25%);
+  transition: transform 0.2s;
+}
+.faq details[open] summary::after {
+  transform: rotate(-135deg) translateY(-25%);
+}
+.faq details p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+}
+
+/* ---------- Long-form text (markdown bodies, privacy policy) ---------- */
 .prose {
   max-width: 70ch;
-  color: #d4d8ee;
+  color: #2c3448;
 }
 .prose h2 {
-  font-size: 1.45rem;
+  font-size: 1.5rem;
   margin: 2.2rem 0 0.75rem;
-  color: var(--text);
 }
 .prose h3 {
   font-size: 1.15rem;
   margin: 1.6rem 0 0.5rem;
-  color: var(--text);
 }
 .prose ul,
 .prose ol {
@@ -205,6 +435,26 @@ img {
 }
 .prose strong {
   color: var(--text);
+}
+/* Markdown tables (e.g. a game's levels): scroll sideways on phones instead of widening the page */
+.prose table:not(.controls) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.prose table:not(.controls) th,
+.prose table:not(.controls) td {
+  padding: 0.55rem 0.9rem 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.prose table:not(.controls) th {
+  color: var(--muted);
+  font-weight: 650;
+  white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: reduce) {

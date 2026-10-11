@@ -1,5 +1,6 @@
 ---
 import GameCard from './GameCard.astro';
+import { CATEGORIES } from '../config/categories';
 import type { Game } from '../lib/content';
 
 interface Props {
@@ -8,17 +9,30 @@ interface Props {
   eager?: number;
   /** Pad the grid with "coming soon" tiles up to this many slots */
   minSlots?: number;
+  /** Heading level for the card titles */
+  as?: 'h2' | 'h3';
 }
 
-const { games, eager = 0, minSlots = 0 } = Astro.props;
+const { games, eager = 0, minSlots = 0, as = 'h3' } = Astro.props;
 const placeholders = Math.max(0, minSlots - games.length);
 ---
 
 <ul class="grid" role="list">
   {
     games.map((game, i) => (
-      <li data-category={game.data.category} data-search={[game.data.title, ...game.data.tags].join(' ').toLowerCase()}>
-        <GameCard game={game} eager={i < eager} />
+      <li
+        data-category={game.data.category}
+        data-search={[
+          game.data.title,
+          game.data.tagline ?? '',
+          CATEGORIES[game.data.category].heading,
+          ...game.data.tags,
+          ...game.data.learn,
+        ]
+          .join(' ')
+          .toLowerCase()}
+      >
+        <GameCard game={game} eager={i < eager} as={as} />
       </li>
     ))
   }
@@ -26,6 +40,9 @@ const placeholders = Math.max(0, minSlots - games.length);
     Array.from({ length: placeholders }, () => (
       <li class="soon" aria-hidden="true">
         <div class="soon-tile">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
           <span>New game coming soon</span>
         </div>
       </li>
@@ -36,11 +53,14 @@ const placeholders = Math.max(0, minSlots - games.length);
 <style>
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
     gap: 1.25rem;
     list-style: none;
     margin: 0;
     padding: 0;
+  }
+  li {
+    min-width: 0;
   }
   li[hidden] {
     display: none;
@@ -48,23 +68,32 @@ const placeholders = Math.max(0, minSlots - games.length);
   .soon-tile {
     display: grid;
     place-items: center;
+    align-content: center;
+    gap: 0.5rem;
     height: 100%;
-    min-height: 12rem;
+    min-height: 14rem;
     border-radius: var(--radius);
-    border: 1.5px dashed var(--line);
-    color: var(--muted);
+    border: 2px dashed var(--line-strong);
+    color: var(--faint);
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 650;
     text-align: center;
     padding: 1rem;
-    background: repeating-linear-gradient(-45deg, transparent 0 12px, rgb(255 255 255 / 0.015) 12px 24px);
+    background: var(--grid-paper);
+  }
+  .soon-tile svg {
+    width: 1.6rem;
+    height: 1.6rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
   }
   @media (max-width: 560px) {
     .grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
+      gap: 1rem;
     }
-    .soon:nth-child(n + 4) {
+    .soon:nth-child(n + 3) {
       display: none;
     }
   }

@@ -17,7 +17,7 @@ export const ABOUT = {
     eyebrow: 'About DowPlay · Game development studio',
     titleStart: 'We build mobile & web games people',
     titleHighlight: 'come back to',
-    lead: 'DowPlay is an independent game studio. We design, develop and publish games for iPhone, iPad and Android — and free HTML5 games you can play instantly in your browser.',
+    lead: 'DowPlay is an independent game studio. We make free engineering games that teach students how things really work, and we design, develop and publish games for iPhone, iPad and Android.',
     image: front,
     imageAlt: 'A colorful 3D handheld game console surrounded by game pieces',
   },
@@ -49,7 +49,7 @@ export const ABOUT = {
     },
     {
       title: 'HTML5 & web games',
-      text: 'Browser games that load in seconds and run anywhere — no install needed. Ideal for instant play on our own site, game portals and brand campaigns.',
+      text: 'Browser games that load in seconds and run anywhere — no install needed. Ideal for learning games like the engineering games on this site, game portals and brand campaigns.',
       bullets: ['Desktop & mobile browser support', 'Lightweight, fast-loading builds', 'Game portal & ad SDK integration', 'Embeddable on any website'],
       image: serv1,
       imageAlt: 'Illustration of hands playing an online platform game on a phone',
@@ -89,6 +89,7 @@ export const ABOUT = {
     text: 'Have a game idea, a publishing or partnership proposal, a press question, or feedback about one of our games? Send us a message and we will get back to you.',
     topics: [
       'General question',
+      'Teachers & schools',
       'Game development project',
       'Publishing & partnerships',
       'Press & media',

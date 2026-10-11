@@ -34,7 +34,7 @@ const { items } = Astro.props;
     color: var(--muted);
   }
   li + li::before {
-    content: '/';
+    content: '›';
     margin-right: 0.4rem;
     opacity: 0.5;
   }
@@ -47,5 +47,6 @@ const { items } = Astro.props;
   }
   [aria-current] {
     color: var(--text);
+    font-weight: 600;
   }
 </style>

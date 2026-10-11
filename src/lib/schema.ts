@@ -4,7 +4,7 @@
  */
 import { SITE } from '../config/site';
 import { CATEGORIES } from '../config/categories';
-import { absoluteUrl, gameUrl, type App, type Game } from './content';
+import { absoluteUrl, audienceOf, gameUrl, type App, type Game } from './content';
 
 const CONTEXT = 'https://schema.org';
 const ORG_ID = `${SITE.url}/#organization`;
@@ -61,16 +61,24 @@ export const gameList = (games: Game[]) => ({
   })),
 });
 
+// Each game is both a game and a learning resource, so search engines can match it to
+// searches like "gear ratio activity for year 9".
 export const videoGame = (game: Game, imageUrl: string) => {
-  const { title, description, category, publishedAt, updatedAt, appStoreUrl, googlePlayUrl } = game.data;
+  const { title, description, category, publishedAt, updatedAt, appStoreUrl, googlePlayUrl, years, learn } = game.data;
+  const who = audienceOf(years);
   return {
     '@context': CONTEXT,
-    '@type': 'VideoGame',
+    '@type': ['VideoGame', 'LearningResource'],
     name: title,
     description,
     url: absoluteUrl(gameUrl(game)),
     image: imageUrl,
-    genre: CATEGORIES[category].label,
+    genre: ['Educational', CATEGORIES[category].label],
+    learningResourceType: 'Educational game',
+    about: CATEGORIES[category].heading.replace(/ games$/, ''),
+    ...(learn.length ? { teaches: learn } : {}),
+    ...(who ? { educationalLevel: `${who.years} (UK), ${who.grades} (US)`, typicalAgeRange: who.ageRange } : {}),
+    audience: { '@type': 'EducationalAudience', educationalRole: 'student' },
     gamePlatform: ['Web browser', appStoreUrl && 'iOS', googlePlayUrl && 'Android'].filter(Boolean),
     applicationCategory: 'Game',
     operatingSystem: 'Any',
@@ -101,5 +109,16 @@ export const mobileAppList = (apps: App[]) => ({
         : {}),
       author: { '@id': ORG_ID },
     },
+  })),
+});
+
+// Questions and answers shown on the page (answers as plain text)
+export const faqPage = (items: { q: string; a: string }[]) => ({
+  '@context': CONTEXT,
+  '@type': 'FAQPage',
+  mainEntity: items.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
   })),
 });

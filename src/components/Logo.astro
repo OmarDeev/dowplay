@@ -4,8 +4,8 @@ import { SITE } from '../config/site';
 
 <span class="logo">
   <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
-    <rect width="32" height="32" rx="9" fill="var(--accent)"></rect>
-    <path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="var(--bg)"></path>
+    <rect width="32" height="32" rx="9" fill="#c8ff3d"></rect>
+    <path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#11160a"></path>
   </svg>
   <span class="word">{SITE.name}</span>
 </span>
@@ -17,13 +17,15 @@ import { SITE } from '../config/site';
     gap: 0.55rem;
   }
   .mark {
-    width: 1.9rem;
-    height: 1.9rem;
+    width: 1.95rem;
+    height: 1.95rem;
     flex: none;
+    border-radius: 9px;
+    box-shadow: 0 0 0 1px rgb(17 22 10 / 0.08), 0 4px 10px -4px rgb(120 170 0 / 0.6);
   }
   .word {
     font-family: var(--font-display);
-    font-weight: 750;
+    font-weight: 780;
     font-size: 1.3rem;
     letter-spacing: -0.02em;
     color: var(--text);

@@ -2,15 +2,70 @@
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GameGrid from '../components/GameGrid.astro';
+import PackStack from '../components/PackStack.astro';
+import TopicIcon from '../components/TopicIcon.astro';
 import { SITE } from '../config/site';
 import { CATEGORIES } from '../config/categories';
-import { getApps, getGames, gameUrl } from '../lib/content';
+import { audienceOf, getApps, getGames, gameUrl, categoryUrl } from '../lib/content';
 import { gameList, organization, website } from '../lib/schema';
 
 const games = await getGames();
 const apps = await getApps();
 const spotlight = games.find((g) => g.data.featured) ?? games[0];
 const categories = [...new Set(games.map((g) => g.data.category))];
+const packs = games.filter((g) => g.data.teacherPack?.preview);
+
+// Short names for the hero's topic badges
+const topicBadge: Record<string, string> = {
+  electricity: 'Circuits',
+  mechanics: 'Gears',
+  structures: 'Bridges',
+  energy: 'Energy',
+};
+
+// The school years covered by each topic's games
+const topicYears = (key: string) => {
+  const spans = games.filter((g) => g.data.category === key && g.data.years).map((g) => g.data.years!);
+  return spans.length ? audienceOf([Math.min(...spans.map((y) => y[0])), Math.max(...spans.map((y) => y[1]))]) : null;
+};
+
+const reasons = [
+  {
+    icon: 'M3 12h4l3-8 4 16 3-8h4',
+    title: 'Real engineering inside',
+    text: 'Every game runs a real model: circuit analysis, gear trains, forces in a bridge, an hour-by-hour power grid.',
+  },
+  {
+    icon: 'M2 9.5 12 5l10 4.5-10 4.5L2 9.5ZM6 11.5v4.5c3.5 2.5 8.5 2.5 12 0v-4.5M22 9.5v5',
+    title: 'From Year 8 to Year 13',
+    text: 'Levels get harder as students do: the first suit 12-year-olds, the last stretch A-level students.',
+  },
+  {
+    icon: 'M4 5.5h16v10.5H4zM2 19.5h20',
+    title: 'Any device, nothing to install',
+    text: 'Runs in the browser on Chromebooks, iPads, laptops and phones. No accounts to manage.',
+  },
+  {
+    icon: 'M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6l8-3Z M8.5 12l2.5 2.5 4.5-5',
+    title: 'Free and private',
+    text: 'No sign-up, no ads and no chat. Progress is saved only on the device being used.',
+  },
+];
+
+const steps = [
+  {
+    title: 'Read the brief',
+    text: 'Each level is a real job: light every room, lift a heavy load, get a lorry across a river, keep a town powered all night.',
+  },
+  {
+    title: 'Build and test',
+    text: 'Place wires, gears, beams or solar farms, then press play. The game works out what really happens.',
+  },
+  {
+    title: 'Find out why',
+    text: 'If a design fails, the game shows the reason: a fuse blows, a beam buckles, the batteries run flat. Fix it and go for three stars.',
+  },
+];
 
 const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] : [])];
 ---
@@ -19,47 +74,106 @@ const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] 
   <section class="hero">
     <div class="container hero-inner">
       <div class="copy">
-        <span class="eyebrow">Free browser games</span>
-        <h1>Play free HTML5 games online — <span class="hl">instantly</span></h1>
+        <h1>
+          <span class="kicker"><span class="dot">Free</span> Engineering games for ages 12–18<span class="visually-hidden">:</span></span>
+          Learn engineering by <span class="hl">building things</span>
+        </h1>
         <p class="lead">
-          No downloads, no sign-ups. {SITE.name} games load in seconds and play great on your phone, tablet or computer.
+          Wire circuits, link gears, build bridges and run a town’s power grid. Every game starts simple in Year 8 and
+          works up to A-level ideas by Year 13.
         </p>
         <div class="cta">
-          {spotlight && <a class="btn btn-primary" href={gameUrl(spotlight)}>Play {spotlight.data.title}</a>}
-          <a class="btn btn-ghost" href="#games">Browse all games</a>
+          {
+            spotlight && (
+              <a class="btn btn-primary btn-lg" href={gameUrl(spotlight)}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                  <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+                </svg>
+                Play {spotlight.data.title}
+              </a>
+            )
+          }
+          <a class="btn btn-ghost btn-lg" href="#games">See all {games.length > 1 ? games.length : ''} games</a>
         </div>
+        <ul class="trust" role="list">
+          <li>No sign-up</li>
+          <li>No ads</li>
+          <li>Free teacher packs</li>
+        </ul>
       </div>
 
       {
-        spotlight ? (
-          <a class="spotlight" href={gameUrl(spotlight)} aria-label={`Play ${spotlight.data.title}`}>
-            <Image
-              src={spotlight.data.cover}
-              alt={spotlight.data.coverAlt ?? `${spotlight.data.title} cover art`}
-              widths={[480, 720, 960]}
-              sizes="(max-width: 900px) 100vw, 560px"
-              loading="eager"
-              fetchpriority="high"
-            />
-            <span class="badge">{spotlight.data.featured ? 'Featured' : 'New'}</span>
-            <span class="go" aria-hidden="true">
-              Play now
-              <svg viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" /></svg>
-            </span>
-          </a>
-        ) : (
-          <div class="spotlight empty" aria-hidden="true">
-            <span>Games are on the way</span>
+        spotlight && (
+          <div class="art">
+            <a class="window" href={gameUrl(spotlight)} aria-label={`Play ${spotlight.data.title}`}>
+              <span class="window-bar" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+                <span class="url">dowplay.com{gameUrl(spotlight)}</span>
+              </span>
+              <span class="window-img">
+                <Image
+                  src={spotlight.data.cover}
+                  alt={spotlight.data.coverAlt ?? `${spotlight.data.title} cover art`}
+                  widths={[480, 720, 960]}
+                  sizes="(max-width: 900px) 92vw, 560px"
+                  loading="eager"
+                  fetchpriority="high"
+                />
+                <span class="go" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+                  </svg>
+                  Play now
+                </span>
+              </span>
+            </a>
+            <ul class="badges" role="list" aria-label="Topics">
+              {categories.map((key, i) => (
+                <li class={`b${i}`}>
+                  <a href={categoryUrl(key)} data-topic={key}>
+                    <span class="ic">
+                      <TopicIcon topic={key} />
+                    </span>
+                    {topicBadge[key] ?? CATEGORIES[key].label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         )
       }
     </div>
   </section>
 
-  <section id="games" class="container games" aria-labelledby="games-title">
+  <section class="container reasons" aria-labelledby="why-title">
+    <h2 id="why-title" class="visually-hidden">Why {SITE.name}</h2>
+    <ul role="list">
+      {
+        reasons.map((r) => (
+          <li>
+            <span class="r-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d={r.icon} />
+              </svg>
+            </span>
+            <div>
+              <h3>{r.title}</h3>
+              <p>{r.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id="games" class="container section" aria-labelledby="games-title">
     <div class="section-head">
-      <h2 id="games-title">All games</h2>
-      {games.length > 0 && <span class="count">{games.length} {games.length === 1 ? 'game' : 'games'}</span>}
+      <div>
+        <h2 id="games-title">Engineering games to play free</h2>
+        <p>Pick a topic, press play, and build. Each game has 8 levels, labelled by school year.</p>
+      </div>
     </div>
 
     {
@@ -71,15 +185,16 @@ const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] 
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.5-3.5" />
             </svg>
-            <input type="search" placeholder="Search games…" data-filter-search autocomplete="off" />
+            <input type="search" placeholder="Search games and topics…" data-filter-search autocomplete="off" />
           </label>
           {categories.length > 1 && (
-            <div class="filters" role="group" aria-label="Filter by category">
+            <div class="filters" role="group" aria-label="Filter by topic">
               <button type="button" class="filter" aria-pressed="true" data-filter-category="">
-                All
+                All topics
               </button>
               {categories.map((key) => (
-                <button type="button" class="filter" aria-pressed="false" data-filter-category={key}>
+                <button type="button" class="filter" aria-pressed="false" data-filter-category={key} data-topic={key}>
+                  <TopicIcon topic={key} />
                   {CATEGORIES[key].label}
                 </button>
               ))}
@@ -89,21 +204,118 @@ const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] 
       )
     }
 
-    <GameGrid games={games} eager={4} minSlots={4} />
-    <p class="no-results" hidden data-filter-empty>No games match your search.</p>
+    <GameGrid games={games} minSlots={4} />
+    <p class="no-results" hidden data-filter-empty>No games match your search. <button type="button" class="reset" data-filter-reset>Show all games</button></p>
   </section>
 
-  <section class="container about-teaser">
-    <div class="teaser">
+  <section class="container section" aria-labelledby="how-title">
+    <div class="section-head">
       <div>
-        <span class="eyebrow">The studio</span>
-        <h2>Made by {SITE.name}</h2>
-        <p>
-          {SITE.name} is an independent game studio. Besides the free web games on this site, we build and publish mobile
-          games for iPhone, iPad and Android{apps.length > 0 ? ` — ${apps.length} so far` : ''}.
-        </p>
+        <h2 id="how-title">How the games work</h2>
+        <p>Short levels with a clear goal, so students learn by trying, failing and fixing.</p>
       </div>
-      <a class="btn btn-ghost" href="/about">Meet the studio →</a>
+    </div>
+    <ol class="steps">
+      {
+        steps.map((s, i) => (
+          <li>
+            <span class="n" aria-hidden="true">
+              {i + 1}
+            </span>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  {
+    categories.length > 0 && (
+      <section class="container section topics" aria-labelledby="topics-title">
+        <div class="section-head">
+          <div>
+            <h2 id="topics-title">Browse by topic</h2>
+            <p>Topics from secondary science, physics and design &amp; technology.</p>
+          </div>
+        </div>
+        <ul role="list">
+          {categories.map((key) => {
+            const who = topicYears(key);
+            const count = games.filter((g) => g.data.category === key).length;
+            return (
+              <li>
+                <a href={categoryUrl(key)} data-topic={key}>
+                  <span class="t-ic">
+                    <TopicIcon topic={key} />
+                  </span>
+                  <h3>{CATEGORIES[key].heading}</h3>
+                  <p>{CATEGORIES[key].intro}</p>
+                  <span class="t-meta">
+                    {count} {count === 1 ? 'game' : 'games'}
+                    {who && ` · ${who.years}`}
+                    <span class="arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    )
+  }
+
+  <section class="container section" aria-labelledby="teachers-title">
+    <div class="teach">
+      <div class="teach-copy">
+        <span class="eyebrow">For teachers &amp; parents</span>
+        <h2 id="teachers-title">Free lesson plans and worksheets for every game</h2>
+        <p>
+          Each game covers one topic from secondary science, physics and design &amp; technology. Share a link and the
+          class can start in seconds, then use the free teacher pack to plan the lesson.
+        </p>
+        <ul class="ticks">
+          <li>Two 60-minute lesson plans per game</li>
+          <li>Printable worksheets, with answers and mark schemes</li>
+          <li>A level-by-level guide with the 3-star solutions</li>
+          <li>Curriculum links for KS3, GCSE, A-level and NGSS</li>
+        </ul>
+        <div class="cta">
+          <a class="btn btn-primary" href="/teachers#teacher-packs">Get the free teacher packs</a>
+          <a class="btn btn-ghost" href="/teachers">Using DowPlay in class</a>
+        </div>
+      </div>
+      {
+        packs.length > 0 && (
+          <div class="teach-art">
+            <PackStack
+              pages={packs.slice(0, 3).map((g) => ({
+                src: g.data.teacherPack!.preview!,
+                alt: `Cover of the ${g.data.title} teacher pack`,
+              }))}
+              width={230}
+            />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="container section" aria-labelledby="studio-title">
+    <div class="studio">
+    <div>
+      <h2 id="studio-title">Made by {SITE.name}, an independent studio</h2>
+      <p>
+        Besides the free engineering games on this site, we build and publish mobile games for iPhone, iPad and
+        Android{apps.length > 0 ? ` (${apps.length} so far)` : ''}. Teachers’ ideas decide what we make next.
+      </p>
+    </div>
+    <div class="studio-links">
+      <a class="btn btn-ghost" href="/about">Meet the studio</a>
+      <a class="btn btn-ghost" href="/about#contact">Suggest a game</a>
+    </div>
     </div>
   </section>
 
@@ -114,7 +326,7 @@ const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] 
     const placeholders = [...document.querySelectorAll<HTMLElement>('#games li.soon')];
     const empty = document.querySelector<HTMLElement>('[data-filter-empty]');
     let category = '';
-  
+
     function apply() {
       const q = (search?.value ?? '').trim().toLowerCase();
       let shown = 0;
@@ -127,56 +339,57 @@ const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] 
       placeholders.forEach((p) => (p.hidden = filtering));
       if (empty) empty.hidden = shown > 0;
     }
-  
-    search?.addEventListener('input', apply);
-    for (const btn of buttons) {
-      btn.addEventListener('click', () => {
-        category = btn.dataset.filterCategory ?? '';
-        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-        apply();
-      });
+
+    function pick(btn: HTMLButtonElement) {
+      category = btn.dataset.filterCategory ?? '';
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      apply();
     }
+
+    search?.addEventListener('input', apply);
+    buttons.forEach((btn) => btn.addEventListener('click', () => pick(btn)));
+    document.querySelector('[data-filter-reset]')?.addEventListener('click', () => {
+      if (search) search.value = '';
+      pick(buttons[0]);
+    });
   </script>
 </BaseLayout>
 
 <style>
+  /* ---------- Hero ---------- */
   .hero {
     position: relative;
     overflow: hidden;
-    padding-block: clamp(2.5rem, 7vw, 5rem) clamp(2rem, 5vw, 3.5rem);
+    padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 6vw, 4.5rem);
     background:
-      radial-gradient(600px 300px at 85% 20%, rgb(139 114 255 / 0.22), transparent 70%),
-      radial-gradient(500px 260px at 10% 90%, rgb(200 255 61 / 0.1), transparent 70%);
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
-    background-size: 40px 40px;
-    mask-image: linear-gradient(to bottom, #000 30%, transparent);
-    pointer-events: none;
+      radial-gradient(520px 320px at 88% 18%, rgb(200 255 61 / 0.35), transparent 70%),
+      radial-gradient(560px 360px at 70% 95%, rgb(61 90 254 / 0.12), transparent 70%),
+      radial-gradient(420px 300px at 0% 0%, rgb(245 165 36 / 0.12), transparent 70%),
+      var(--grid-paper),
+      var(--bg);
+    border-bottom: 1px solid var(--line);
   }
   .hero-inner {
-    position: relative;
     display: grid;
-    grid-template-columns: 1.05fr 1fr;
+    grid-template-columns: 1fr 1.05fr;
     align-items: center;
-    gap: clamp(2rem, 5vw, 4rem);
+    gap: clamp(2rem, 5vw, 4.5rem);
   }
   h1 {
-    font-size: clamp(2.2rem, 5.2vw, 3.9rem);
-    margin: 0.6rem 0 1rem;
+    font-size: clamp(2.4rem, 5.6vw, 4.2rem);
+    margin: 0 0 1.1rem;
+    line-height: 1.04;
   }
-  .hl {
-    color: var(--accent);
+  h1 .kicker {
+    display: flex;
+    width: fit-content;
+    margin-bottom: 1.25rem;
+    line-height: 1.3;
   }
   .lead {
-    font-size: 1.15rem;
+    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
     color: var(--muted);
-    max-width: 46ch;
+    max-width: 44ch;
     margin: 0 0 1.75rem;
   }
   .cta {
@@ -184,42 +397,92 @@ const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] 
     flex-wrap: wrap;
     gap: 0.75rem;
   }
-  .spotlight {
+  .trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    font-weight: 600;
+  }
+  .trust li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .trust li::before {
+    content: '';
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    background: #dcf5ea
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23128a5a' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12.5 4 4 8-9'/%3E%3C/svg%3E")
+      center / 70% no-repeat;
+  }
+
+  .art {
     position: relative;
+    padding: 1.5rem 0.5rem;
+  }
+  .window {
     display: block;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
+    border-radius: 18px;
+    background: var(--surface);
     border: 1px solid var(--line);
-    aspect-ratio: 16 / 10;
-    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.9);
-    transform: rotate(1.5deg);
-    transition: transform 0.3s;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
     color: var(--text);
     text-decoration: none;
+    transform: rotate(1.2deg);
+    transition: transform 0.3s;
   }
-  .spotlight:hover {
-    transform: rotate(0deg) scale(1.01);
+  .window:hover {
+    transform: rotate(0deg) translateY(-4px);
   }
-  .spotlight img {
+  .window-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 0.85rem;
+    border-bottom: 1px solid var(--line);
+    background: #fbfcfe;
+  }
+  .window-bar i {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: #ff6159;
+  }
+  .window-bar i:nth-child(2) {
+    background: #ffbd2e;
+  }
+  .window-bar i:nth-child(3) {
+    background: #28c940;
+  }
+  .url {
+    margin-left: 0.6rem;
+    padding: 0.15rem 0.75rem;
+    border-radius: 999px;
+    background: var(--bg-soft);
+    color: var(--faint);
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .window-img {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+  }
+  .window-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-  .badge {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    padding: 0.3rem 0.75rem;
-    border-radius: 999px;
-    background: rgb(11 13 23 / 0.75);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border: 1px solid rgb(255 255 255 / 0.12);
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--accent);
   }
   .go {
     position: absolute;
@@ -228,13 +491,13 @@ const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] 
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.55rem 1rem;
+    padding: 0.6rem 1.1rem;
     border-radius: 999px;
-    background: var(--accent);
-    color: var(--accent-ink);
+    background: var(--primary);
+    color: #fff;
     font-weight: 700;
     font-size: 0.95rem;
-    box-shadow: 0 8px 20px -6px rgb(0 0 0 / 0.7);
+    box-shadow: 0 10px 24px -8px rgb(20 26 46 / 0.6);
     transition: transform 0.2s;
   }
   .go svg {
@@ -242,123 +505,445 @@ const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] 
     height: 1rem;
     fill: currentColor;
   }
-  .spotlight:hover .go {
+  .window:hover .go {
     transform: scale(1.06);
   }
-  .spotlight.empty {
+  .badges {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .badges li {
+    position: absolute;
+    z-index: 2;
+  }
+  .badges a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem 0.4rem 0.4rem;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    color: var(--text);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: transform 0.2s;
+  }
+  .badges a:hover {
+    transform: translateY(-3px);
+  }
+  .badges .ic {
     display: grid;
     place-items: center;
-    background: var(--bg-card);
-    color: var(--muted);
-    font-weight: 600;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    background: var(--topic-soft);
+    color: var(--topic-ink);
+  }
+  .badges .ic :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .b0 {
+    top: 0.1rem;
+    right: 14%;
+  }
+  .b1 {
+    top: 38%;
+    right: -1.25rem;
+  }
+  .b2 {
+    top: 26%;
+    left: -1.75rem;
+  }
+  .b3 {
+    bottom: 0;
+    left: 10%;
   }
 
-  .games {
-    scroll-margin-top: 5rem;
-    padding-top: 1rem;
+  /* ---------- Reasons ---------- */
+  .reasons {
+    position: relative;
+    margin-top: -1.75rem;
   }
-  .count {
+  .reasons ul {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .reasons li {
+    display: flex;
+    gap: 0.85rem;
+    padding: 1.3rem 1.25rem;
+  }
+  .reasons li + li {
+    border-left: 1px solid var(--line);
+  }
+  .r-ic {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 12px;
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+  .r-ic svg {
+    width: 1.35rem;
+    height: 1.35rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .reasons h3 {
+    font-size: 1.02rem;
+    margin: 0.1rem 0 0.3rem;
+  }
+  .reasons p {
+    margin: 0;
     color: var(--muted);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
+
+  /* ---------- Games ---------- */
   .toolbar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem 1rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
   }
   .search {
     position: relative;
-    flex: 0 1 280px;
+    flex: 0 1 300px;
   }
   .search svg {
     position: absolute;
-    left: 0.85rem;
+    left: 0.9rem;
     top: 50%;
     width: 1.1rem;
     height: 1.1rem;
     transform: translateY(-50%);
     fill: none;
-    stroke: var(--muted);
+    stroke: var(--faint);
     stroke-width: 2;
     stroke-linecap: round;
   }
   .search input {
     width: 100%;
-    padding: 0.65rem 1rem 0.65rem 2.5rem;
+    padding: 0.7rem 1rem 0.7rem 2.6rem;
     border-radius: 999px;
-    border: 1px solid var(--line);
-    background: var(--bg-elev);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
     color: var(--text);
     font: inherit;
+    box-shadow: var(--shadow-sm);
   }
   .search input:focus {
     outline: none;
-    border-color: var(--accent);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-soft);
   }
   .filters {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.45rem;
   }
   .filter {
-    padding: 0.45rem 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.95rem;
     border-radius: 999px;
-    border: 1px solid var(--line);
-    background: transparent;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
     color: var(--muted);
     font: inherit;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 650;
     cursor: pointer;
+    transition:
+      background-color 0.15s,
+      color 0.15s,
+      border-color 0.15s;
+  }
+  .filter :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    color: var(--topic-ink, currentColor);
   }
   .filter:hover {
     color: var(--text);
+    border-color: var(--text);
   }
   .filter[aria-pressed='true'] {
     background: var(--text);
     border-color: var(--text);
-    color: var(--bg);
+    color: #fff;
+  }
+  .filter[data-topic][aria-pressed='true'] {
+    background: var(--topic-soft);
+    border-color: var(--topic);
+    color: var(--topic-ink);
   }
   .no-results {
     color: var(--muted);
     text-align: center;
     padding: 2rem 0;
   }
-
-  .about-teaser {
-    margin-top: 4.5rem;
+  .reset {
+    border: 0;
+    background: none;
+    padding: 0;
+    font: inherit;
+    font-weight: 700;
+    color: var(--primary-ink);
+    text-decoration: underline;
+    cursor: pointer;
   }
-  .teaser {
+
+  /* ---------- Steps ---------- */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .steps li {
+    position: relative;
+    padding: 1.4rem 1.4rem 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  .n {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 12px;
+    background: var(--brand);
+    color: var(--brand-ink);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.15rem;
+  }
+  .steps h3 {
+    font-size: 1.15rem;
+    margin: 0.9rem 0 0.35rem;
+  }
+  .steps p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* ---------- Topics ---------- */
+  .topics ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .topics a {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.3rem 1.3rem 1.2rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(160deg, var(--topic-soft), transparent 55%),
+      var(--surface);
+    box-shadow: var(--shadow-sm);
+    color: var(--text);
+    text-decoration: none;
+    transition:
+      border-color 0.2s,
+      transform 0.2s,
+      box-shadow 0.2s;
+  }
+  .topics a:hover,
+  .topics a:focus-visible {
+    border-color: var(--topic);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+  .t-ic {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 14px;
+    background: var(--topic);
+    color: #fff;
+  }
+  .t-ic :global(svg) {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+  .topics h3 {
+    margin: 1rem 0 0.45rem;
+    font-size: 1.15rem;
+  }
+  .topics p {
+    margin: 0 0 1rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .t-meta {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--topic-ink);
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+  .arrow {
+    margin-left: auto;
+    transition: transform 0.2s;
+  }
+  .topics a:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  /* ---------- Teachers ---------- */
+  .teach {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.75rem, 4.5vw, 3.25rem);
+    border-radius: 28px;
+    border: 1px solid #d9defb;
+    background:
+      radial-gradient(420px 260px at 100% 0%, rgb(200 255 61 / 0.4), transparent 70%),
+      var(--grid-paper),
+      var(--primary-soft);
+  }
+  .teach h2 {
+    font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+    margin: 0.5rem 0 0.8rem;
+  }
+  .teach-copy > p {
+    color: #3a4258;
+    margin: 0 0 1.25rem;
+    max-width: 56ch;
+  }
+  .teach .ticks {
+    margin-bottom: 1.6rem;
+    font-weight: 600;
+  }
+
+  /* ---------- Studio ---------- */
+  .studio {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
-    padding: clamp(1.5rem, 4vw, 2.5rem);
+    gap: 1.25rem 2rem;
+    padding: clamp(1.4rem, 3.5vw, 2rem) clamp(1.4rem, 3.5vw, 2.25rem);
     border-radius: var(--radius-lg);
     border: 1px solid var(--line);
-    background:
-      radial-gradient(400px 200px at 100% 0%, rgb(139 114 255 / 0.18), transparent 70%),
-      var(--bg-card);
+    background: var(--surface);
   }
-  .teaser h2 {
-    font-size: clamp(1.4rem, 3vw, 1.9rem);
-    margin: 0.4rem 0 0.6rem;
+  .studio h2 {
+    font-size: clamp(1.25rem, 2.4vw, 1.5rem);
+    margin: 0 0 0.4rem;
   }
-  .teaser p {
+  .studio p {
     margin: 0;
     color: var(--muted);
-    max-width: 60ch;
+    max-width: 62ch;
+  }
+  .studio-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
   }
 
+  @media (max-width: 1000px) {
+    .reasons ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .reasons li:nth-child(3) {
+      border-left: 0;
+    }
+    .reasons li:nth-child(n + 3) {
+      border-top: 1px solid var(--line);
+    }
+  }
   @media (max-width: 900px) {
-    .hero-inner {
+    .hero-inner,
+    .teach {
       grid-template-columns: 1fr;
     }
-    .spotlight {
-      transform: none;
+    .art {
+      max-width: 560px;
+      width: 100%;
+      margin-inline: auto;
+    }
+    .teach-art {
+      order: -1;
+      max-width: 340px;
+      width: 100%;
+      margin-inline: auto;
+    }
+    .steps {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .reasons ul {
+      grid-template-columns: 1fr;
+    }
+    .reasons li + li {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .b1 {
+      right: -0.25rem;
+    }
+    .b2 {
+      left: -0.5rem;
+    }
+    .badges a {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.7rem 0.3rem 0.3rem;
+    }
+    .badges .ic {
+      width: 1.6rem;
+      height: 1.6rem;
+    }
+    .search {
+      flex-basis: 100%;
+    }
+    .cta .btn {
+      flex: 1 1 auto;
     }
   }
 </style>

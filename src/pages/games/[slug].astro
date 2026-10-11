@@ -6,10 +6,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import GamePlayer from '../../components/GamePlayer.astro';
 import GameGrid from '../../components/GameGrid.astro';
+import PackStack from '../../components/PackStack.astro';
 import StoreButtons from '../../components/StoreButtons.astro';
+import TopicIcon from '../../components/TopicIcon.astro';
 import { CATEGORIES } from '../../config/categories';
-import { absoluteUrl, categoryUrl, gameUrl, getGames, type Game } from '../../lib/content';
-import { breadcrumbs, videoGame } from '../../lib/schema';
+import { absoluteUrl, audienceOf, categoryUrl, gameUrl, getGames, type Game } from '../../lib/content';
+import { breadcrumbs, faqPage, videoGame } from '../../lib/schema';
 
 export const getStaticPaths = (async () => {
   const games = await getGames();
@@ -22,10 +24,12 @@ interface Props {
 }
 
 const { game, all } = Astro.props;
-const { title, description, cover, coverAlt, category, publishedAt, updatedAt, controls, orientation, tags, appStoreUrl, googlePlayUrl } =
+const { title, seoTitle, description, cover, coverAlt, category, publishedAt, updatedAt, controls, tags, appStoreUrl, googlePlayUrl } =
   game.data;
+const { years, levels, learn, curriculum, teacherPack } = game.data;
 const { Content } = await render(game);
-const categoryLabel = CATEGORIES[category].label;
+const topic = CATEGORIES[category];
+const who = audienceOf(years);
 
 // Same category first, then everything else
 const others = all.filter((g) => g.id !== game.id);
@@ -33,41 +37,134 @@ const related = [...others.filter((g) => g.data.category === category), ...other
 
 const crumbs = [
   { label: 'Games', href: '/' },
-  { label: `${categoryLabel} games`, href: categoryUrl(category) },
+  { label: `${topic.label} games`, href: categoryUrl(category) },
   { label: title, href: gameUrl(game) },
 ];
 
-const ogImage = await getImage({ src: cover, width: 1200, height: 630, fit: 'cover', format: 'jpeg', quality: 82 });
-const jsonLd = [videoGame(game, absoluteUrl(ogImage.src)), breadcrumbs(crumbs)];
+// Quick answers to what people search for, built from the game's own details
+const faqs: { q: string; a: string; list?: string[] }[] = [
+  {
+    q: `Is ${title} free?`,
+    a: `Yes. ${title} is free to play in any web browser, with no ads, no sign-up and nothing to install.${teacherPack ? ' The teacher pack is free too.' : ''}`,
+  },
+  ...(who
+    ? [
+        {
+          q: `What age is ${title} for?`,
+          a: `${title} is for ${who.ages.toLowerCase()}. Its ${levels ?? ''} levels are labelled by school year and cover ${who.years} in the UK (${who.grades} in the US). The first levels need no previous knowledge${years![1] >= 13 ? ' and the last ones reach A-level ideas' : ''}.`.replace('  ', ' '),
+        },
+      ]
+    : []),
+  ...(learn.length
+    ? [{ q: `What do students learn in ${title}?`, a: `The levels cover:`, list: learn }]
+    : []),
+  ...(teacherPack
+    ? [
+        {
+          q: `Is there a teacher pack for ${title}?`,
+          a: `Yes. A free ${teacherPack.pages}-page PDF you can download from this page. It includes:`,
+          list: teacherPack.includes,
+        },
+      ]
+    : []),
+  {
+    q: `Does ${title} work on Chromebooks and iPads?`,
+    a: 'Yes. It runs in any up-to-date browser on Chromebooks, Windows and Mac computers, iPads, Android tablets and phones, with a mouse, touch or keyboard. A bigger screen makes the later levels easier.',
+  },
+];
 
-const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const ogImage = await getImage({ src: cover, width: 1200, height: 630, fit: 'cover', format: 'jpeg', quality: 82 });
+const jsonLd = [
+  videoGame(game, absoluteUrl(ogImage.src)),
+  breadcrumbs(crumbs),
+  faqPage(faqs.map((f) => ({ q: f.q, a: f.list ? `${f.a} ${f.list.join('; ')}.` : f.a }))),
+];
+
+const fmt = (d: Date) => d.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
 const platforms = ['Web browser', appStoreUrl && 'iOS', googlePlayUrl && 'Android'].filter(Boolean).join(', ');
+const packPages = teacherPack
+  ? [
+      teacherPack.preview && { src: teacherPack.preview, alt: `First page of the ${title} teacher pack` },
+      teacherPack.worksheetPreview && { src: teacherPack.worksheetPreview, alt: `First page of the ${title} student worksheets` },
+    ].filter((p) => !!p)
+  : [];
 ---
 
 <BaseLayout
-  title={`${title} — Play Free Online`}
+  title={seoTitle ?? `${title} — Free ${topic.label} Game`}
   description={description}
   image={cover}
   imageAlt={coverAlt ?? `${title} cover art`}
   jsonLd={jsonLd}
 >
-  <div class="container page">
-    <Breadcrumbs items={crumbs} />
+  <div class="band" data-topic={category}>
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <header class="title">
+        <ul class="chips" role="list">
+          <li>
+            <a class="chip" data-topic={category} href={categoryUrl(category)}><TopicIcon topic={category} />{topic.label}</a>
+          </li>
+          {who && <li class="chip">{who.years} · {who.ages}</li>}
+          {levels && <li class="chip">{levels} levels</li>}
+          <li class="chip free">Free · No sign-up</li>
+        </ul>
+        <h1>{title}</h1>
+        <p>{description}</p>
+      </header>
+      <GamePlayer game={game} />
+    </div>
+  </div>
 
-    <header class="title">
-      <h1>{title}</h1>
-      <p>{description}</p>
-    </header>
-
-    <GamePlayer game={game} />
-
+  <div class="container">
     <div class="details">
-      <article class="prose">
-        <Content />
+      <article class="main">
+        {
+          learn.length > 0 && (
+            <section class="learn" aria-labelledby="learn-title">
+              <h2 id="learn-title">What students learn</h2>
+              <ul class="ticks">
+                {learn.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        <div class="prose">
+          <Content />
+        </div>
+
+        {
+          curriculum.length > 0 && (
+            <section class="block" aria-labelledby="curriculum-title">
+              <h2 id="curriculum-title">Curriculum links</h2>
+              <ul class="curriculum" role="list">
+                {curriculum.map((item) => {
+                  const [course, ...rest] = item.split(': ');
+                  return (
+                    <li>
+                      {rest.length ? (
+                        <>
+                          <strong>{course}</strong>
+                          <span>{rest.join(': ')}</span>
+                        </>
+                      ) : (
+                        <span>{item}</span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )
+        }
+
         {
           controls.length > 0 && (
-            <>
-              <h2>Controls</h2>
+            <section class="block" aria-labelledby="controls-title">
+              <h2 id="controls-title">Controls</h2>
               <table class="controls">
                 <tbody>
                   {controls.map((c) => (
@@ -80,70 +177,153 @@ const platforms = ['Web browser', appStoreUrl && 'iOS', googlePlayUrl && 'Androi
                   ))}
                 </tbody>
               </table>
-            </>
+            </section>
           )
         }
+
+        <section class="block" aria-labelledby="faq-title">
+          <h2 id="faq-title">Questions about {title}</h2>
+          <div class="faq">
+            {
+              faqs.map((f) => (
+                <details>
+                  <summary>{f.q}</summary>
+                  <p>{f.a}</p>
+                  {f.list && (
+                    <ul class="ticks small">
+                      {f.list.map((item) => (
+                        <li>{item}</li>
+                      ))}
+                    </ul>
+                  )}
+                </details>
+              ))
+            }
+          </div>
+        </section>
       </article>
 
-      <aside class="info" aria-label="Game info">
-        <dl>
-          <div>
-            <dt>Category</dt>
-            <dd><a href={categoryUrl(category)}>{categoryLabel}</a></dd>
-          </div>
-          <div>
-            <dt>Released</dt>
-            <dd><time datetime={publishedAt.toISOString()}>{fmt(publishedAt)}</time></dd>
-          </div>
+      <aside class="side" aria-label="Game info">
+        {
+          teacherPack && (
+            <section class="pack" aria-labelledby="pack-title">
+              {packPages.length > 0 && <PackStack pages={packPages} width={150} class="pack-art" />}
+              <span class="eyebrow">Free download</span>
+              <h2 id="pack-title">{title} teacher pack</h2>
+              {teacherPack.includes.length > 0 && (
+                <ul class="ticks small">
+                  {teacherPack.includes.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              )}
+              <a class="btn btn-primary dl" href={teacherPack.pack} target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+                </svg>
+                <span>
+                  Teacher pack
+                  <small>PDF, {teacherPack.pages} pages</small>
+                </span>
+              </a>
+              {teacherPack.worksheets && (
+                <a class="btn btn-ghost dl" href={teacherPack.worksheets} target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+                  </svg>
+                  <span>
+                    Student worksheets only
+                    <small>PDF, ready to print</small>
+                  </span>
+                </a>
+              )}
+            </section>
+          )
+        }
+
+        <section class="facts" aria-label="Game facts">
+          <dl>
+            <div>
+              <dt>Topic</dt>
+              <dd><a href={categoryUrl(category)}>{topic.label}</a></dd>
+            </div>
+            {
+              who && (
+                <>
+                  <div>
+                    <dt>School years</dt>
+                    <dd>
+                      {who.years} (UK)
+                      <span class="sub">{who.grades} (US)</span>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Ages</dt>
+                    <dd>{who.ages.replace('Ages ', '')}</dd>
+                  </div>
+                </>
+              )
+            }
+            {
+              levels && (
+                <div>
+                  <dt>Levels</dt>
+                  <dd>{levels}</dd>
+                </div>
+              )
+            }
+            <div>
+              <dt>Platforms</dt>
+              <dd>{platforms}</dd>
+            </div>
+            <div>
+              <dt>Price</dt>
+              <dd>Free, no sign-up</dd>
+            </div>
+            <div>
+              <dt>Released</dt>
+              <dd><time datetime={publishedAt.toISOString()}>{fmt(publishedAt)}</time></dd>
+            </div>
+            {
+              updatedAt && (
+                <div>
+                  <dt>Updated</dt>
+                  <dd>
+                    <time datetime={updatedAt.toISOString()}>{fmt(updatedAt)}</time>
+                  </dd>
+                </div>
+              )
+            }
+          </dl>
           {
-            updatedAt && (
-              <div>
-                <dt>Updated</dt>
-                <dd>
-                  <time datetime={updatedAt.toISOString()}>{fmt(updatedAt)}</time>
-                </dd>
+            tags.length > 0 && (
+              <ul class="tags" aria-label="Tags">
+                {tags.map((t) => (
+                  <li class="chip">{t}</li>
+                ))}
+              </ul>
+            )
+          }
+          {
+            (appStoreUrl || googlePlayUrl) && (
+              <div class="also">
+                <p>Also on mobile</p>
+                <StoreButtons appStoreUrl={appStoreUrl} googlePlayUrl={googlePlayUrl} name={title} size="sm" />
               </div>
             )
           }
-          <div>
-            <dt>Platforms</dt>
-            <dd>{platforms}</dd>
-          </div>
-          <div>
-            <dt>Screen</dt>
-            <dd>{orientation === 'portrait' ? 'Portrait (best on phones)' : 'Landscape'}</dd>
-          </div>
-          <div>
-            <dt>Price</dt>
-            <dd>Free</dd>
-          </div>
-        </dl>
-        {
-          tags.length > 0 && (
-            <ul class="tags" aria-label="Tags">
-              {tags.map((t) => (
-                <li class="chip">{t}</li>
-              ))}
-            </ul>
-          )
-        }
-        {
-          (appStoreUrl || googlePlayUrl) && (
-            <div class="also">
-              <p>Also on mobile</p>
-              <StoreButtons appStoreUrl={appStoreUrl} googlePlayUrl={googlePlayUrl} name={title} size="sm" />
-            </div>
-          )
-        }
+        </section>
       </aside>
     </div>
 
     {
       related.length > 0 && (
-        <section class="more" aria-labelledby="more-title">
+        <section class="section" aria-labelledby="more-title">
           <div class="section-head">
-            <h2 id="more-title">More games to play</h2>
-            <a href="/">See all →</a>
+            <h2 id="more-title">More engineering games</h2>
+            <a class="more-link" href="/#games">
+              See all games →
+            </a>
           </div>
           <GameGrid games={related} />
         </section>
@@ -153,41 +333,123 @@ const platforms = ['Web browser', appStoreUrl && 'iOS', googlePlayUrl && 'Androi
 </BaseLayout>
 
 <style>
-  .page {
-    padding-top: 1.5rem;
+  .band {
+    padding: 1.5rem 0 2.5rem;
+    background:
+      radial-gradient(600px 300px at 100% 0%, var(--topic-soft), transparent 70%),
+      var(--grid-paper),
+      var(--bg);
+    border-bottom: 1px solid var(--line);
   }
   .title {
-    margin: 1rem 0 1.5rem;
+    margin: 1.1rem 0 1.5rem;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 0 0 0.9rem;
+    padding: 0;
+  }
+  .chips .chip {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    font-size: 0.82rem;
+    padding: 0.25rem 0.7rem;
+  }
+  .chips a.chip {
+    background: var(--topic-soft);
+    border-color: transparent;
+    text-decoration: none;
+  }
+  .chips a.chip:hover {
+    border-color: var(--topic);
+  }
+  .chips .free {
+    background: #dcf5ea;
+    border-color: transparent;
+    color: var(--ok);
   }
   .title h1 {
-    font-size: clamp(2rem, 4.5vw, 3rem);
-    margin: 0 0 0.5rem;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    margin: 0 0 0.6rem;
   }
   .title p {
     margin: 0;
     color: var(--muted);
-    font-size: 1.1rem;
-    max-width: 70ch;
+    font-size: 1.12rem;
+    max-width: 68ch;
   }
+
   .details {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-columns: minmax(0, 1fr) 330px;
     gap: clamp(1.5rem, 4vw, 3.5rem);
     margin-top: 2.5rem;
     align-items: start;
   }
+  .main > :first-child {
+    margin-top: 0;
+  }
+  .learn {
+    padding: 1.4rem 1.5rem 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(150deg, var(--topic-soft, var(--primary-soft)), transparent 50%),
+      var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  .learn h2 {
+    margin: 0 0 1rem;
+    font-size: 1.4rem;
+  }
+  .learn .ticks {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem 1.5rem;
+    font-weight: 600;
+  }
   .details .prose > :global(:first-child) {
     margin-top: 0;
+  }
+  .block {
+    margin-top: 2.5rem;
+    max-width: 70ch;
+  }
+  .block h2 {
+    font-size: 1.5rem;
+    margin: 0 0 1rem;
+  }
+  .curriculum {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .curriculum li {
+    display: grid;
+    grid-template-columns: minmax(9rem, 0.4fr) 1fr;
+    gap: 0.25rem 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .curriculum span {
+    color: var(--muted);
   }
   .controls {
     border-collapse: collapse;
     width: 100%;
-    max-width: 480px;
+    max-width: 520px;
   }
   .controls th,
   .controls td {
     text-align: left;
-    padding: 0.55rem 0.75rem 0.55rem 0;
+    padding: 0.6rem 0.75rem 0.6rem 0;
     border-bottom: 1px solid var(--line);
     vertical-align: top;
   }
@@ -197,34 +459,87 @@ const platforms = ['Web browser', appStoreUrl && 'iOS', googlePlayUrl && 'Androi
   }
   kbd {
     display: inline-block;
-    padding: 0.1rem 0.5rem;
-    border-radius: 6px;
-    border: 1px solid var(--line);
+    padding: 0.1rem 0.55rem;
+    border-radius: 7px;
+    border: 1px solid var(--line-strong);
     border-bottom-width: 3px;
-    background: var(--bg-elev);
+    background: var(--surface);
     font-family: inherit;
     font-size: 0.85rem;
+    font-weight: 600;
     color: var(--text);
   }
-  .info {
-    position: sticky;
-    top: 5.5rem;
+  .ticks.small {
+    gap: 0.4rem;
+    font-size: 0.92rem;
+  }
+  .faq .ticks {
+    margin: 0 0 1rem;
+    color: var(--muted);
+  }
+
+  .side {
+    display: grid;
+    gap: 1rem;
+  }
+  .pack {
     padding: 1.25rem;
     border-radius: var(--radius-lg);
-    background: var(--bg-card);
+    border: 1px solid #d9defb;
+    background:
+      radial-gradient(260px 160px at 100% 0%, rgb(200 255 61 / 0.45), transparent 70%),
+      var(--primary-soft);
+  }
+  .pack :global(.pack-art) {
+    margin: -0.25rem auto 0.5rem;
+  }
+  .pack h2 {
+    margin: 0.3rem 0 0.75rem;
+    font-size: 1.2rem;
+  }
+  .pack .ticks {
+    margin-bottom: 1.1rem;
+  }
+  .dl {
+    justify-content: flex-start;
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 14px;
+    text-align: left;
+  }
+  .dl + .dl {
+    margin-top: 0.5rem;
+  }
+  .dl span {
+    display: grid;
+    line-height: 1.25;
+  }
+  .dl small {
+    font-size: 0.78rem;
+    font-weight: 600;
+    opacity: 0.75;
+  }
+  .facts {
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
     border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
   }
   dl {
     margin: 0;
     display: grid;
-    gap: 0.75rem;
   }
   dl div {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    padding-bottom: 0.75rem;
+    padding: 0.6rem 0;
     border-bottom: 1px solid var(--line);
+    font-size: 0.95rem;
+  }
+  dl div:first-child {
+    padding-top: 0;
   }
   dt {
     color: var(--muted);
@@ -232,12 +547,18 @@ const platforms = ['Web browser', appStoreUrl && 'iOS', googlePlayUrl && 'Androi
   dd {
     margin: 0;
     text-align: right;
-    font-weight: 600;
+    font-weight: 650;
+  }
+  dd .sub {
+    display: block;
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 0.85rem;
   }
   .tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.35rem;
     list-style: none;
     padding: 0;
     margin: 1rem 0 0;
@@ -247,20 +568,40 @@ const platforms = ['Web browser', appStoreUrl && 'iOS', googlePlayUrl && 'Androi
     color: var(--muted);
     font-size: 0.9rem;
   }
-  .more {
-    margin-top: 4rem;
-  }
-  .more .section-head a {
-    text-decoration: none;
-    font-weight: 600;
-  }
-  @media (max-width: 900px) {
+  /* One column: what students learn, then the teacher pack, then everything else */
+  @media (max-width: 960px) {
     .details {
+      display: flex;
+      flex-direction: column;
+    }
+    .main,
+    .side {
+      display: contents;
+    }
+    .learn {
+      order: 1;
+    }
+    .pack {
+      order: 2;
+      margin-bottom: 2rem;
+    }
+    .prose {
+      order: 3;
+    }
+    .block {
+      order: 4;
+    }
+    .facts {
+      order: 5;
+      margin-top: 2.5rem;
+    }
+  }
+  @media (max-width: 640px) {
+    .learn .ticks {
       grid-template-columns: 1fr;
     }
-    .info {
-      position: static;
-      order: -1;
+    .curriculum li {
+      grid-template-columns: 1fr;
     }
   }
 </style>

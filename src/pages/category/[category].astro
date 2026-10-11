@@ -1,11 +1,14 @@
 ---
 import type { GetStaticPaths } from 'astro';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import GameGrid from '../../components/GameGrid.astro';
+import PackStack from '../../components/PackStack.astro';
+import TopicIcon from '../../components/TopicIcon.astro';
 import { CATEGORIES, type CategoryKey } from '../../config/categories';
 import { SITE } from '../../config/site';
-import { categoryUrl, getGames, type Game } from '../../lib/content';
+import { audienceOf, categoryUrl, gameUrl, getGames, type Game } from '../../lib/content';
 import { breadcrumbs, gameList } from '../../lib/schema';
 
 // Only categories that actually have games get a page (no thin/empty pages for Google)
@@ -14,17 +17,27 @@ export const getStaticPaths = (async () => {
   const keys = [...new Set(games.map((g) => g.data.category))];
   return keys.map((category) => ({
     params: { category },
-    props: { category, games: games.filter((g) => g.data.category === category) },
+    props: { category, games: games.filter((g) => g.data.category === category), topics: keys },
   }));
 }) satisfies GetStaticPaths;
 
 interface Props {
   category: CategoryKey;
   games: Game[];
+  topics: CategoryKey[];
 }
 
-const { category, games } = Astro.props;
-const { label, intro } = CATEGORIES[category];
+const { category, games, topics } = Astro.props;
+const { label, heading, description, intro } = CATEGORIES[category];
+// The school years covered by this topic's games, e.g. "Years 8–13 · Ages 12–18"
+const spans = games.map((g) => g.data.years).filter((y) => y !== undefined);
+const who = spans.length
+  ? audienceOf([Math.min(...spans.map((y) => y[0])), Math.max(...spans.map((y) => y[1]))])
+  : null;
+const learn = [...new Set(games.flatMap((g) => g.data.learn))];
+const curriculum = [...new Set(games.flatMap((g) => g.data.curriculum))];
+const packs = games.filter((g) => g.data.teacherPack);
+const otherTopics = topics.filter((t) => t !== category);
 const crumbs = [
   { label: 'Games', href: '/' },
   { label: `${label} games`, href: categoryUrl(category) },
@@ -32,35 +45,471 @@ const crumbs = [
 ---
 
 <BaseLayout
-  title={`${label} Games — Play Free Online`}
-  description={`Play free ${label.toLowerCase()} games online at ${SITE.name}. ${intro} No downloads, works on mobile and desktop.`}
+  title={`Free ${heading.toLowerCase()} for students`}
+  description={description}
   jsonLd={[breadcrumbs(crumbs), gameList(games)]}
 >
-  <div class="container page">
-    <Breadcrumbs items={crumbs} />
-    <header>
-      <h1>{label} games</h1>
-      <p>{intro} Every game is free and runs right in your browser.</p>
-    </header>
-    <GameGrid games={games} eager={4} />
+  <div class="band" data-topic={category}>
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <header class="head">
+        <span class="t-ic"><TopicIcon topic={category} /></span>
+        <div>
+          <span class="eyebrow">{who ? `${who.years} · ${who.ages}` : SITE.audience}</span>
+          <h1>Free {heading.toLowerCase()}</h1>
+          <p class="lead">{intro}</p>
+          <p class="note">
+            Every game is free, needs no sign-up and runs in any browser. <a href="/teachers">Using it in class?</a>
+          </p>
+        </div>
+      </header>
+    </div>
+  </div>
+
+  <div class="container">
+    <section class="section first" aria-labelledby="games-title">
+      {
+        games.length < 3 ? (
+          <>
+            <h2 id="games-title" class="visually-hidden">
+              {label} {games.length === 1 ? 'game' : 'games'}
+            </h2>
+            <ul class="features" role="list">
+              {games.map((game) => {
+                const g = audienceOf(game.data.years);
+                return (
+                  <li class="feature panel">
+                    <a class="f-img" href={gameUrl(game)} tabindex="-1" aria-hidden="true">
+                      <Image
+                        src={game.data.cover}
+                        alt=""
+                        widths={[480, 720, 960]}
+                        sizes="(max-width: 860px) 92vw, 600px"
+                        loading="eager"
+                      />
+                    </a>
+                    <div class="f-body">
+                      <h3>
+                        <a href={gameUrl(game)}>{game.data.title}</a>
+                      </h3>
+                      {game.data.tagline && <p class="f-tag">{game.data.tagline}</p>}
+                      <p class="f-desc">{game.data.description}</p>
+                      <ul class="f-facts" role="list">
+                        {g && <li>{g.years}</li>}
+                        {g && <li>{g.ages}</li>}
+                        {game.data.levels && <li>{game.data.levels} levels</li>}
+                        <li>Free, no sign-up</li>
+                      </ul>
+                      <div class="dls">
+                        <a class="btn btn-primary" href={gameUrl(game)}>
+                          <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                            <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
+                          </svg>
+                          Play {game.data.title}
+                        </a>
+                        {game.data.teacherPack && (
+                          <a class="btn btn-ghost" href="#packs-title">
+                            Teacher pack
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        ) : (
+          <>
+            <div class="section-head">
+              <h2 id="games-title">{label} games</h2>
+            </div>
+            <GameGrid games={games} eager={4} />
+          </>
+        )
+      }
+    </section>
+
+    {
+      (learn.length > 0 || curriculum.length > 0) && (
+        <section class="section split" aria-label="What the games teach">
+          {learn.length > 0 && (
+            <div class="panel box" data-topic={category}>
+              <h2>What students learn</h2>
+              <ul class="ticks">
+                {learn.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {curriculum.length > 0 && (
+            <div class="panel box">
+              <h2>Curriculum links</h2>
+              <ul class="curriculum" role="list">
+                {curriculum.map((item) => {
+                  const [course, ...rest] = item.split(': ');
+                  return (
+                    <li>
+                      {rest.length ? (
+                        <>
+                          <strong>{course}</strong>
+                          <span>{rest.join(': ')}</span>
+                        </>
+                      ) : (
+                        <span>{item}</span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+        </section>
+      )
+    }
+
+    {
+      packs.length > 0 && (
+        <section class="section" aria-labelledby="packs-title">
+          <div class="section-head">
+            <div>
+              <h2 id="packs-title">Free teacher {packs.length === 1 ? 'pack' : 'packs'}</h2>
+              <p>Lesson plans, printable worksheets with answers, and curriculum links.</p>
+            </div>
+          </div>
+          <ul class="packs" role="list">
+            {packs.map((game) => {
+              const pack = game.data.teacherPack!;
+              const pages = [
+                pack.preview && { src: pack.preview, alt: `First page of the ${game.data.title} teacher pack` },
+                pack.worksheetPreview && {
+                  src: pack.worksheetPreview,
+                  alt: `First page of the ${game.data.title} student worksheets`,
+                },
+              ].filter((p) => !!p);
+              return (
+                <li class="pack">
+                  {pages.length > 0 && <PackStack pages={pages} width={140} class="pack-art" />}
+                  <div>
+                    <h3>
+                      <a href={gameUrl(game)}>{game.data.title}</a> teacher pack
+                    </h3>
+                    <ul class="ticks small">
+                      {pack.includes.map((item) => (
+                        <li>{item}</li>
+                      ))}
+                    </ul>
+                    <div class="dls">
+                      <a class="btn btn-primary" href={pack.pack} target="_blank" rel="noopener">
+                        Download the pack <span class="size">PDF, {pack.pages} pages</span>
+                      </a>
+                      {pack.worksheets && (
+                        <a class="btn btn-ghost" href={pack.worksheets} target="_blank" rel="noopener">
+                          Worksheets only
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      otherTopics.length > 0 && (
+        <section class="section" aria-labelledby="other-title">
+          <div class="section-head">
+            <h2 id="other-title">More engineering topics</h2>
+          </div>
+          <ul class="others" role="list">
+            {otherTopics.map((key) => (
+              <li>
+                <a href={categoryUrl(key)} data-topic={key}>
+                  <span class="o-ic">
+                    <TopicIcon topic={key} />
+                  </span>
+                  <span>
+                    <strong>{CATEGORIES[key].heading}</strong>
+                    <small>{CATEGORIES[key].blurb}</small>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
   </div>
 </BaseLayout>
 
 <style>
-  .page {
-    padding-top: 1.5rem;
+  .band {
+    padding: 1.5rem 0 clamp(2rem, 5vw, 3rem);
+    background:
+      radial-gradient(640px 320px at 95% 0%, var(--topic-soft), transparent 70%),
+      var(--grid-paper),
+      var(--bg);
+    border-bottom: 1px solid var(--line);
   }
-  header {
-    margin: 1rem 0 2rem;
+  .head {
+    display: flex;
+    gap: clamp(1rem, 3vw, 1.75rem);
+    align-items: flex-start;
+    margin-top: 1.5rem;
+  }
+  .t-ic {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: clamp(3.5rem, 8vw, 5rem);
+    height: clamp(3.5rem, 8vw, 5rem);
+    border-radius: 20px;
+    background: var(--topic);
+    color: #fff;
+    box-shadow: 0 14px 30px -14px var(--topic);
+  }
+  .t-ic :global(svg) {
+    width: 55%;
+    height: 55%;
+  }
+  .eyebrow {
+    color: var(--topic-ink);
   }
   h1 {
-    font-size: clamp(2rem, 4.5vw, 3rem);
-    margin: 0 0 0.5rem;
+    font-size: clamp(2.1rem, 5vw, 3.3rem);
+    margin: 0.35rem 0 0.8rem;
   }
-  header p {
+  .lead {
+    margin: 0 0 0.75rem;
+    color: #3a4258;
+    font-size: 1.12rem;
+    max-width: 68ch;
+  }
+  .note {
     margin: 0;
     color: var(--muted);
-    font-size: 1.1rem;
-    max-width: 65ch;
+  }
+  .section.first {
+    margin-top: 2.5rem;
+  }
+  .features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+  .feature {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+  }
+  .f-img {
+    display: block;
+    min-height: 100%;
+    background: var(--topic-soft);
+  }
+  .f-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 16 / 10;
+  }
+  .f-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: clamp(1.4rem, 3.5vw, 2.25rem);
+  }
+  .f-body h3 {
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    margin: 0 0 0.4rem;
+  }
+  .f-body h3 a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .f-body h3 a:hover {
+    text-decoration: underline;
+  }
+  .f-tag {
+    margin: 0 0 0.6rem;
+    font-weight: 650;
+    font-size: 1.05rem;
+  }
+  .f-desc {
+    margin: 0 0 1rem;
+    color: var(--muted);
+  }
+  .f-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 0 0 1.4rem;
+    padding: 0;
+  }
+  .f-facts li {
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    background: var(--bg-soft);
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 650;
+  }
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+  .box {
+    padding: 1.5rem;
+  }
+  .box[data-topic] {
+    background:
+      linear-gradient(150deg, var(--topic-soft), transparent 55%),
+      var(--surface);
+  }
+  .box h2 {
+    font-size: 1.4rem;
+    margin: 0 0 1rem;
+  }
+  .box .ticks {
+    font-weight: 600;
+  }
+  .curriculum {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .curriculum li {
+    display: grid;
+    gap: 0.1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .curriculum li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .curriculum span {
+    color: var(--muted);
+  }
+  .packs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .pack {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid #d9defb;
+    background:
+      radial-gradient(320px 200px at 100% 0%, rgb(200 255 61 / 0.4), transparent 70%),
+      var(--primary-soft);
+  }
+  .pack h3 {
+    font-size: 1.3rem;
+    margin: 0 0 0.85rem;
+  }
+  .pack h3 a {
+    color: inherit;
+  }
+  .ticks.small {
+    font-size: 0.95rem;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+  }
+  .dls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .size {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    font-weight: 600;
+  }
+  .others {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .others a {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    height: 100%;
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    box-shadow: var(--shadow-sm);
+    transition:
+      border-color 0.2s,
+      transform 0.2s;
+  }
+  .others a:hover {
+    border-color: var(--topic);
+    transform: translateY(-2px);
+  }
+  .o-ic {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 12px;
+    background: var(--topic-soft);
+    color: var(--topic-ink);
+  }
+  .o-ic :global(svg) {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+  .others span:last-child {
+    display: grid;
+    line-height: 1.35;
+  }
+  .others small {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  @media (max-width: 860px) {
+    .split,
+    .feature {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 640px) {
+    .head {
+      flex-direction: column;
+    }
+    .pack {
+      grid-template-columns: 1fr;
+    }
+    .pack :global(.pack-art) {
+      max-width: 220px;
+    }
   }
 </style>

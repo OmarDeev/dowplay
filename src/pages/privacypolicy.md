@@ -2,12 +2,12 @@
 layout: ../layouts/LegalLayout.astro
 title: Privacy Policy
 description: How DowPlay, an independent game developer, collects, uses and protects your information in its mobile apps, games and on dowplay.com.
-lastUpdated: October 9, 2026
+lastUpdated: October 10, 2026
 ---
 
 This Privacy Policy explains how DowPlay collects, uses and shares information when You use our mobile apps and games, our web games, or our website, and tells You about Your privacy rights.
 
-DowPlay is an independent game developer based in Morocco. We publish apps and games on the Apple App Store and Google Play, and free HTML5 games on [dowplay.com](https://dowplay.com).
+DowPlay is an independent game developer based in Morocco. We publish apps and games on the Apple App Store and Google Play, and free engineering games for students on [dowplay.com](https://dowplay.com).
 
 By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy.
 
@@ -115,7 +115,11 @@ To exercise these rights, contact Us using the details below. Because most data 
 
 ## Children's Privacy
 
-Our Service is intended for a general audience and is not directed at children under the age of 13. We do not knowingly collect Personal Data from anyone under the age of 13. If You are a parent or guardian and You believe Your child has provided Us with Personal Data, please contact Us and We will delete it. If We need to rely on consent as a legal basis for processing Your information and Your country requires consent from a parent, We may require Your parent's consent before We collect and use that information.
+**Website:** the web games on the Website are made for students aged about 12 to 18, and they can be played without giving Us any Personal Data. There are no accounts, no chat and no advertising on the Website, and the games save progress only in the browser on Your Device. Analytics cookies are only set if the visitor accepts them in the cookie banner. The contact form is meant for teachers, parents and other adults; We ask children not to send Us Personal Data.
+
+**Applications:** our mobile Applications are intended for a general audience and are not directed at children under the age of 13.
+
+We do not knowingly collect Personal Data from children under the age of 13, or under the minimum age set by the law of their country. If You are a parent or guardian and You believe Your child has provided Us with Personal Data, please contact Us and We will delete it. If We need to rely on consent as a legal basis for processing Your information and Your country requires consent from a parent, We may require Your parent's consent before We collect and use that information.
 
 ## Security of Your Personal Data
 

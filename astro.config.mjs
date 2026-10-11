@@ -5,7 +5,7 @@ import { SITE } from './src/config/site.ts';
 
 export default defineConfig({
   site: SITE.url,
-  // Clean URLs: /about, /games/neon-snake (Cloudflare serves about.html at /about)
+  // Clean URLs: /about, /games/grid-manager (Cloudflare serves about.html at /about)
   trailingSlash: 'never',
   build: { format: 'file' },
   integrations: [

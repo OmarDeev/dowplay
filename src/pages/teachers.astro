@@ -1,0 +1,622 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PackStack from '../components/PackStack.astro';
+import TopicIcon from '../components/TopicIcon.astro';
+import { CATEGORIES } from '../config/categories';
+import { SITE } from '../config/site';
+import { absoluteUrl, audienceOf, categoryUrl, gameUrl, getGames } from '../lib/content';
+import { breadcrumbs, faqPage } from '../lib/schema';
+
+// The games table and the teacher packs are built from the published games, so they're always up to date.
+const games = await getGames();
+const packs = games.filter((g) => g.data.teacherPack);
+
+const crumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'For teachers & parents', href: '/teachers' },
+];
+
+const reasons = [
+  {
+    icon: 'M13 2.5 4.5 13.5H11l-1 8 8.5-11H12l1-8Z',
+    title: 'No setup',
+    text: 'No accounts, no installs and no logins to forget. Share a link and the class starts in seconds, on Chromebooks, iPads, laptops or phones.',
+  },
+  {
+    icon: 'M3 20h18M6 16v4M11 11v9M16 6v14M21 3v17',
+    title: 'Built-in stretch',
+    text: 'Levels are labelled by school year, from Year 8 to Year 13. Everyone starts together; fast finishers keep going, and the 3-star target asks for the cheapest design.',
+  },
+  {
+    icon: 'M21 12a9 9 0 1 1-9-9M12 8v4l2.5 2.5M16 3h5v5',
+    title: 'Feedback that explains why',
+    text: 'Each game runs a real engineering model, so when a design fails students see the reason: a beam buckled, a fuse blew, the batteries ran empty.',
+  },
+  {
+    icon: 'M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6l8-3Z M8.5 12l2.5 2.5 4.5-5',
+    title: 'Free and private',
+    text: 'No ads and no chat. The games collect no personal data and save progress only on the device being used.',
+  },
+];
+
+const lesson = [
+  {
+    title: 'Starter (5 minutes)',
+    text: 'Play the first level together on the board. Before testing, ask the class to predict what will happen.',
+  },
+  {
+    title: 'Main activity (20–30 minutes)',
+    text: 'Students work in pairs through the levels for their year group, noting what went wrong each time and how they fixed it.',
+  },
+  {
+    title: 'Challenge',
+    text: 'Three stars mean matching the cheapest design we found. Can anyone match it, or beat it? Ask them to explain how.',
+  },
+  {
+    title: 'Plenary',
+    text: 'Every level ends with a short “What you learned” summary. Use it to pull out the key idea and link it back to the theory.',
+  },
+];
+
+const faqs = [
+  {
+    q: `Is ${SITE.name} free?`,
+    a: 'Yes. Every game is free to play, with no ads and no sign-up, and so are the teacher packs.',
+  },
+  {
+    q: 'What is in a teacher pack?',
+    a: 'Each pack is a printable PDF with two 60-minute lesson plans (one for younger and one for older students), two worksheets with answers and a mark scheme, a level-by-level guide with the 3-star solutions, and curriculum links. A second PDF has the student worksheets on their own, ready to print.',
+  },
+  {
+    q: 'Do students need an account or an email address?',
+    a: 'No. Students open a game and play. Progress is saved in the browser on their device, so they can carry on later on the same device.',
+  },
+  {
+    q: 'Which devices and browsers work?',
+    a: 'Any up-to-date browser: Chrome, Edge, Safari or Firefox, on Chromebooks, Windows and Mac computers, iPads, Android tablets and phones. A bigger screen makes the harder levels easier. Every game works with a mouse, touch or keyboard.',
+  },
+  {
+    q: 'Which school years and curricula do the games fit?',
+    a: 'Levels are labelled with UK school years from Year 8 to Year 13. That is US grades 7 to 12, or ages 12 to 18. The topics come from secondary science, physics and design & technology courses, from KS3 up to GCSE and A-level.',
+  },
+  {
+    q: 'Is it safe for children?',
+    a: `There are no accounts, no chat and no ads, and the games don't collect personal data. If a visitor accepts analytics cookies, we count page visits with Google Analytics; declining them changes nothing in the games. See our privacy policy for details.`,
+  },
+  {
+    q: 'Can I suggest a topic or report a problem?',
+    a: 'Please do. We read every message, and teacher suggestions decide which games and resources we make next.',
+  },
+];
+
+const page = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  url: absoluteUrl('/teachers'),
+  name: `${SITE.name} for teachers and parents`,
+  description: 'How to use free engineering games in lessons and at home, for students aged 12–18 (Years 8–13).',
+  audience: [
+    { '@type': 'EducationalAudience', educationalRole: 'teacher' },
+    { '@type': 'EducationalAudience', educationalRole: 'parent' },
+  ],
+  publisher: { '@id': `${SITE.url}/#organization` },
+};
+---
+
+<BaseLayout
+  title="Free Engineering Games and Teacher Packs for the Classroom"
+  description="Free engineering games with lesson plans and worksheets: circuits, gears, bridges and energy for ages 12–18 (Years 8–13). No accounts, no ads, no setup."
+  jsonLd={[page, breadcrumbs(crumbs), faqPage(faqs)]}
+>
+  <div class="band">
+    <div class="container">
+      <Breadcrumbs items={crumbs} />
+      <header class="intro">
+        <div>
+          <span class="kicker"><span class="dot">Free</span> For teachers &amp; parents</span>
+          <h1>Engineering games students <span class="hl">want</span> to play</h1>
+          <p class="lead">
+            Free browser games that turn physics and engineering topics into hands-on puzzles, with a free teacher pack
+            for every game. Levels run from Year 8 to Year 13, so a whole class can start together and every student can
+            stretch as far as they’re able.
+          </p>
+          <div class="cta">
+            <a class="btn btn-primary btn-lg" href="#teacher-packs">Get the teacher packs</a>
+            <a class="btn btn-ghost btn-lg" href="/#games">Browse the games</a>
+          </div>
+        </div>
+        {
+          packs.some((g) => g.data.teacherPack?.preview) && (
+            <div class="intro-art">
+              <PackStack
+                pages={packs
+                  .filter((g) => g.data.teacherPack?.preview)
+                  .slice(0, 3)
+                  .map((g) => ({ src: g.data.teacherPack!.preview!, alt: `Cover of the ${g.data.title} teacher pack` }))}
+                width={230}
+                eager
+              />
+            </div>
+          )
+        }
+      </header>
+    </div>
+  </div>
+
+  <div class="container">
+    <section class="section" aria-labelledby="why-title">
+      <div class="section-head">
+        <h2 id="why-title">Why teachers use {SITE.name}</h2>
+      </div>
+      <ul class="cards" role="list">
+        {
+          reasons.map((r) => (
+            <li>
+              <span class="c-ic" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d={r.icon} />
+                </svg>
+              </span>
+              <h3>{r.title}</h3>
+              <p>{r.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    {
+      packs.length > 0 && (
+        <section class="section" id="teacher-packs" aria-labelledby="packs-title">
+          <div class="section-head">
+            <div>
+              <h2 id="packs-title">Free teacher packs</h2>
+              <p>
+                Lesson plans, printable worksheets with answers, a level guide and curriculum links (KS3, GCSE, A-level
+                and US grades 7–12). Free to download, print and share with colleagues.
+              </p>
+            </div>
+          </div>
+          <ul class="packs" role="list">
+            {packs.map((game) => {
+              const pack = game.data.teacherPack!;
+              const who = audienceOf(game.data.years);
+              return (
+                <li class="pack" data-topic={game.data.category}>
+                  {pack.preview && (
+                    <PackStack
+                      pages={[
+                        { src: pack.preview, alt: `First page of the ${game.data.title} teacher pack` },
+                        ...(pack.worksheetPreview
+                          ? [{ src: pack.worksheetPreview, alt: `First page of the ${game.data.title} student worksheets` }]
+                          : []),
+                      ]}
+                      width={130}
+                      class="pack-art"
+                    />
+                  )}
+                  <div class="pack-body">
+                    <span class="chip" data-topic={game.data.category}>
+                      <TopicIcon topic={game.data.category} />
+                      {CATEGORIES[game.data.category].label}
+                    </span>
+                    <h3>{game.data.title}</h3>
+                    <p class="pack-meta">
+                      {who ? `${who.years} · ` : ''}PDF, {pack.pages} pages
+                    </p>
+                    <div class="dls">
+                      <a class="btn btn-primary" href={pack.pack} target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+                        </svg>
+                        Teacher pack
+                      </a>
+                      {pack.worksheets && (
+                        <a class="btn btn-ghost" href={pack.worksheets} target="_blank" rel="noopener">
+                          Worksheets only
+                        </a>
+                      )}
+                    </div>
+                    <a class="play-link" href={gameUrl(game)}>
+                      Play {game.data.title} →
+                    </a>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+          <p class="pack-note">
+            {packs.length < games.length
+              ? 'Packs for the other games are on the way. Tell us what you teach and we’ll do those topics first.'
+              : 'Every game has a pack.'}{' '}
+            <a href="/about#contact">Tell us which topics you’d like next.</a>
+          </p>
+        </section>
+      )
+    }
+
+    {
+      games.length > 0 && (
+        <section class="section" aria-labelledby="games-title">
+          <div class="section-head">
+            <div>
+              <h2 id="games-title">Games by topic and school year</h2>
+              <p>Each game covers one topic. Its levels are labelled by school year, so you can set the right ones.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Game</th>
+                  <th scope="col">Topic</th>
+                  <th scope="col">Years</th>
+                  <th scope="col">What students learn</th>
+                  <th scope="col">Teacher pack</th>
+                </tr>
+              </thead>
+              <tbody>
+                {games.map((game) => {
+                  const who = audienceOf(game.data.years);
+                  return (
+                    <tr>
+                      <th scope="row" class="nowrap">
+                        <a href={gameUrl(game)}>{game.data.title}</a>
+                      </th>
+                      <td>
+                        <a class="chip" data-topic={game.data.category} href={categoryUrl(game.data.category)}>
+                          <TopicIcon topic={game.data.category} />
+                          {CATEGORIES[game.data.category].label}
+                        </a>
+                      </td>
+                      <td class="nowrap">
+                        {who ? (
+                          <>
+                            {who.years}
+                            <span class="sub">{who.grades} (US)</span>
+                          </>
+                        ) : (
+                          '–'
+                        )}
+                      </td>
+                      <td>{game.data.learn.slice(0, 4).join(', ') || '–'}</td>
+                      <td class="nowrap">
+                        {game.data.teacherPack ? (
+                          <a href={game.data.teacherPack.pack} target="_blank" rel="noopener">
+                            Free PDF
+                          </a>
+                        ) : (
+                          <span class="sub">Coming soon</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )
+    }
+
+    <section class="section" aria-labelledby="lesson-title">
+      <div class="section-head">
+        <div>
+          <h2 id="lesson-title">A lesson in four steps</h2>
+          <p>A simple plan that works with any of the games. The teacher packs have full 60-minute plans.</p>
+        </div>
+      </div>
+      <ol class="steps">
+        {
+          lesson.map((step, i) => (
+            <li>
+              <span class="n" aria-hidden="true">
+                {i + 1}
+              </span>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="section home" aria-labelledby="home-title">
+      <div>
+        <span class="eyebrow">For parents</span>
+        <h2 id="home-title">Learning at home</h2>
+        <p>
+          The games work just as well at the kitchen table. Play a level together and ask your child to explain why a
+          design failed before fixing it. Explaining is one of the best ways to learn. Progress is saved in the browser,
+          so they can pick up where they left off.
+        </p>
+      </div>
+      <a class="btn btn-ghost" href="/#games">Find a game to start with</a>
+    </section>
+
+    <section class="section" aria-labelledby="faq-title">
+      <div class="faq-grid">
+        <div>
+          <h2 id="faq-title">Questions</h2>
+          <p class="faq-side">
+            Something else? <a href="/about#contact">Get in touch</a>. Read the full <a href="/privacypolicy">privacy policy</a>.
+          </p>
+        </div>
+        <div class="faq">
+          {
+            faqs.map((f) => (
+              <details>
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .band {
+    padding: 1.5rem 0 clamp(2.5rem, 5vw, 3.5rem);
+    background:
+      radial-gradient(520px 320px at 90% 10%, rgb(200 255 61 / 0.35), transparent 70%),
+      radial-gradient(520px 320px at 60% 100%, rgb(61 90 254 / 0.1), transparent 70%),
+      var(--grid-paper),
+      var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .intro {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+    margin-top: 1.5rem;
+  }
+  h1 {
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    margin: 1.1rem 0 1rem;
+  }
+  .lead {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 60ch;
+    margin: 0 0 1.6rem;
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .cards li,
+  .steps li {
+    padding: 1.35rem 1.35rem 1.45rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  .c-ic {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 12px;
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+  .c-ic svg {
+    width: 1.35rem;
+    height: 1.35rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .cards h3,
+  .steps h3 {
+    margin: 0.9rem 0 0.4rem;
+    font-size: 1.12rem;
+  }
+  .cards p,
+  .steps p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .packs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr));
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .pack {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 1.25rem;
+    align-items: center;
+    padding: 1.25rem 1.5rem 1.25rem 1rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(300px 200px at 0% 50%, var(--topic-soft), transparent 75%),
+      var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  .pack-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .pack h3 {
+    font-size: 1.35rem;
+    margin: 0.6rem 0 0.2rem;
+  }
+  .pack-meta {
+    margin: 0 0 1rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .dls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .dls .btn {
+    padding: 0.6rem 1.05rem;
+    font-size: 0.92rem;
+  }
+  .play-link {
+    margin-top: 0.85rem;
+    font-weight: 700;
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+  .play-link:hover {
+    text-decoration: underline;
+  }
+  .pack-note {
+    margin: 1.25rem 0 0;
+    color: var(--muted);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
+  }
+  th,
+  td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  thead th {
+    color: var(--muted);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: var(--bg-soft);
+  }
+  tbody tr:last-child > * {
+    border-bottom: none;
+  }
+  tbody tr:hover {
+    background: #fafbfe;
+  }
+  tbody th a {
+    font-weight: 700;
+  }
+  td .chip {
+    text-decoration: none;
+  }
+  .nowrap {
+    white-space: nowrap;
+  }
+  .sub {
+    display: block;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .n {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 12px;
+    background: var(--brand);
+    color: var(--brand-ink);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.15rem;
+  }
+
+  .home {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem 2.5rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(360px 220px at 100% 100%, rgb(245 165 36 / 0.16), transparent 70%),
+      var(--surface);
+  }
+  .home h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin: 0.4rem 0 0.6rem;
+  }
+  .home p {
+    margin: 0;
+    color: var(--muted);
+    max-width: 65ch;
+  }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 0.6fr 1.4fr;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+  .faq-grid h2 {
+    font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+    margin: 0 0 0.75rem;
+  }
+  .faq-side {
+    color: var(--muted);
+    margin: 0;
+  }
+  @media (max-width: 900px) {
+    .intro,
+    .faq-grid {
+      grid-template-columns: 1fr;
+    }
+    .intro-art {
+      max-width: 320px;
+      width: 100%;
+      margin-inline: auto;
+    }
+  }
+  @media (max-width: 560px) {
+    .pack {
+      grid-template-columns: 1fr;
+      padding: 1.25rem;
+    }
+    .pack :global(.pack-art) {
+      max-width: 220px;
+    }
+  }
+</style>

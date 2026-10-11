@@ -85,11 +85,9 @@ const show = Boolean(SITE.googleAnalyticsId) && SITE.cookieConsent;
     width: min(420px, calc(100vw - 2rem));
     padding: 1.1rem 1.2rem;
     border-radius: var(--radius-lg);
-    background: color-mix(in srgb, var(--bg-card) 94%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: var(--surface);
     border: 1px solid var(--line);
-    box-shadow: 0 20px 50px -20px rgb(0 0 0 / 0.9);
+    box-shadow: var(--shadow-lg);
     animation: rise 0.3s ease-out;
   }
   .consent[hidden] {
@@ -98,10 +96,10 @@ const show = Boolean(SITE.googleAnalyticsId) && SITE.cookieConsent;
   p {
     margin: 0 0 0.9rem;
     font-size: 0.9rem;
-    color: #c9cde6;
+    color: var(--muted);
   }
   p a {
-    color: var(--text);
+    color: var(--primary-ink);
   }
   .buttons {
     display: flex;

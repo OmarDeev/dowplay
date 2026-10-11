@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bridge Builder</title>
+  <meta name="description" content="Build a truss bridge and drive a truck across. A structural engineering game for Years 8 to 13.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M2 22h28M5 22l5-9 5 9 5-9 5 9M10 13h15' fill='none' stroke='%238ce99a' stroke-width='3' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="site-back" href="/games/bridge-builder" hidden>← DowPlay</a>
+    <div class="brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M2 22h28M5 22l5-9 5 9 5-9 5 9M10 13h15"/></svg>Bridge Builder</div>
+    <div class="level-name" id="levelName"></div>
+    <button type="button" class="btn" id="levelsButton">Levels</button>
+  </header>
+
+  <main class="layout">
+    <section class="play" aria-label="Bridge builder">
+      <div class="toolbar" role="toolbar" aria-label="Building materials">
+        <div class="tools" id="tools"></div>
+        <div class="toolbar-actions">
+          <button type="button" class="btn" id="undoButton" title="Undo (Ctrl+Z)">Undo</button>
+          <button type="button" class="btn" id="clearButton">Clear</button>
+          <label class="toggle"><input type="checkbox" id="forcesToggle"> <span>Show forces</span></label>
+        </div>
+      </div>
+
+      <div class="board-wrap">
+        <svg id="board" tabindex="0" role="application" aria-roledescription="building site"
+             aria-label="Building site. Arrow keys move the cursor. Space picks a start point, Enter builds a beam to the cursor, Delete removes it."
+             aria-describedby="keyboardHelp">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1b2b4a"/>
+              <stop offset="1" stop-color="#2d4a6e"/>
+            </linearGradient>
+            <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2f7fb5"/>
+              <stop offset="1" stop-color="#1d4f78"/>
+            </linearGradient>
+            <pattern id="zoneHatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="12" height="12" fill="rgba(255,120,120,0.07)"/>
+              <rect width="3" height="12" fill="rgba(255,140,140,0.22)"/>
+            </pattern>
+          </defs>
+          <g id="scene"></g>
+          <g id="dots"></g>
+          <g id="members"></g>
+          <g id="joints"></g>
+          <g id="truck"></g>
+          <g id="forceLabels"></g>
+          <g id="overlay"></g>
+        </svg>
+      </div>
+      <div class="legend" id="legend" hidden>
+        <span><i class="swatch tension"></i>Pulled (tension)</span>
+        <span><i class="swatch compression"></i>Squashed (compression)</span>
+        <span><i class="swatch over"></i>Over 100%: it would break</span>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <p class="sr-only" id="keyboardHelp">Keyboard: arrow keys move the cursor between points. Space picks the cursor point as the start of a beam. Move to a neighbouring point (or any point for a cable) and press Enter to build. Delete removes the beam between the start point and the cursor. Escape cancels. Number keys choose a material, E the eraser, Ctrl+Z undoes.</p>
+      <p class="sr-only" aria-live="polite" id="announcer"></p>
+    </section>
+
+    <aside class="panel" aria-label="Mission">
+      <section class="card mission">
+        <p class="eyebrow" id="levelMeta"></p>
+        <h1 id="levelTitle"></h1>
+        <p id="story"></p>
+        <p class="goal" id="goal"></p>
+        <ol class="hints" id="hints"></ol>
+        <button type="button" class="btn btn-quiet" id="hintButton">Show a hint</button>
+      </section>
+
+      <section class="card" id="goalsCard">
+        <h2>Goals</h2>
+        <div id="goals"></div>
+      </section>
+
+      <section class="card">
+        <h2>Budget</h2>
+        <div class="budget">
+          <div class="budget-row"><span>Cost</span><strong id="cost"></strong></div>
+          <div class="meter" aria-hidden="true"><div class="meter-fill" id="meterFill"></div><div class="meter-par" id="meterPar"></div></div>
+          <p class="budget-note" id="budgetNote"></p>
+        </div>
+      </section>
+
+      <button type="button" class="btn btn-primary btn-big" id="driveButton">Drive</button>
+    </aside>
+  </main>
+
+  <dialog id="levelsDialog" aria-labelledby="levelsTitle">
+    <form method="dialog" class="dialog-body">
+      <h2 id="levelsTitle">Choose a level</h2>
+      <div class="level-list" id="levelList"></div>
+      <div class="dialog-actions"><button class="btn" value="close">Close</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="winDialog" aria-labelledby="winTitle">
+    <div class="dialog-body">
+      <h2 id="winTitle">Made it across!</h2>
+      <p class="stars" id="winStars"></p>
+      <p id="winCost"></p>
+      <h3>What you learned</h3>
+      <p id="winLearn"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="winStay">Improve my design</button>
+        <button type="button" class="btn btn-primary" id="winNext">Next level</button>
+      </div>
+    </div>
+  </dialog>
+
+  <noscript><p class="noscript">Bridge Builder needs JavaScript turned on.</p></noscript>
+
+  <script src="js/bridge.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/game.js"></script>
+  <script>
+    // Opened on its own on dowplay.com (not inside the site's player)? Show a way back to the website.
+    if (window.top === window.self && location.pathname.startsWith("/play/")) {
+      document.querySelector(".site-back").hidden = false;
+    }
+  </script>
+</body>
+</html>

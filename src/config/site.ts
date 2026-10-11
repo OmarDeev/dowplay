@@ -7,16 +7,20 @@ export const SITE = {
   name: 'DowPlay',
   // TODO: your real production domain (no trailing slash). Used for canonical URLs and the sitemap.
   url: 'https://dowplay.com',
-  locale: 'en',
-  ogLocale: 'en_US',
+  // British English (UK school years, GCSE, A-level); US grades are shown alongside
+  locale: 'en-GB',
+  ogLocale: 'en_GB',
 
   // Home page <title> and meta description
-  title: 'DowPlay — Free Online HTML5 Games',
+  title: 'DowPlay — Free Engineering Games for Ages 12–18',
   description:
-    'Play free HTML5 games online from DowPlay. No downloads, no sign-up — instant browser games that work on mobile, tablet and desktop.',
+    'Free engineering games for ages 12–18: build circuits, gears, bridges and power grids, from Year 8 to Year 13. No sign-up, works in any browser.',
 
-  // Used on /about and in structured data
-  studioTagline: 'Independent game studio making mobile and web games.',
+  // Who the games are for, shown across the site
+  audience: 'Ages 12–18',
+
+  // Used in the footer and in structured data
+  studioTagline: 'Free engineering games for curious minds, made by an independent game studio.',
   // TODO: your contact address
   email: 'omardov2010@gmail.com',
 
@@ -51,8 +55,10 @@ export const SITE = {
   cookieConsent: true,
 } as const;
 
+// Main menu. The header adds a "Topics" menu after Games (built from the topics that have
+// games) and a "Free teacher packs" button; Contact lives in the footer and on the About page.
 export const NAV = [
   { href: '/', label: 'Games' },
+  { href: '/teachers', label: 'Teachers' },
   { href: '/about', label: 'About' },
-  { href: '/about#contact', label: 'Contact' },
 ] as const;

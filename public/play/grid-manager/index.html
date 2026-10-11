@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grid Manager</title>
+  <meta name="description" content="Keep a town powered all day with solar, wind, batteries and smart planning. An energy engineering game for Years 9 to 13.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M18 2L6 18h8l-2 12 12-16h-8z' fill='%23a9e34b'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="site-back" href="/games/grid-manager" hidden>← DowPlay</a>
+    <div class="brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M18 2L6 18h8l-2 12 12-16h-8z"/></svg>Grid Manager</div>
+    <div class="level-name" id="levelName"></div>
+    <button type="button" class="btn" id="levelsButton">Levels</button>
+  </header>
+
+  <main class="layout">
+    <section class="play" aria-label="Town and power chart">
+      <div class="toolbar" role="toolbar" aria-label="What to build">
+        <div class="tools" id="tools"></div>
+        <div class="toolbar-actions">
+          <button type="button" class="btn" id="undoButton" title="Undo (Ctrl+Z)">Undo</button>
+          <button type="button" class="btn" id="clearButton">Clear</button>
+        </div>
+      </div>
+
+      <div class="stage" id="stage">
+        <svg id="board" tabindex="0" role="application" aria-roledescription="town map"
+             aria-label="Town map. Arrow keys move between squares. Enter builds the chosen machine, Delete removes one."
+             aria-describedby="keyboardHelp">
+          <defs>
+            <pattern id="hatchRed" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="8" height="8" fill="rgba(255,90,110,0.55)"/>
+              <rect width="3" height="8" fill="rgba(255,150,165,0.9)"/>
+            </pattern>
+          </defs>
+          <g id="sky"></g>
+          <g id="terrain"></g>
+          <g id="items"></g>
+          <rect id="shade" x="0" y="0" width="0" height="0"/>
+          <g id="lights"></g>
+          <g id="overlay"></g>
+        </svg>
+        <svg id="chart" tabindex="0" role="application" aria-roledescription="power chart"
+             aria-label="Power chart. Left and right arrow keys choose an hour.">
+          <defs>
+            <pattern id="hatchWaste" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="7" height="7" fill="rgba(160,170,185,0.18)"/>
+              <rect width="2" height="7" fill="rgba(190,200,215,0.55)"/>
+            </pattern>
+            <pattern id="hatchCharge" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+              <rect width="7" height="7" fill="rgba(177,151,252,0.2)"/>
+              <rect width="2" height="7" fill="rgba(200,180,255,0.7)"/>
+            </pattern>
+            <pattern id="hatchShort" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="7" height="7" fill="rgba(255,77,109,0.55)"/>
+              <rect width="3" height="7" fill="rgba(255,140,160,0.95)"/>
+            </pattern>
+          </defs>
+          <g id="chartBody"></g>
+        </svg>
+      </div>
+      <div class="readout" id="readout"></div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <p class="sr-only" id="keyboardHelp">Keyboard: on the map, arrow keys move between squares, Enter or Space builds the chosen machine (or removes it if it's already there), and Delete removes whatever is on the square. Number keys choose what to build, R chooses Remove, Ctrl+Z undoes. On the chart, left and right arrows choose an hour. Flexible jobs on the timeline can be focused with Tab and moved with the left and right arrows.</p>
+      <p class="sr-only" aria-live="polite" id="announcer"></p>
+    </section>
+
+    <aside class="panel" aria-label="Mission">
+      <section class="card mission">
+        <p class="eyebrow" id="levelMeta"></p>
+        <h1 id="levelTitle"></h1>
+        <p id="story"></p>
+        <p class="goal" id="goal"></p>
+        <ol class="hints" id="hints"></ol>
+        <button type="button" class="btn btn-quiet" id="hintButton">Show a hint</button>
+      </section>
+
+      <section class="card" id="goalsCard">
+        <h2>Goals</h2>
+        <div id="goals"></div>
+        <p class="stats" id="stats"></p>
+      </section>
+
+      <section class="card">
+        <h2>Daily cost</h2>
+        <div class="budget">
+          <div class="budget-row"><span>Cost per day</span><strong id="cost"></strong></div>
+          <div class="meter" aria-hidden="true"><div class="meter-fill" id="meterFill"></div><div class="meter-par" id="meterPar"></div></div>
+          <p class="budget-note" id="budgetNote"></p>
+        </div>
+      </section>
+
+      <button type="button" class="btn btn-primary btn-big" id="runButton">Run the day</button>
+    </aside>
+  </main>
+
+  <dialog id="levelsDialog" aria-labelledby="levelsTitle">
+    <form method="dialog" class="dialog-body">
+      <h2 id="levelsTitle">Choose a level</h2>
+      <div class="level-list" id="levelList"></div>
+      <div class="dialog-actions"><button class="btn" value="close">Close</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="winDialog" aria-labelledby="winTitle">
+    <div class="dialog-body">
+      <h2 id="winTitle">The lights stayed on!</h2>
+      <p class="stars" id="winStars"></p>
+      <p id="winCost"></p>
+      <h3>What you learned</h3>
+      <p id="winLearn"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="winStay">Improve my grid</button>
+        <button type="button" class="btn btn-primary" id="winNext">Next level</button>
+      </div>
+    </div>
+  </dialog>
+
+  <noscript><p class="noscript">Grid Manager needs JavaScript turned on.</p></noscript>
+
+  <script src="js/grid.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/game.js"></script>
+  <script>
+    // Opened on its own on dowplay.com (not inside the site's player)? Show a way back to the website.
+    if (window.top === window.self && location.pathname.startsWith("/play/")) {
+      document.querySelector(".site-back").hidden = false;
+    }
+  </script>
+</body>
+</html>

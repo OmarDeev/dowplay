@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { game } = Astro.props;
-const { title, cover, orientation } = game.data;
+const { title, cover, coverAlt, orientation } = game.data;
 const src = gameEmbedUrl(game);
 ---
 
@@ -20,7 +20,7 @@ const src = gameEmbedUrl(game);
   <div class="stage">
     <Image
       src={cover}
-      alt=""
+      alt={coverAlt ?? `${title} game`}
       widths={[640, 960, 1280]}
       sizes="(max-width: 1240px) 100vw, 1200px"
       loading="eager"
@@ -35,10 +35,11 @@ const src = gameEmbedUrl(game);
     </div>
   </div>
   <div class="controls">
-    <span class="hint">Free · No download · Works on mobile</span>
-    <button type="button" class="btn btn-ghost fullscreen">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"></path></svg>
-      Fullscreen
+    <span class="hint">Free · No sign-up · Works on Chromebooks, tablets and phones</span>
+    <button type="button" class="btn btn-ghost fullscreen" aria-pressed="false">
+      <svg class="enter" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"></path></svg>
+      <svg class="exit" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"></path></svg>
+      <span class="label">Fullscreen</span>
     </button>
   </div>
 </game-player>
@@ -63,19 +64,83 @@ const src = gameEmbedUrl(game);
         frame.addEventListener('load', () => frame.focus());
         stage.replaceChildren(frame);
         this.classList.add('playing');
+        // The game gets the full height of the screen, so bring all of it into view.
+        const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+        const hint = this.querySelector<HTMLElement>('.hint');
+        if (hint) hint.textContent = 'Short on space? Press Fullscreen.';
         track('game_start', { game_name: this.dataset.title ?? '', game_id: this.dataset.id ?? '' });
       };
 
       start.addEventListener('click', load);
-      fullscreen.addEventListener('click', () => {
-        track('game_fullscreen', { game_name: this.dataset.title ?? '', game_id: this.dataset.id ?? '' });
-        // iPhone Safari has no element fullscreen: open the game on its own page instead
-        if (!document.fullscreenEnabled) {
-          window.location.href = src;
+
+      // Fullscreen: the browser's real fullscreen where it works. Where it doesn't (iPhone
+      // Safari, in-app browsers), the player fills the browser window instead. Either way the
+      // visitor stays on this page, and the same button (or Escape, or Back) brings them out.
+      type WebkitDocument = Document & { webkitFullscreenEnabled?: boolean; webkitFullscreenElement?: Element; webkitExitFullscreen?: () => void };
+      type WebkitElement = HTMLElement & { webkitRequestFullscreen?: () => void };
+      const doc = document as WebkitDocument;
+      const label = fullscreen.querySelector<HTMLElement>('.label')!;
+      let expanded = false; // filling the window ourselves
+      let addedHistory = false;
+
+      const inRealFullscreen = () => (doc.fullscreenElement ?? doc.webkitFullscreenElement) === this;
+      const update = () => {
+        const on = expanded || inRealFullscreen();
+        this.classList.toggle('expanded', expanded);
+        this.classList.toggle('is-full', on);
+        document.documentElement.classList.toggle('game-expanded', expanded);
+        fullscreen.setAttribute('aria-pressed', String(on));
+        label.textContent = on ? 'Exit fullscreen' : 'Fullscreen';
+      };
+
+      const expand = () => {
+        expanded = true;
+        // So the phone's Back gesture closes the full-window view instead of leaving the page
+        history.pushState({ dowplayFullWindow: true }, '');
+        addedHistory = true;
+        update();
+        stage.querySelector('iframe')?.focus();
+      };
+      const collapse = (fromBack = false) => {
+        if (!expanded) return;
+        expanded = false;
+        update();
+        if (addedHistory && !fromBack) history.back();
+        addedHistory = false;
+        // After the browser restores its own scroll position for the history step
+        setTimeout(() => this.scrollIntoView({ block: 'start' }), 60);
+      };
+
+      fullscreen.addEventListener('click', async () => {
+        if (expanded) return collapse();
+        if (inRealFullscreen()) {
+          if (doc.exitFullscreen) doc.exitFullscreen().catch(() => {});
+          else doc.webkitExitFullscreen?.();
           return;
         }
+        track('game_fullscreen', { game_name: this.dataset.title ?? '', game_id: this.dataset.id ?? '' });
         load();
-        this.requestFullscreen().catch(() => (window.location.href = src));
+        const el = this as WebkitElement;
+        if (doc.fullscreenEnabled && el.requestFullscreen) {
+          try {
+            await el.requestFullscreen();
+            return;
+          } catch {
+            // refused (e.g. inside some app browsers): fill the window instead
+          }
+        } else if (doc.webkitFullscreenEnabled && el.webkitRequestFullscreen) {
+          el.webkitRequestFullscreen();
+          return;
+        }
+        expand();
+      });
+
+      document.addEventListener('fullscreenchange', update);
+      document.addEventListener('webkitfullscreenchange', update);
+      window.addEventListener('popstate', () => collapse(true));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && expanded) collapse();
       });
     }
   }
@@ -85,39 +150,48 @@ const src = gameEmbedUrl(game);
 <style>
   .player {
     display: block;
+    scroll-margin-top: 4.75rem;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    background: #000;
+    background: #0b0d17;
     border: 1px solid var(--line);
+    box-shadow: var(--shadow-lg);
   }
   .stage {
     position: relative;
     aspect-ratio: 16 / 9;
     max-height: 78vh;
     margin-inline: auto;
-    background: #000;
+    background: #0b0d17;
   }
   .portrait .stage {
     aspect-ratio: 9 / 16;
     height: min(78vh, 760px);
   }
+  /* Once playing, a landscape game fills the screen height (minus the site header and the
+     bar below), which suits games with a side panel and gives phones a usable frame. */
+  .playing:not(.portrait) .stage {
+    aspect-ratio: auto;
+    height: clamp(420px, calc(100svh - 8.75rem), 900px);
+    max-height: none;
+  }
   .poster {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: brightness(0.55) saturate(1.1);
+    filter: brightness(0.62) saturate(1.1);
   }
   .overlay {
     position: absolute;
     inset: 0;
     display: grid;
     place-items: center;
-    background: radial-gradient(circle at center, transparent 0 35%, rgb(0 0 0 / 0.45));
+    background: radial-gradient(circle at center, transparent 0 35%, rgb(11 13 23 / 0.4));
   }
   .start {
     font-size: 1.15rem;
     padding: 1rem 1.8rem;
-    box-shadow: 0 0 0 8px rgb(200 255 61 / 0.15), 0 12px 30px -8px rgb(0 0 0 / 0.8);
+    box-shadow: 0 0 0 8px rgb(61 90 254 / 0.35), 0 12px 30px -8px rgb(0 0 0 / 0.8);
     animation: pulse 2.4s ease-in-out infinite;
   }
   .start svg {
@@ -127,7 +201,7 @@ const src = gameEmbedUrl(game);
   }
   @keyframes pulse {
     50% {
-      box-shadow: 0 0 0 14px rgb(200 255 61 / 0.06), 0 12px 30px -8px rgb(0 0 0 / 0.8);
+      box-shadow: 0 0 0 16px rgb(61 90 254 / 0.12), 0 12px 30px -8px rgb(0 0 0 / 0.8);
     }
   }
   .stage :global(iframe) {
@@ -141,7 +215,7 @@ const src = gameEmbedUrl(game);
     justify-content: space-between;
     gap: 1rem;
     padding: 0.6rem 0.75rem 0.6rem 1.1rem;
-    background: var(--bg-elev);
+    background: var(--surface);
     border-top: 1px solid var(--line);
   }
   .hint {
@@ -160,6 +234,40 @@ const src = gameEmbedUrl(game);
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+  .fullscreen .exit,
+  .is-full .fullscreen .enter {
+    display: none;
+  }
+  .is-full .fullscreen .exit {
+    display: block;
+  }
+  /* Full-window mode (where the browser has no real fullscreen): cover the whole page */
+  .player.expanded {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .player.expanded .stage {
+    flex: 1;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    aspect-ratio: auto;
+  }
+  .player.expanded .controls {
+    padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+  }
+  :global(html.game-expanded),
+  :global(html.game-expanded body) {
+    overflow: hidden;
   }
   /* Fullscreen: let the game fill the screen */
   .player:fullscreen {

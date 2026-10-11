@@ -34,7 +34,7 @@ const aboutPage = {
 ---
 
 <BaseLayout
-  title={`About ${SITE.name} — Mobile & HTML5 Game Development Studio`}
+  title="About Us — Mobile & HTML5 Game Development Studio"
   description={`${SITE.name} is an independent game studio: mobile game development for iOS & Android, HTML5 web games, game design and live ops. See our games and get in touch.`}
   image={hero.image}
   imageAlt={hero.imageAlt}
@@ -272,8 +272,11 @@ const aboutPage = {
     overflow: hidden;
     padding-block: clamp(2.5rem, 7vw, 5rem) clamp(2rem, 5vw, 3rem);
     background:
-      radial-gradient(700px 380px at 82% 30%, rgb(139 114 255 / 0.28), transparent 70%),
-      radial-gradient(500px 260px at 0% 100%, rgb(200 255 61 / 0.08), transparent 70%);
+      radial-gradient(640px 380px at 82% 30%, rgb(61 90 254 / 0.14), transparent 70%),
+      radial-gradient(500px 300px at 0% 100%, rgb(200 255 61 / 0.3), transparent 70%),
+      var(--grid-paper),
+      var(--bg);
+    border-bottom: 1px solid var(--line);
   }
   .hero-inner {
     display: grid;
@@ -284,9 +287,6 @@ const aboutPage = {
   h1 {
     font-size: clamp(2.2rem, 5vw, 3.8rem);
     margin: 0.7rem 0 1rem;
-  }
-  .hl {
-    color: var(--accent);
   }
   .lead {
     font-size: 1.15rem;
@@ -333,8 +333,9 @@ const aboutPage = {
     aspect-ratio: 2 / 3;
     transform: rotate(2.5deg);
     box-shadow:
-      0 0 0 1px rgb(255 255 255 / 0.08),
-      0 40px 80px -30px rgb(80 60 220 / 0.7);
+      0 0 0 6px #fff,
+      0 0 0 7px var(--line),
+      0 40px 80px -30px rgb(61 90 254 / 0.55);
   }
   .frame img {
     width: 100%;
@@ -345,13 +346,11 @@ const aboutPage = {
     position: absolute;
     padding: 0.45rem 0.9rem;
     border-radius: 999px;
-    background: rgb(11 13 23 / 0.8);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgb(255 255 255 / 0.12);
+    background: var(--surface);
+    border: 1px solid var(--line);
     font-weight: 700;
     font-size: 0.85rem;
-    box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.8);
+    box-shadow: var(--shadow);
   }
   .float::before {
     content: '';
@@ -360,7 +359,7 @@ const aboutPage = {
     height: 0.5rem;
     margin-right: 0.45rem;
     border-radius: 50%;
-    background: var(--accent);
+    background: var(--primary);
     vertical-align: 0.05em;
   }
   .f1 {
@@ -414,7 +413,7 @@ const aboutPage = {
     margin: 0.5rem 0 1.25rem;
   }
   .intro-text p {
-    color: #c9cde6;
+    color: #3a4258;
     margin: 0 0 1rem;
     font-size: 1.05rem;
   }
@@ -429,8 +428,9 @@ const aboutPage = {
   .values li {
     padding: 1.4rem;
     border-radius: var(--radius-lg);
-    background: var(--bg-card);
+    background: var(--surface);
     border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
   }
   .values li:nth-child(2),
   .values li:nth-child(3) {
@@ -509,18 +509,6 @@ const aboutPage = {
     font-weight: 500;
     font-size: 0.95rem;
   }
-  .ticks li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.2em;
-    width: 1.05rem;
-    height: 1.05rem;
-    border-radius: 50%;
-    background: rgb(200 255 61 / 0.15)
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c8ff3d' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E")
-      center / 70% no-repeat;
-  }
 
   /* ---------- Games ---------- */
   .bento {
@@ -563,6 +551,7 @@ const aboutPage = {
     background: linear-gradient(to top, rgb(8 9 18 / 0.92), rgb(8 9 18 / 0.6) 55%, transparent);
   }
   .tile h3 {
+    color: #fff;
     margin: 0 0 0.2rem;
     font-size: 1.2rem;
   }
@@ -572,7 +561,7 @@ const aboutPage = {
   .tile p {
     margin: 0;
     font-size: 0.9rem;
-    color: #c9cde6;
+    color: #e2e6f5;
   }
   .sub {
     margin-top: 3rem;
@@ -612,7 +601,8 @@ const aboutPage = {
     padding: 1.4rem;
     border-radius: var(--radius-lg);
     border: 1px solid var(--line);
-    background: var(--bg-elev);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
   }
   .process li:not(:last-child)::after {
     content: '';
@@ -653,9 +643,10 @@ const aboutPage = {
     border-radius: 28px;
     border: 1px solid var(--line);
     background:
-      radial-gradient(500px 300px at 0% 0%, rgb(139 114 255 / 0.18), transparent 70%),
-      radial-gradient(400px 260px at 100% 100%, rgb(200 255 61 / 0.07), transparent 70%),
-      var(--bg-card);
+      radial-gradient(500px 300px at 0% 0%, rgb(200 255 61 / 0.3), transparent 70%),
+      var(--grid-paper),
+      var(--primary-soft);
+    border-color: #d9defb;
   }
   .contact-info h2 {
     font-size: clamp(1.8rem, 3.6vw, 2.5rem);
@@ -703,8 +694,9 @@ const aboutPage = {
   .contact-form {
     padding: clamp(1.25rem, 3vw, 2rem);
     border-radius: var(--radius-lg);
-    background: var(--bg-elev);
+    background: var(--surface);
     border: 1px solid var(--line);
+    box-shadow: var(--shadow);
   }
 
   /* ---------- Responsive ---------- */

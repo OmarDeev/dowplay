@@ -1,6 +1,6 @@
 # DowPlay
 
-Website for DowPlay: free HTML5 games on the home page, and the studio portfolio (App Store / Google Play games) on `/about`.
+Website for DowPlay: free engineering games for students aged 12–18 (UK Years 8–13, US grades 7–12) on the home page, a page for teachers and parents, and the studio portfolio (App Store / Google Play games) on `/about`.
 
 Built with [Astro](https://astro.build) as a fully static site: every page is plain, pre-rendered HTML, which is the best setup for SEO and speed. It's hosted on Cloudflare and deployed automatically from GitHub.
 
@@ -8,14 +8,15 @@ Built with [Astro](https://astro.build) as a fully static site: every page is pl
 
 | URL | What it is | Source |
 | --- | --- | --- |
-| `/` | All games (search + category filter) | `src/pages/index.astro` |
-| `/games/<slug>` | One game: SEO page + player | `src/pages/games/[slug].astro` |
-| `/category/<key>` | Games in one category (only created when it has games) | `src/pages/category/[category].astro` |
+| `/` | All games (search + topic filter) | `src/pages/index.astro` |
+| `/games/<slug>` | One game: SEO page + player, what students learn, curriculum links | `src/pages/games/[slug].astro` |
+| `/category/<key>` | Games in one topic, e.g. `/category/energy` (only created when it has games) | `src/pages/category/[category].astro` (topics in `src/config/categories.ts`) |
+| `/teachers` | For teachers & parents: why and how to use the games, games by topic and year, FAQ | `src/pages/teachers.astro` |
 | `/about` | Studio intro, services, games, contact form | `src/pages/about.astro` (text in `src/config/about.ts`) |
 | `/privacypolicy` | Privacy policy (needed for store listings) | `src/pages/privacypolicy.md` (plain Markdown, edit the text directly) |
 | `/play/<slug>/` | The raw game files, loaded inside the game page | `public/play/<slug>/` |
 
-`sitemap-index.xml`, `robots.txt`, canonical URLs, Open Graph images and schema.org data (Organization, VideoGame, BreadcrumbList, MobileApplication) are all generated automatically.
+`sitemap-index.xml`, `robots.txt`, canonical URLs, Open Graph images and schema.org data (Organization, VideoGame + LearningResource, BreadcrumbList, MobileApplication) are all generated automatically.
 
 ## First-time setup
 
@@ -23,20 +24,60 @@ Built with [Astro](https://astro.build) as a fully static site: every page is pl
 2. **Contact form:** create a free form at [formspree.io](https://formspree.io) and paste its endpoint into `contactFormEndpoint` in `src/config/site.ts`. Until you do, the form opens the visitor's email app with the message pre-filled.
 3. Edit the About page text (intro, services, genres, process, contact) in **`src/config/about.ts`**. Its images are in `src/assets/about/`.
 4. Add your App Store / Google Play games to `src/content/apps/` when you're ready (see below). Until then the store section on `/about` stays hidden.
-5. Keep or delete the example game (Neon Snake). To delete it, remove `src/content/games/neon-snake.md`, `src/assets/games/neon-snake.png` and `public/play/neon-snake/`.
-6. Review `src/pages/privacypolicy.md` — the company name, address and contact details must be yours.
+5. Review `src/pages/privacypolicy.md` — the company name, address and contact details must be yours.
 
 ## Add a web game
 
 1. Put the game build (its `index.html` plus assets) in `public/play/my-game/`.
 2. Add a cover image (16:10, e.g. 1280×800) at `src/assets/games/my-game.png`.
 3. Copy `src/content/games/_template.md` to `src/content/games/my-game.md` and fill it in. The file name becomes the URL: `/games/my-game`.
-4. Write 150–300 words of unique text in the markdown body (how to play, tips). That text is what Google ranks.
+   - `category` is the engineering topic (`electricity`, `mechanics`, `structures`, `energy`; add more in `src/config/categories.ts`).
+   - `years: [8, 13]` is the UK school years the levels cover. The site shows US grades and ages from it.
+   - `learn` lists what students learn, and `curriculum` the curriculum links (KS3, GCSE, A-level…). Both appear on the game page and the teachers page.
+4. Write 300–500 words of unique text in the markdown body (how to play, how the levels progress, tips for teachers). That text is what Google ranks.
 5. Commit and push. Cloudflare rebuilds and deploys the site.
 
 Games marked `draft: true` show up in `npm run dev` but are left out of the live site.
 
 > Cloudflare limits: max **25 MiB per file**, 20,000 files per deployment. If a game has bigger files, host it elsewhere (for example on Cloudflare R2) and set `embed:` to its URL.
+
+## Teacher packs
+
+Free teacher packs (lesson plans, worksheets, answers) are PDFs in `public/teacher-packs/`. To offer
+one, add a `teacherPack` block to the game's markdown file (see `_template.md`): it then appears as a
+"Free teacher pack" box on the game page and in the list and table on `/teachers`.
+
+Every game has a pack. They are built from source folders in the workspace's `teacher-packs/` folder
+(one per game, each with `pack.html` and `check-numbers.js`; see its README). After rebuilding a pack
+there, copy its two PDFs here with lowercase names, for example `bridge-builder-teacher-pack.pdf` and
+`bridge-builder-student-worksheets.pdf`, and update `pages` in the game's `teacherPack` block if the
+page count changed.
+
+The pictures of each pack's first page (shown next to the download buttons) live in
+`src/assets/packs/`. Remake them after rebuilding a pack (macOS):
+
+```bash
+sips -s format png --resampleWidth 900 public/teacher-packs/bridge-builder-teacher-pack.pdf --out src/assets/packs/bridge-builder-cover.png
+sips -s format png --resampleWidth 900 public/teacher-packs/bridge-builder-student-worksheets.pdf --out src/assets/packs/bridge-builder-worksheet.png
+```
+
+## Design
+
+Colours, buttons, cards and the topic colours (`data-topic="electricity"` and so on) are defined at
+the top of `src/styles/global.css`. Each game also has a short `tagline` in its markdown file, shown on
+the game cards.
+
+## Update a game
+
+The four engineering games (Light It Up, Gear Garage, Bridge Builder, Grid Manager) are
+developed in their own folders, each with a `README.md` and a `check-levels.js` level checker.
+After changing a game there, copy only the files the browser needs into `public/play/`:
+
+```bash
+rsync -a --delete --exclude README.md --exclude check-levels.js --exclude .DS_Store "path/to/grid-manager/" public/play/grid-manager/
+```
+
+Players keep their progress: each game saves it in the browser under its own key.
 
 ## Add a mobile app to the portfolio
 

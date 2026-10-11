@@ -2,7 +2,7 @@
 import Logo from './Logo.astro';
 import { SITE } from '../config/site';
 import { CATEGORIES } from '../config/categories';
-import { getGames, categoryUrl } from '../lib/content';
+import { getGames, categoryUrl, gameUrl } from '../lib/content';
 
 const games = await getGames();
 const usedCategories = [...new Set(games.map((g) => g.data.category))];
@@ -25,16 +25,36 @@ const showCookieSettings = Boolean(SITE.googleAnalyticsId) && SITE.cookieConsent
     <div class="brand">
       <a href="/" aria-label={`${SITE.name} home`}><Logo /></a>
       <p>{SITE.studioTagline}</p>
+      <ul class="promises" aria-label="Every game is">
+        <li>Free</li>
+        <li>No sign-up</li>
+        <li>No ads</li>
+      </ul>
     </div>
 
     {
-      usedCategories.length > 0 && (
-        <nav aria-label="Game categories">
+      games.length > 0 && (
+        <nav aria-label="Games">
           <h2>Games</h2>
+          <ul>
+            {games.map((game) => (
+              <li>
+                <a href={gameUrl(game)}>{game.data.title}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+
+    {
+      usedCategories.length > 0 && (
+        <nav aria-label="Topics">
+          <h2>Topics</h2>
           <ul>
             {usedCategories.map((key) => (
               <li>
-                <a href={categoryUrl(key)}>{CATEGORIES[key].label} games</a>
+                <a href={categoryUrl(key)}>{CATEGORIES[key].heading}</a>
               </li>
             ))}
           </ul>
@@ -42,43 +62,41 @@ const showCookieSettings = Boolean(SITE.googleAnalyticsId) && SITE.cookieConsent
       )
     }
 
-    <nav aria-label="Studio">
-      <h2>Studio</h2>
+    <nav aria-label={SITE.name}>
+      <h2>{SITE.name}</h2>
       <ul>
-        <li><a href="/about">About {SITE.name}</a></li>
+        <li><a href="/teachers">For teachers &amp; parents</a></li>
+        <li><a href="/teachers#teacher-packs">Free teacher packs</a></li>
+        <li><a href="/about">About the studio</a></li>
+        <li><a href="/about#contact">Contact us</a></li>
         {SITE.appStoreDeveloperUrl && <li><a href={SITE.appStoreDeveloperUrl} rel="noopener">App Store</a></li>}
         {SITE.googlePlayDeveloperUrl && <li><a href={SITE.googlePlayDeveloperUrl} rel="noopener">Google Play</a></li>}
-        <li><a href="/privacypolicy">Privacy policy</a></li>
         {
-          showCookieSettings && (
+          socials.map(([key, url]) => (
             <li>
-              <button type="button" class="link" data-consent-open>
-                Cookie settings
-              </button>
+              <a href={url} rel="noopener me">
+                {socialLabels[key]}
+              </a>
             </li>
-          )
+          ))
         }
-        <li><a href="/about#contact">Contact us</a></li>
       </ul>
     </nav>
-
-    {
-      socials.length > 0 && (
-        <nav aria-label="Social">
-          <h2>Follow</h2>
-          <ul>
-            {socials.map(([key, url]) => (
-              <li>
-                <a href={url} rel="noopener me">{socialLabels[key]}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )
-    }
   </div>
-  <div class="container legal">
+  <div class="container">
+    <div class="legal">
     <p>© {year} {SITE.name}. All rights reserved.</p>
+    <p class="links">
+      <a href="/privacypolicy">Privacy policy</a>
+      {
+        showCookieSettings && (
+          <button type="button" class="link" data-consent-open>
+            Cookie settings
+          </button>
+        )
+      }
+    </p>
+    </div>
   </div>
 </footer>
 
@@ -86,56 +104,67 @@ const showCookieSettings = Boolean(SITE.googleAnalyticsId) && SITE.cookieConsent
   .site-footer {
     margin-top: 6rem;
     border-top: 1px solid var(--line);
-    background: var(--bg-elev);
+    background: var(--surface);
     font-size: 0.95rem;
   }
   .grid {
     display: grid;
-    grid-template-columns: 2fr repeat(3, 1fr);
+    grid-template-columns: 1.6fr repeat(3, 1fr);
     gap: 2rem;
-    padding-block: 3rem 2rem;
+    padding-block: 3.25rem 2.25rem;
   }
   .brand p {
     color: var(--muted);
-    max-width: 30ch;
-    margin-top: 0.75rem;
+    max-width: 32ch;
+    margin: 0.85rem 0 1rem;
   }
   .brand a {
     text-decoration: none;
   }
-  h2 {
+  .promises {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .promises li {
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    background: #dcf5ea;
+    color: var(--ok);
     font-size: 0.8rem;
+    font-weight: 700;
+  }
+  h2 {
+    font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--muted);
-    margin: 0 0 0.75rem;
+    color: var(--faint);
+    margin: 0 0 0.85rem;
     font-family: var(--font-body);
-    font-weight: 600;
+    font-weight: 700;
   }
   ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 0.45rem;
+    gap: 0.5rem;
   }
   nav a {
     color: var(--text);
     text-decoration: none;
   }
   nav a:hover,
+  .legal a:hover,
   .link:hover {
-    color: var(--accent);
-  }
-  .link {
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--text);
-    font: inherit;
-    cursor: pointer;
+    color: var(--primary-ink);
+    text-decoration: underline;
   }
   .legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
     border-top: 1px solid var(--line);
     padding-block: 1.25rem;
     color: var(--muted);
@@ -144,12 +173,33 @@ const showCookieSettings = Boolean(SITE.googleAnalyticsId) && SITE.cookieConsent
   .legal p {
     margin: 0;
   }
-  @media (max-width: 760px) {
+  .links {
+    display: flex;
+    gap: 1.25rem;
+  }
+  .legal a,
+  .link {
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .link {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+  }
+  @media (max-width: 860px) {
     .grid {
       grid-template-columns: 1fr 1fr;
     }
     .brand {
       grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 480px) {
+    .grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

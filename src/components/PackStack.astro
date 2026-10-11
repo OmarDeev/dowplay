@@ -1,0 +1,86 @@
+---
+/**
+ * Two or three teacher-pack pages fanned out like papers on a desk.
+ * The first image is drawn on top.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  pages: { src: ImageMetadata; alt: string }[];
+  /** Rendered width of each page in CSS pixels, for responsive image sizes */
+  width?: number;
+  /** Load straight away (when the stack is in the first screen of the page) */
+  eager?: boolean;
+  class?: string;
+}
+
+const { pages, width = 220, eager = false, class: className } = Astro.props;
+const shown = pages.slice(0, 3);
+---
+
+<div class:list={['stack', `n${shown.length}`, className]} style={`--w: ${width}px`}>
+  {
+    [...shown].reverse().map((page, i) => (
+      <Image
+        src={page.src}
+        alt={page.alt}
+        class:list={['sheet', `s${shown.length - 1 - i}`]}
+        widths={[width, width * 2]}
+        sizes={`${width}px`}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager && i === shown.length - 1 ? 'high' : undefined}
+      />
+    ))
+  }
+</div>
+
+<style>
+  .stack {
+    position: relative;
+    width: min(100%, calc(var(--w) * 1.55));
+    aspect-ratio: 1.55 / 1.62;
+    margin-inline: auto;
+  }
+  .sheet {
+    position: absolute;
+    top: 6%;
+    left: 50%;
+    width: calc(100% / 1.55);
+    aspect-ratio: 900 / 1273;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow:
+      0 0 0 1px rgb(20 26 46 / 0.08),
+      0 18px 40px -18px rgb(20 26 46 / 0.45);
+    transition: transform 0.35s;
+  }
+  .s0 {
+    z-index: 3;
+    transform: translateX(-50%) rotate(-2deg);
+  }
+  .s1 {
+    z-index: 2;
+    transform: translateX(-22%) rotate(7deg);
+  }
+  .s2 {
+    z-index: 1;
+    transform: translateX(-80%) rotate(-10deg);
+  }
+  .n2 .s0 {
+    transform: translateX(-62%) rotate(-4deg);
+  }
+  .n2 .s1 {
+    transform: translateX(-36%) rotate(6deg);
+  }
+  .stack:hover .s0 {
+    transform: translateX(-50%) rotate(0deg) translateY(-6px);
+  }
+  .n2:hover .s0 {
+    transform: translateX(-66%) rotate(-6deg) translateY(-4px);
+  }
+  .n2:hover .s1 {
+    transform: translateX(-30%) rotate(8deg);
+  }
+</style>

@@ -1,2 +1,8 @@
 # Cloudflare redirects — https://developers.cloudflare.com/workers/static-assets/redirects/
 /privacy /privacypolicy 301
+
+# The example game (Neon Snake) and the old Arcade category were removed when the site
+# became an engineering-games site. Send old links to the home page.
+/games/neon-snake / 301
+/category/arcade / 301
+/play/neon-snake/* / 301

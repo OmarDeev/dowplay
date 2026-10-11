@@ -8,8 +8,8 @@ export const GET: APIRoute = () =>
     description: SITE.description,
     start_url: '/',
     display: 'standalone',
-    background_color: '#0b0d17',
-    theme_color: '#0b0d17',
+    background_color: '#f6f8fc',
+    theme_color: '#ffffff',
     icons: [
       { src: '/favicon.svg', type: 'image/svg+xml', sizes: 'any' },
       { src: '/icon-512.png', type: 'image/png', sizes: '512x512' },

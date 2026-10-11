@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gear Garage</title>
+  <meta name="description" content="Link gears so the output turns at the right speed and direction. A mechanical engineering game for Years 8 to 13.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23ffb547' d='M14 2h4l1 4 3 1 3-2 3 3-2 3 1 3 4 1v4l-4 1-1 3 2 3-3 3-3-2-3 1-1 4h-4l-1-4-3-1-3 2-3-3 2-3-1-3-4-1v-4l4-1 1-3-2-3 3-3 3 2 3-1z'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%231d2533'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="site-back" href="/games/gear-garage" hidden>← DowPlay</a>
+    <div class="brand"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M14 2h4l1 4 3 1 3-2 3 3-2 3 1 3 4 1v4l-4 1-1 3 2 3-3 3-3-2-3 1-1 4h-4l-1-4-3-1-3 2-3-3 2-3-1-3-4-1v-4l4-1 1-3-2-3 3-3 3 2 3-1z"/><circle cx="16" cy="16" r="5"/></svg>Gear Garage</div>
+    <div class="level-name" id="levelName"></div>
+    <button type="button" class="btn" id="levelsButton">Levels</button>
+  </header>
+
+  <main class="layout">
+    <section class="play" aria-label="Gear builder">
+      <div class="toolbar" role="toolbar" aria-label="Gears">
+        <div class="tools" id="tools"></div>
+        <div class="toolbar-actions">
+          <button type="button" class="btn" id="undoButton" title="Undo (Ctrl+Z)">Undo</button>
+          <button type="button" class="btn" id="clearButton">Clear</button>
+          <label class="toggle"><input type="checkbox" id="numbersToggle"> <span>Show the numbers</span></label>
+        </div>
+      </div>
+
+      <div class="board-wrap">
+        <svg id="board" tabindex="0" role="application" aria-roledescription="pegboard"
+             aria-label="Pegboard. Arrow keys move between holes. Enter places the selected gear, Delete removes a gear."
+             aria-describedby="keyboardHelp">
+          <defs>
+            <pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="10" height="10" fill="#2a3240"/>
+              <rect width="4" height="10" fill="#343e4f"/>
+            </pattern>
+            <filter id="lift" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.55"/>
+            </filter>
+            <clipPath id="rackClip"><rect id="rackClipRect"/></clipPath>
+          </defs>
+          <g id="pegboard"></g>
+          <g id="scenery"></g>
+          <g id="objects"></g>
+          <g id="gears0"></g>
+          <g id="gears1"></g>
+          <g id="labels"></g>
+          <g id="overlay"></g>
+        </svg>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <p class="sr-only" id="keyboardHelp">Keyboard: arrow keys move between holes, Enter or Space places the selected gear (or removes the same size), Delete removes the gear at the cursor, number keys choose a gear size, E chooses the eraser, Ctrl+Z undoes.</p>
+      <p class="sr-only" aria-live="polite" id="announcer"></p>
+    </section>
+
+    <aside class="panel" aria-label="Mission">
+      <section class="card mission">
+        <p class="eyebrow" id="levelMeta"></p>
+        <h1 id="levelTitle"></h1>
+        <p id="story"></p>
+        <p class="goal" id="goal"></p>
+        <ol class="hints" id="hints"></ol>
+        <button type="button" class="btn btn-quiet" id="hintButton">Show a hint</button>
+      </section>
+
+      <section class="card" id="goalsCard">
+        <h2>Goals</h2>
+        <div id="goals"></div>
+      </section>
+
+      <section class="card">
+        <h2>Budget</h2>
+        <div class="budget">
+          <div class="budget-row"><span>Cost</span><strong id="cost"></strong></div>
+          <div class="meter" aria-hidden="true"><div class="meter-fill" id="meterFill"></div><div class="meter-par" id="meterPar"></div></div>
+          <p class="budget-note" id="budgetNote"></p>
+        </div>
+      </section>
+
+      <button type="button" class="btn btn-primary btn-big" id="checkButton">Check my gears</button>
+    </aside>
+  </main>
+
+  <dialog id="levelsDialog" aria-labelledby="levelsTitle">
+    <form method="dialog" class="dialog-body">
+      <h2 id="levelsTitle">Choose a level</h2>
+      <div class="level-list" id="levelList"></div>
+      <div class="dialog-actions"><button class="btn" value="close">Close</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="winDialog" aria-labelledby="winTitle">
+    <div class="dialog-body">
+      <h2 id="winTitle">It works!</h2>
+      <p class="stars" id="winStars"></p>
+      <p id="winCost"></p>
+      <h3>What you learned</h3>
+      <p id="winLearn"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="winStay">Improve my design</button>
+        <button type="button" class="btn btn-primary" id="winNext">Next level</button>
+      </div>
+    </div>
+  </dialog>
+
+  <noscript><p class="noscript">Gear Garage needs JavaScript turned on.</p></noscript>
+
+  <script src="js/gears.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/game.js"></script>
+  <script>
+    // Opened on its own on dowplay.com (not inside the site's player)? Show a way back to the website.
+    if (window.top === window.self && location.pathname.startsWith("/play/")) {
+      document.querySelector(".site-back").hidden = false;
+    }
+  </script>
+</body>
+</html>
