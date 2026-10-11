@@ -9,6 +9,7 @@ category: structures
 tags: [bridges, bridge builder, trusses, forces, tension, compression, buckling, cable-stayed, structural engineering]
 years: [8, 13]
 levels: 8
+saveKey: bridgeBuilder.v1
 featured: true
 learn:
   - Triangles make structures rigid

@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Light It Up · Teacher Pack · DowPlay</title>
+<meta name="pack-title" content="Light It Up">
+<!--
+  Light It Up teacher pack. One source for two PDFs:
+    pack.html           the full teacher pack
+    pack.html?student   the student worksheets only (no teacher pages, no answers)
+  Shared styles: ../shared/pack.css. Build with: node ../build-pdf.mjs light-it-up
+  Every number in here comes from the game itself; check-numbers.js re-checks them.
+-->
+<link rel="stylesheet" href="../shared/pack.css">
+<style>
+  /* circuit diagrams */
+  .cd { display: block; margin: 0 auto; }
+  .cd .w { fill: none; stroke: #151821; stroke-width: 2; stroke-linecap: round; }
+  .cd .t { font: 600 9px Helvetica, Arial, sans-serif; fill: #151821; text-anchor: middle; }
+  .cd .r { fill: #fff; stroke: #151821; stroke-width: 2; }
+  .diagrams { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin: 1mm 0 2mm 5mm; text-align: center; font-weight: 700; }
+</style>
+</head>
+<body>
+<script>
+  if (location.search.includes("student")) document.body.classList.add("student");
+</script>
+
+<!-- ======================================================= COVER -->
+<section class="page teacher">
+  <div class="cover-band">
+    <div class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</div>
+    <span class="eyebrow" style="color:#c8ff3d">Teacher pack</span>
+    <h1>Light It Up</h1>
+    <p class="sub">Wire up a house so every lamp lights: from complete circuits and switches to Ohm's law, fuses and cable losses.</p>
+    <span class="tag">UK Years 8–13</span><span class="tag">Ages 12–18</span><span class="tag">US grades 7–12</span><span class="tag">Physics · Electricity</span>
+  </div>
+  <img class="cover-img" src="img/game.png" alt="Light It Up: a battery wired to two glowing lamps in parallel across three rooms of a house">
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0">Inside this pack</h3>
+      <ol class="small" style="padding-left:4.5mm">
+        <li>Overview: learning outcomes, curriculum links, key words</li>
+        <li>How the game works (teacher background)</li>
+        <li>Level-by-level guide with 3-star solutions</li>
+        <li>Lesson 1: Series, parallel and switches (Years 8–9)</li>
+        <li>Lesson 2: Resistance, power and safety (Years 10–13)</li>
+        <li>Worksheet 1 and Worksheet 2 (photocopiable)</li>
+        <li>Answers and mark scheme</li>
+      </ol>
+    </div>
+    <div class="box soft" style="margin:0">
+      <h3 style="margin-top:0">Play it free</h3>
+      <p><b>dowplay.com/games/light-it-up</b></p>
+      <p class="small">Runs in any browser on Chromebooks, iPads, laptops and phones. No accounts, no ads, nothing to install. Progress is saved only on the device being used.</p>
+      <p class="small muted" style="margin:0">A separate PDF has the worksheets on their own, ready to print for students.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= OVERVIEW -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Light It Up · Teacher pack</span></div>
+  <span class="eyebrow">1 · Overview</span>
+  <h2>What students learn</h2>
+  <p>Light It Up turns circuit-building into a puzzle. Students wire up the rooms of a house so the lamps, appliances and gadgets work, within a budget. The game solves every circuit the way an electrical engineer would (nodal analysis), so the voltages and currents are real: lamps in series really do glow dimmer, and too much current really does blow the fuse. Its eight levels run from Year 8 to Year 13.</p>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">By the end, students can</h3>
+      <ul style="margin:0">
+        <li>explain why a circuit needs a <b>complete loop</b>, and what a switch does</li>
+        <li>compare <b>series and parallel</b> circuits: how voltage and current are shared</li>
+        <li>use <b>V = I × R</b> to choose a resistor, and add resistances in series</li>
+        <li>use <b>I = P ÷ V</b> to work out currents, and explain what a <b>fuse</b> does</li>
+        <li>design a <b>potential divider</b> and explain loading</li>
+        <li>explain why big currents need thick cables (<b>P = I² × R</b>)</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">You will need</h3>
+      <ul style="margin:0 0 2mm">
+        <li>One device per pair (any browser)</li>
+        <li>A projector for the starters</li>
+        <li>Worksheet 1 or 2 for each student</li>
+      </ul>
+      <h3>Timing</h3>
+      <p style="margin:0">Each lesson plan fills 60 minutes. The levels also work as a homework or a club activity: each takes 5–15 minutes.</p>
+    </div>
+  </div>
+
+  <h2>Curriculum links</h2>
+  <table>
+    <tr><th style="width:30%">Course</th><th>Content</th><th style="width:16%">Levels</th></tr>
+    <tr><td>KS3 Science (England)</td><td>Current in series and parallel circuits; currents add where branches meet; potential difference in volts; battery and bulb ratings; resistance as the ratio of potential difference to current</td><td>1–5</td></tr>
+    <tr><td>GCSE Physics / Combined Science</td><td>Circuit symbols; V = I R; series and parallel circuits; power (P = I V, P = I² R); domestic electricity, fuses and safety; why the National Grid transmits at high voltage</td><td>2–8</td></tr>
+    <tr><td>A-level Physics</td><td>Potential dividers and loading; resistance of wires and power losses</td><td>7–8</td></tr>
+    <tr><td>US (NGSS)</td><td>MS-ETS1-1, MS-ETS1-2, HS-ETS1-3: designing solutions within criteria and constraints, such as cost and safety</td><td>All</td></tr>
+  </table>
+  <div class="box soft small">
+    <b>Safety note.</b> The game uses low-voltage batteries. Remind students that mains electricity (230 V in the UK) is dangerous and must never be experimented with.
+  </div>
+</section>
+
+<!-- ======================================================= HOW THE GAME WORKS -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Light It Up · Teacher pack</span></div>
+  <span class="eyebrow">2 · Teacher background</span>
+  <h2>How the game works</h2>
+  <div class="box key">
+    <p><b>The board is a real circuit:</b></p>
+    <ol style="margin:0">
+      <li>Every part sits between two junctions on the grid, and everything touching a junction is connected.</li>
+      <li>The game works out the voltage at every junction and the current in every part, the way engineers analyse circuits.</li>
+      <li>If a battery gives more current than its fuse allows, the <b>fuse blows</b>. If a lamp or appliance gets more than 135% of its rated voltage, it <b>burns out</b>.</li>
+    </ol>
+  </div>
+  <p>A lamp or appliance counts as <b>working</b> when its voltage is within 20% of its rating (within 10% on levels 5, 6 and 8). Below 10% of its rating, it's off.</p>
+
+  <h3>The parts</h3>
+  <table>
+    <tr><th>Part</th><th>What it does</th><th>Notes</th></tr>
+    <tr><td>Battery or supply</td><td>A fixed voltage: 6, 9 or 12 V</td><td>Each has a fuse (5 A, 3 A, 2 A, 100 mA…) and a tiny internal resistance (0.05 Ω)</td></tr>
+    <tr><td>Lamp, appliance</td><td>Rated voltage and power, e.g. 6 V, 3 W</td><td>Resistance = V² ÷ P, so a 6 V, 3 W lamp is 12 Ω</td></tr>
+    <tr><td>Doorbell</td><td>Needs 2.8–3.2 V</td><td>A fixed 1 kΩ resistance</td></tr>
+    <tr><td>Wire</td><td>£1 per grid section</td><td>0.01 Ω per section (Power to the Shed: thin wire 0.1 Ω; thick cable 0.01 Ω at £3)</td></tr>
+    <tr><td>Resistor</td><td>£3 each</td><td>2, 4, 10, 12, 22, 47 or 100 Ω, depending on the level</td></tr>
+    <tr><td>Switch</td><td>Tap to open or close</td><td>Part of the level; circuits are tested both ways</td></tr>
+  </table>
+
+</section>
+
+<!-- ======================================================= READING THE SCREEN, KEY WORDS -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Light It Up · Teacher pack</span></div>
+  <span class="eyebrow">2 · Teacher background (continued)</span>
+  <div class="grid2">
+    <div>
+      <h2>Reading the screen</h2>
+      <p>Wires glow and dots flow where current runs, and each room lights up when its lamps work. Ticking <b>Show the numbers</b> labels every lamp, appliance and resistor with its voltage and current, and the battery with the current it gives. The figures on the worksheets are taken straight from that view.</p>
+    </div>
+    <div>
+      <h2>Stars</h2>
+      <p>1 star for a working circuit, 2 for staying within the budget, 3 for matching the cheapest design we know. Students sometimes match it with a different layout.</p>
+      <h2 style="margin-top:6mm">What the model leaves out</h2>
+      <p>Real lamp filaments get hotter and their resistance rises; in the game it's fixed. Real batteries run down, fuses take time to blow, and homes use alternating current (AC) at 230 V. Good discussion points with older students.</p>
+    </div>
+  </div>
+
+  <h2 style="margin-top:6mm">Key words</h2>
+  <table>
+    <tr><td style="width:17%"><b>Current (A)</b></td><td style="width:33%">The flow of charge, measured in amps.</td><td style="width:19%"><b>Series</b></td><td>Components on one path, one after another. They share the voltage.</td></tr>
+    <tr><td><b>Voltage (V)</b></td><td>Potential difference: the push from the battery, in volts.</td><td><b>Parallel</b></td><td>Components on separate branches. Each gets the full voltage.</td></tr>
+    <tr><td><b>Resistance (Ω)</b></td><td>How much a component opposes current. R = V ÷ I.</td><td><b>Fuse</b></td><td>Melts and breaks the circuit if the current is too big.</td></tr>
+    <tr><td><b>Power (W)</b></td><td>Energy transferred each second. P = I × V.</td><td><b>Potential divider</b></td><td>Two resistances in series that share a voltage to give a smaller one.</td></tr>
+  </table>
+</section>
+
+<!-- ======================================================= LEVEL GUIDE -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Light It Up · Teacher pack</span></div>
+  <span class="eyebrow">3 · Level guide</span>
+  <h2>Level by level</h2>
+  <p class="small muted">"3 stars" is the cheapest design we know. Keep it to yourself until students have had a go: the fun is in the search.</p>
+
+  <div class="level">
+    <div class="level-top"><span class="num">1</span><h3>Lights On</h3><span class="yrs">Year 8 · A complete loop</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>A single wire from the battery to the lamp, or a gap at a corner.</dd>
+      <dt>3 stars, £8</dt><dd>A loop of 8 wire sections: one along the top and one along the bottom.</dd>
+      <dt>Ask</dt><dd>"If you cut the bottom wire, what happens, and why?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">2</span><h3>Two Rooms</h3><span class="yrs">Year 8 · Series vs parallel</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>The lamps in a chain (series): both glow dimly at 3 V each.</dd>
+      <dt>3 stars, £12</dt><dd>Each lamp joined straight to both battery wires (parallel). The battery then gives 0.98 A, about 0.49 A to each lamp.</dd>
+      <dt>Ask</dt><dd>"Why does the battery give twice as much current now?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">3</span><h3>The Hall Switch</h3><span class="yrs">Years 8–9 · Switches in branches</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>The switch in the main loop, so it turns both lamps off.</dd>
+      <dt>3 stars, £16</dt><dd>The kitchen lamp on its own loop; only the hall lamp's return wire goes through the switch.</dd>
+      <dt>Ask</dt><dd>"Where would you put a master switch that turns everything off?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">4</span><h3>Twelve Volts</h3><span class="yrs">Year 9 · Voltage shared in series</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>The lamps in parallel straight across 12 V: each gets twice its rating and burns out.</dd>
+      <dt>3 stars, £15</dt><dd>The two lamps in series, 6 V each. The 12 Ω resistor isn't needed.</dd>
+      <dt>Ask</dt><dd>"What would three of these lamps in series on 12 V get?" (4 V each: too dim.)</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">5</span><h3>Pick the Resistor</h3><span class="yrs">Year 10 · Ohm's law; resistors in series</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>No resistor (the lamp gets 9 V and burns out), or a 10 Ω or 22 Ω resistor (too dim).</dd>
+      <dt>3 stars, £14</dt><dd>A 2 Ω and a 4 Ω resistor in series with the lamp: 5.96 V and 0.50 A for the lamp.</dd>
+      <dt>Ask</dt><dd>"How much power does the resistor waste?" (About 1.5 W.)</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">6</span><h3>Two Fuses</h3><span class="yrs">Years 10–11 · I = P ÷ V; currents add</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>The heater and fridge on one circuit (3.5 A blows the 3 A fuse), or circuits A and B joined together.</dd>
+      <dt>3 stars, £16</dt><dd>The heater alone on circuit A (2 A); the fridge, TV and lamp on circuit B (2.75 A).</dd>
+      <dt>Ask</dt><dd>"Why would fitting a bigger fuse be dangerous?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">7</span><h3>Smart Doorbell</h3><span class="yrs">Years 11–13 · Potential dividers; loading</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Small resistors, which draw too much current and blow the 100 mA fuse; forgetting that the doorbell pulls the output voltage down.</dd>
+      <dt>3 stars, £21</dt><dd>Two 47 Ω resistors in series on top and one 47 Ω below: the doorbell gets 2.91 V and the battery gives 65 mA.</dd>
+      <dt>Ask</dt><dd>"Why is the output 2.91 V and not exactly 3 V?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">8</span><h3>Power to the Shed</h3><span class="yrs">Years 12–13 · Cable resistance and losses</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Thin wire on the heater's long loop (the heater gets well under 10.8 V), or thick cable everywhere (over budget).</dd>
+      <dt>3 stars, £76</dt><dd>Thick cable for the heater's loop (23 sections) and thin wire for the lamp's short loop (7): heater 10.9 V, lamp 11.3 V.</dd>
+      <dt>Ask</dt><dd>"Why does the heater's loop need thick cable when the lamp's doesn't?"</dd>
+    </dl>
+  </div>
+</section>
+
+<!-- ======================================================= LESSON 1 -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Light It Up · Teacher pack</span></div>
+  <span class="eyebrow">4 · Lesson plan · Years 8–9 · 60 minutes</span>
+  <h2>Lesson 1: Series, parallel and switches</h2>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">Objectives</h3>
+      <ul style="margin:0">
+        <li>Explain why a circuit needs a complete loop.</li>
+        <li>Compare series and parallel circuits.</li>
+        <li>Explain where to put a switch to control one lamp.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Resources</h3>
+      <ul style="margin:0">
+        <li>Worksheet 1 (one each)</li>
+        <li>Devices, one per pair</li>
+        <li>Light It Up on the projector</li>
+      </ul>
+    </div>
+  </div>
+  <table class="steps">
+    <tr><th>Time</th><th>Activity</th></tr>
+    <tr><td>Starter<br>10 min</td><td>Open <b>Level 1, Lights On</b>. Lay one wire from the battery to the lamp: nothing happens. Ask why. Complete the loop and it lights. Then open <b>Level 2, Two Rooms</b> and ask: "If I chain the two lamps one after the other, how bright will they be?" Build it: both are dim. Then wire them in parallel: both are bright.</td></tr>
+    <tr><td>Main 1<br>15 min</td><td><b>Worksheet 1, Part A</b>: which circuits work, series and parallel voltages, and why a 6 V lamp burns out on 12 V.</td></tr>
+    <tr><td>Main 2<br>25 min</td><td>Pairs play <b>levels 1–4</b> and fill in the record table (Part B). Before pressing Check, one partner predicts what will happen. Circulate and ask: "Is that part in series or in parallel?"</td></tr>
+    <tr><td>Plenary<br>10 min</td><td><b>Part C</b> together: the Two Rooms numbers. Currents add where branches meet (0.49 A + 0.49 A = 0.98 A). Exit ticket: <i>why are the lights in a house wired in parallel?</i></td></tr>
+  </table>
+  <div class="grid2">
+    <div class="box">
+      <h3 style="margin-top:0">Support</h3>
+      <p style="margin:0">Use the in-game hints. For Two Rooms, ask students to trace each lamp's loop with a finger: does each lamp have its own path to both sides of the battery?</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Stretch</h3>
+      <p style="margin:0">Tick Show the numbers and explain every value. Try Level 5, Pick the Resistor. Go for 3 stars on The Hall Switch (£16).</p>
+    </div>
+  </div>
+  <div class="box soft">
+    <h3 style="margin-top:0">Misconceptions to listen for</h3>
+    <ul style="margin:0">
+      <li>"The lamp uses up the current." In series, the same current flows all the way round; the lamp transfers energy, not current.</li>
+      <li>"A battery always gives the same current." It gives whatever the circuit draws: two lamps in parallel draw twice as much.</li>
+      <li>"A switch must be next to the lamp it controls." It just has to be in that lamp's branch.</li>
+    </ul>
+  </div>
+  <p><b>Homework:</b> Worksheet 1, Part D, and get 3 stars on Level 2.</p>
+</section>
+
+<!-- ======================================================= LESSON 2 -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Light It Up · Teacher pack</span></div>
+  <span class="eyebrow">5 · Lesson plan · Years 10–13 · 60 minutes</span>
+  <h2>Lesson 2: Resistance, power and safety</h2>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">Objectives</h3>
+      <ul style="margin:0">
+        <li>Use V = I R and I = P ÷ V in circuit design.</li>
+        <li>Explain how fuses protect circuits.</li>
+        <li>Design a potential divider; explain why thick cables carry big currents.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Resources</h3>
+      <ul style="margin:0">
+        <li>Worksheet 2 (one each)</li>
+        <li>Devices, one per pair</li>
+        <li>Light It Up on the projector</li>
+      </ul>
+    </div>
+  </div>
+  <table class="steps">
+    <tr><th>Time</th><th>Activity</th></tr>
+    <tr><td>Starter<br>10 min</td><td>Show <b>Level 5, Pick the Resistor</b>. "The lamp needs 6 V and 0.5 A, and the battery gives 9 V. What resistor do we need?" Take answers, then show that the box has no 6 Ω resistor. How can 2 Ω and 4 Ω help? Build it with Show the numbers ticked.</td></tr>
+    <tr><td>Main 1<br>15 min</td><td><b>Worksheet 2, questions 1–3</b>: Ohm's law, reading the game's numbers, and fuse currents.</td></tr>
+    <tr><td>Main 2<br>25 min</td><td>Pairs play <b>levels 5–8</b> (Years 10–11 mainly levels 5–6; Years 12–13 levels 7–8). Use questions 4–5 to guide Smart Doorbell and Power to the Shed.</td></tr>
+    <tr><td>Plenary<br>10 min</td><td>Plan <b>question 6</b> together: how house wiring is made safe and efficient. Finish it as homework.</td></tr>
+  </table>
+  <div class="grid2">
+    <div class="box">
+      <h3 style="margin-top:0">Support</h3>
+      <p style="margin:0">Give students the formula triangle for V = I R. In Two Fuses, have them write each appliance's current next to it before wiring anything.</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Stretch</h3>
+      <p style="margin:0">Smart Doorbell: calculate the loaded output before building. Power to the Shed: find the most thin wire the heater's loop can have and still get 10.8 V.</p>
+    </div>
+  </div>
+  <div class="box soft">
+    <h3 style="margin-top:0">Misconceptions to listen for</h3>
+    <ul style="margin:0">
+      <li>"A bigger fuse is safer." A fuse must blow before the cable overheats, so it must be only just above the normal current.</li>
+      <li>"Resistors use up current." The current is the same all round a series loop; the resistor takes some of the voltage.</li>
+      <li>"Thick wire has more resistance because there's more of it." Thicker wire has <i>less</i> resistance.</li>
+    </ul>
+  </div>
+  <p><b>Homework:</b> Worksheet 2, question 6 (6 marks).</p>
+</section>
+
+<!-- ======================================================= WORKSHEET 1 -->
+<section class="page">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Light It Up · Worksheet 1 · Years 8–9</span></div>
+  <h2>Series and parallel</h2>
+  <div class="ws-head"><span>Name:</span><span>Class:</span><span>Date:</span></div>
+  <div class="box soft keep">
+    A circuit only works if there is a <b>complete loop</b> from one side of the battery to the other.<br>
+    <b>Series:</b> one path. Components share the battery's voltage. &nbsp; <b>Parallel:</b> separate paths. Each component gets the full voltage.
+  </div>
+
+  <h3>Part A · Circuits</h3>
+  <div class="q"><p><span class="qn">A1</span>Which of these circuits will light the lamp? Explain your answer. <span class="marks">[2]</span></p>
+    <div class="diagrams">
+      <div>
+        <svg class="cd" width="150" height="92" viewBox="0 0 150 92">
+          <path class="w" d="M20 46V12H130V36M130 56V80H20V54"/>
+          <path class="w" d="M10 42H30M14 50H26" stroke-width="3"/>
+          <circle class="r" cx="130" cy="46" r="10"/><path class="w" d="M123 39l14 14M137 39l-14 14"/>
+        </svg>(a)</div>
+      <div>
+        <svg class="cd" width="150" height="92" viewBox="0 0 150 92">
+          <path class="w" d="M20 46V12H130V36M130 56V70M20 54V80H60"/>
+          <path class="w" d="M10 42H30M14 50H26" stroke-width="3"/>
+          <circle class="r" cx="130" cy="46" r="10"/><path class="w" d="M123 39l14 14M137 39l-14 14"/>
+        </svg>(b)</div>
+      <div>
+        <svg class="cd" width="150" height="92" viewBox="0 0 150 92">
+          <path class="w" d="M20 46V12H130V36M130 56V80H95M68 80H20V54"/>
+          <path class="w" d="M68 80l24 -12"/><circle cx="68" cy="80" r="2.5" fill="#151821"/><circle cx="95" cy="80" r="2.5" fill="#151821"/>
+          <path class="w" d="M10 42H30M14 50H26" stroke-width="3"/>
+          <circle class="r" cx="130" cy="46" r="10"/><path class="w" d="M123 39l14 14M137 39l-14 14"/>
+        </svg>(c)</div>
+    </div>
+    <div class="lines" style="--n:2"></div></div>
+  <div class="q parts"><p><span class="qn">A2</span>Two identical 6 V lamps are connected to a 6 V battery.</p>
+    <div class="sub"><p>a) In series, what voltage does each lamp get? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) In parallel, what voltage does each lamp get? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) Which way are the lamps brighter? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div></div>
+  <div class="q parts"><p><span class="qn">A3</span>In <b>Twelve Volts</b>, two 6 V lamps must work on a 12 V supply.</p>
+    <div class="sub"><p>a) How should the lamps be connected? Explain why. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+    <div class="sub"><p>b) What would happen to a 6 V lamp connected straight across 12 V? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div></div>
+  <div class="q parts"><p><span class="qn">A4</span>A 6 V, 3 W lamp takes 0.5 A from a 6 V battery.</p>
+    <div class="sub"><p>a) Two of these lamps are connected in parallel to the battery. How much current does the battery give? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) Why does adding a lamp in parallel make the battery give more current? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div></div>
+
+  <div class="keep">
+  <h3>Part B · Play levels 1 to 4</h3>
+  <p class="small">Before you press <b>Check my circuit</b>, predict what will happen. Record your best design for each level.</p>
+  <table class="record">
+    <tr><th style="width:9%">Level</th><th style="width:31%">What I built</th><th style="width:11%">Cost</th><th style="width:11%">Stars</th><th>What went wrong, and how I fixed it</th></tr>
+    <tr><td>1</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>2</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>3</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>4</td><td></td><td>£</td><td></td><td></td></tr>
+  </table>
+  </div>
+
+  <div class="keep">
+  <h3>Part C · Read the numbers</h3>
+  <p>This is <b>Two Rooms</b> with both lamps in parallel and <b>Show the numbers</b> ticked. Each label shows the voltage and the current.</p>
+  <img class="chart-img" src="img/two-rooms.png" alt="Two Rooms: a 6 V battery giving 0.98 A to two lamps in parallel, each at about 5.9 V and 0.49 A">
+  </div>
+  <div class="q"><p><span class="qn">C1</span>What current does each lamp take? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+  <div class="q"><p><span class="qn">C2</span>What current does the battery give? How does it compare with the lamps' currents? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+  <div class="q"><p><span class="qn">C3</span>The lamps get 5.89 V and 5.86 V, not quite 6 V. Suggest why. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+  <div class="q"><p><span class="qn">C4</span>Where would you put a switch to turn off only the bedroom lamp? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+
+  <h3>Part D · Explain</h3>
+  <div class="q"><p><span class="qn">D1</span>The lights in a house are wired in parallel, not in series. Give three reasons why. <span class="marks">[3]</span></p><div class="lines" style="--n:7"></div></div>
+</section>
+
+<!-- ======================================================= WORKSHEET 2 -->
+<section class="page">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Light It Up · Worksheet 2 · Years 10–13</span></div>
+  <h2>Resistance, power and safety</h2>
+  <div class="ws-head"><span>Name:</span><span>Class:</span><span>Date:</span></div>
+  <div class="box soft keep small">
+    V = I × R &nbsp;·&nbsp; P = I × V &nbsp;·&nbsp; P = I² × R &nbsp;·&nbsp; resistors in series: R = R₁ + R₂ &nbsp;·&nbsp; resistors in parallel: 1/R = 1/R₁ + 1/R₂<br>
+    Potential divider: V<sub>out</sub> = V<sub>in</sub> × R₂ ÷ (R₁ + R₂)
+  </div>
+
+  <div class="q parts"><p><span class="qn">1</span><b>Pick the Resistor.</b> A desk lamp needs 6 V and takes 0.5 A. The battery gives 9 V.</p>
+    <div class="sub"><p>a) What voltage must a resistor in series with the lamp take? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) What resistance does it need? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) The box has 2 Ω, 4 Ω, 10 Ω and 22 Ω resistors. How can you make the resistance you need? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>d) How much power does the resistor waste as heat? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div></div>
+
+  <div class="keep">
+  <p><span class="qn" style="font-weight:800; margin-right:1.5mm">2</span><b>Read the numbers.</b> This is the finished Pick the Resistor circuit, with Show the numbers ticked.</p>
+  <img class="chart-img" src="img/pick-resistor.png" alt="Pick the Resistor: a 9 V battery giving 0.50 A through a 2 Ω resistor (0.99 V), a 4 Ω resistor (1.99 V) and a desk lamp (5.96 V, 0.50 A)">
+  </div>
+  <div class="q parts">
+    <div class="sub"><p>a) Add up the voltages across the two resistors and the lamp. Compare the total with 9 V, and explain any difference. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+    <div class="sub"><p>b) Use the numbers to work out the lamp's resistance. Check it against its rating (6 V, 3 W). <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="q parts"><p><span class="qn">3</span><b>Two Fuses.</b> Two 12 V circuits each have a 3 A fuse. The appliances are a 24 W heater, an 18 W fridge, a 12 W TV and a 3 W lamp.</p>
+    <div class="sub"><p>a) Work out the current each appliance takes. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+    <div class="sub"><p>b) Explain why the heater and the fridge can't share a circuit. <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) Suggest a way to share the four appliances between the two circuits. <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>d) Why is it dangerous to replace a 3 A fuse with a 13 A fuse? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="q parts"><p><span class="qn">4</span><b>Smart Doorbell.</b> A 9 V battery feeds a potential divider: R₁ = 94 Ω (two 47 Ω in series) on top and R₂ = 47 Ω below. The battery has a 100 mA fuse.</p>
+    <div class="sub"><p>a) With nothing connected, what is the output voltage across R₂? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) What current flows through the divider? Is it safe for the fuse? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) The 1 kΩ doorbell is connected across R₂. Work out the combined resistance of R₂ and the doorbell, and the new output voltage. <span class="marks">[3]</span></p><div class="lines" style="--n:3"></div></div>
+    <div class="sub"><p>d) Why wouldn't a 22 Ω resistor on top and a 10 Ω resistor below work? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="q parts"><p><span class="qn">5</span><b>Power to the Shed.</b> The shed heater is rated 12 V, 36 W. Assume its current stays the same.</p>
+    <div class="sub"><p>a) What current does the heater take? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) Its loop is 20 sections of thin wire, 0.1 Ω each. What is the loop's resistance, and how much voltage is lost in it? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) Repeat (b) for thick cable at 0.01 Ω per section. <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>d) Use P = I² × R to work out the power wasted in each loop. <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>e) Explain why the National Grid sends electricity at very high voltages. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="q"><p><span class="qn">6</span><b>Evaluate.</b> Evaluate how the wiring of a house is designed to be safe and efficient. Refer to parallel circuits, fuses and cable thickness, and use evidence from Light It Up. <span class="marks">[6]</span></p>
+    <div class="lines" style="--n:14"></div>
+    <p class="small muted" style="margin-left:5mm">Continue on lined paper if you need more space.</p></div>
+</section>
+
+<!-- ======================================================= ANSWERS -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Light It Up · Answers</span></div>
+  <span class="eyebrow">7 · Answers</span>
+  <h2>Worksheet 1 answers</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0">Part A</h3>
+      <p class="ans"><b>A1</b><b>(a) only</b> (1). (b) has no complete loop: the lamp isn't joined back to the battery; in (c) the open switch breaks the loop (1).</p>
+      <p class="ans"><b>A2</b>a) <b>3 V</b> each (they share the 6 V).<br>b) <b>6 V</b> each.<br>c) <b>In parallel.</b></p>
+      <p class="ans"><b>A3</b>a) <b>In series</b> (1): the lamps share the 12 V, so each gets the 6 V it needs (1).<br>b) It gets 12 V, twice its rating, and <b>burns out</b>.</p>
+      <p class="ans"><b>A4</b>a) 0.5 + 0.5 = <b>1 A</b>.<br>b) Each branch takes its own current, and the currents add where the branches meet.</p>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Part C</h3>
+      <p class="ans"><b>C1</b><b>0.49 A</b> each.</p>
+      <p class="ans"><b>C2</b><b>0.98 A</b> (1): the sum of the two lamp currents, because currents add where branches meet (1).</p>
+      <p class="ans"><b>C3</b>The wires and the battery have a small resistance (1), so a little of the voltage is lost in them before it reaches the lamps; the bedroom lamp is further away, so it loses slightly more (1).</p>
+      <p class="ans"><b>C4</b>In the bedroom lamp's own branch, between the lamp and the point where its wires join the main loop.</p>
+      <h3>Part D</h3>
+      <p class="ans"><b>D1</b>Any three: every lamp gets the full voltage, so all are bright; each lamp can be switched on and off on its own; if one lamp breaks, the others stay on; adding more lamps doesn't make the others dimmer.</p>
+    </div>
+  </div>
+  <div class="box soft" style="margin-top:8mm">
+    <h3 style="margin-top:0">More from DowPlay</h3>
+    <p style="margin:0">Free engineering games for ages 12–18: <b>Gear Garage</b> (gears and machines), <b>Bridge Builder</b> (structures) and <b>Grid Manager</b> (energy), each with a free teacher pack. Ideas for new games? Get in touch at <b>dowplay.com/about#contact</b>.</p>
+  </div>
+</section>
+
+<!-- ======================================================= ANSWERS, WORKSHEET 2 -->
+<section class="teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Light It Up · Answers</span></div>
+  <h2>Worksheet 2 answers</h2>
+  <div class="grid2">
+    <div>
+      <p class="ans"><b>1</b>a) 9 − 6 = <b>3 V</b>.<br>b) R = V ÷ I = 3 ÷ 0.5 = <b>6 Ω</b>.<br>c) <b>2 Ω and 4 Ω in series</b> (2 + 4 = 6 Ω).<br>d) P = I × V = 0.5 × 3 = <b>1.5 W</b>.</p>
+      <p class="ans"><b>2</b>a) 0.99 + 1.99 + 5.96 = <b>8.94 V</b> (1). The other 0.06 V is lost in the wires and the battery's internal resistance (1).<br>b) R = 5.96 ÷ 0.50 = <b>11.9 Ω</b> (1); the rating gives V² ÷ P = 36 ÷ 3 = 12 Ω, which matches (1).</p>
+      <p class="ans"><b>3</b>a) I = P ÷ V: heater <b>2 A</b>, fridge <b>1.5 A</b>, TV <b>1 A</b>, lamp <b>0.25 A</b>.<br>b) Together they take 3.5 A, more than the 3 A fuse.<br>c) For example, the heater alone on one circuit (2 A) and the fridge, TV and lamp on the other (2.75 A). Any split with no circuit over 3 A.<br>d) The fuse must blow before the cable overheats (1); a 13 A fuse would let a fault current flow that could overheat the wiring and start a fire (1).</p>
+    </div>
+    <div>
+      <p class="ans"><b>4</b>a) 9 × 47 ÷ (94 + 47) = <b>3.0 V</b>.<br>b) 9 ÷ 141 = 0.064 A = <b>64 mA</b>, under the 100 mA fuse, so safe.<br>c) 1 ÷ (1/47 + 1/1000) = <b>44.9 Ω</b> (1); V<sub>out</sub> = 9 × 44.9 ÷ (94 + 44.9) = <b>2.91 V</b> (2), inside the 2.8–3.2 V range. (The game shows 2.91 V.)<br>d) 9 ÷ (22 + 10) = 0.28 A, which blows the 100 mA fuse (1); small resistors draw too much current (1). (With the doorbell connected its output would also be too low: 2.79 V.)</p>
+      <p class="ans"><b>5</b>a) 36 ÷ 12 = <b>3 A</b>.<br>b) 20 × 0.1 = <b>2 Ω</b>; 3 × 2 = <b>6 V</b> lost.<br>c) 0.2 Ω; <b>0.6 V</b> lost.<br>d) Thin: 3² × 2 = <b>18 W</b>; thick: 3² × 0.2 = <b>1.8 W</b>.<br>e) For the same power, a higher voltage means a smaller current (1); the power wasted in cables is I² R, so a smaller current wastes far less (1).</p>
+    </div>
+  </div>
+
+  <h2 style="margin-top:6mm">Question 6 mark scheme (6 marks)</h2>
+  <table>
+    <tr><th style="width:18%">Level</th><th>Description</th></tr>
+    <tr><td><b>3</b> (5–6 marks)</td><td>A detailed evaluation of parallel wiring, fuses and cable thickness, linking each to safety or efficiency with evidence from the game (numbers or levels). Reaches a justified conclusion.</td></tr>
+    <tr><td><b>2</b> (3–4 marks)</td><td>Explains at least two features with some evidence. The conclusion is partial or not fully justified.</td></tr>
+    <tr><td><b>1</b> (1–2 marks)</td><td>Simple statements about one or two features, with little explanation.</td></tr>
+    <tr><td>0</td><td>Nothing worthy of credit.</td></tr>
+  </table>
+  <div class="keep">
+  <h3>Indicative content</h3>
+  <div class="grid3">
+    <div class="box">
+      <b>Parallel circuits</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>Every appliance gets the full voltage</li>
+        <li>Each can be switched on its own</li>
+        <li>One fault doesn't stop the others (Two Rooms, The Hall Switch)</li>
+      </ul>
+    </div>
+    <div class="box">
+      <b>Fuses</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>Break the circuit if the current is too big</li>
+        <li>Rated just above the normal current (Two Fuses: 3 A for 2.75 A)</li>
+        <li>Protect the cables from overheating and fire</li>
+      </ul>
+    </div>
+    <div class="box">
+      <b>Cable thickness</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>Thick cable has less resistance</li>
+        <li>Big currents need it: losses are I² R (Power to the Shed: 18 W vs 1.8 W)</li>
+        <li>Thicker cable costs more, so it's used only where needed</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+  <p class="small">Credit references to earth wires, circuit breakers and RCDs, and to the National Grid's high transmission voltages.</p>
+
+</section>
+
+</body>
+</html>

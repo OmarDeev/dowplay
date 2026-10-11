@@ -85,7 +85,7 @@ const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] 
         <div class="cta">
           {
             spotlight && (
-              <a class="btn btn-primary btn-lg" href={gameUrl(spotlight)}>
+              <a class="btn btn-primary btn-lg" href={`${gameUrl(spotlight)}#play`}>
                 <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
                   <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
                 </svg>
@@ -105,7 +105,7 @@ const jsonLd = [website(), organization(), ...(games.length ? [gameList(games)] 
       {
         spotlight && (
           <div class="art">
-            <a class="window" href={gameUrl(spotlight)} aria-label={`Play ${spotlight.data.title}`}>
+            <a class="window" href={`${gameUrl(spotlight)}#play`} aria-label={`Play ${spotlight.data.title}`}>
               <span class="window-bar" aria-hidden="true">
                 <i />
                 <i />

@@ -9,6 +9,7 @@ category: mechanics
 tags: [gears, gear ratio, gear train, torque, mechanisms, idler gear, compound gears, rack and pinion, efficiency]
 years: [8, 13]
 levels: 8
+saveKey: gearGarage.v1
 learn:
   - Meshing gears turn in opposite directions
   - Idler gears change direction, not speed

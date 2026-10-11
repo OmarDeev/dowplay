@@ -12,11 +12,11 @@ interface Props {
 }
 
 const { game, eager = false, as: Heading = 'h3' } = Astro.props;
-const { title, tagline, cover, coverAlt, category, years, levels, teacherPack } = game.data;
+const { title, tagline, cover, coverAlt, category, years, levels, teacherPack, saveKey } = game.data;
 const who = audienceOf(years);
 ---
 
-<a class="card" href={gameUrl(game)} data-topic={category}>
+<a class="card" href={gameUrl(game)} data-topic={category} data-save-key={saveKey} data-levels={levels}>
   <div class="thumb">
     <Image
       src={cover}
@@ -25,6 +25,7 @@ const who = audienceOf(years);
       sizes="(max-width: 560px) 92vw, (max-width: 1000px) 46vw, 290px"
       loading={eager ? 'eager' : 'lazy'}
     />
+    <span class="mine" data-card-progress hidden></span>
     <span class="play" aria-hidden="true">
       <svg viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z"></path></svg>
       Play
@@ -52,6 +53,21 @@ const who = audienceOf(years);
     }
   </div>
 </a>
+
+<script>
+  import { readProgress } from '../lib/progress';
+
+  // Returning players see their stars on the games they've played
+  for (const badge of document.querySelectorAll<HTMLElement>('[data-card-progress]')) {
+    const card = badge.closest<HTMLElement>('[data-save-key]');
+    const levels = Number(card?.dataset.levels) || 0;
+    const progress = readProgress(card?.dataset.saveKey, levels);
+    if (!progress) continue;
+    badge.innerHTML = `<span aria-hidden="true">★</span> ${progress.stars}/${levels * 3}<span class="visually-hidden"> stars so far</span>`;
+    badge.title = `You're on level ${progress.level} of ${levels}`;
+    badge.hidden = false;
+  }
+</script>
 
 <style>
   .card {
@@ -91,6 +107,24 @@ const who = audienceOf(years);
   }
   .card:hover .thumb img {
     transform: scale(1.04);
+  }
+  .mine {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: var(--brand);
+    color: var(--brand-ink);
+    font-size: 0.8rem;
+    font-weight: 800;
+    box-shadow: 0 4px 12px -4px rgb(20 26 46 / 0.6);
+  }
+  .mine[hidden] {
+    display: none;
   }
   .play {
     position: absolute;

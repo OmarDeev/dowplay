@@ -27,6 +27,9 @@ const games = defineCollection({
       years: z.tuple([z.number().int().min(1).max(13), z.number().int().min(1).max(13)]).optional(),
       // How many levels the game has
       levels: z.number().int().positive().optional(),
+      // The localStorage key the game saves progress under ({ stars, last }), so the site can
+      // show returning players their progress, e.g. "bridgeBuilder.v1"
+      saveKey: z.string().optional(),
       // What students learn: short phrases, shown on the game page and in structured data
       learn: z.array(z.string()).default([]),
       // Curriculum links, e.g. "GCSE Physics: series and parallel circuits"

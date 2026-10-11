@@ -8,7 +8,10 @@
     "build": "astro build",
     "preview": "astro build && wrangler dev",
     "deploy": "astro build && wrangler deploy",
-    "check": "astro check"
+    "check": "astro check",
+    "packs": "node teacher-packs/build-pdf.mjs",
+    "check:packs": "node teacher-packs/light-it-up/check-numbers.cjs && node teacher-packs/gear-garage/check-numbers.cjs && node teacher-packs/bridge-builder/check-numbers.cjs && node teacher-packs/grid-manager/check-numbers.cjs",
+    "check:levels": "node games/light-it-up/check-levels.cjs && node games/gear-garage/check-levels.cjs && node games/bridge-builder/check-levels.cjs && node games/grid-manager/check-levels.cjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

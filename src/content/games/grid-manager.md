@@ -9,6 +9,7 @@ category: energy
 tags: [renewable energy, solar power, wind power, batteries, energy storage, power grid, sustainability, net zero, carbon emissions]
 years: [9, 13]
 levels: 8
+saveKey: gridManager.v1
 learn:
   - Supply must meet demand every hour
   - Power (MW) and energy (MWh)

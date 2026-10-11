@@ -9,6 +9,7 @@ category: electricity
 tags: [circuits, circuit simulator, series and parallel, ohms law, voltage, current, resistance, fuses, potential divider]
 years: [8, 13]
 levels: 8
+saveKey: lightItUp.v1
 learn:
   - A circuit must be a complete loop
   - Series and parallel circuits

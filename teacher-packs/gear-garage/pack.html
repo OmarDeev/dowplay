@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Gear Garage · Teacher Pack · DowPlay</title>
+<meta name="pack-title" content="Gear Garage">
+<!--
+  Gear Garage teacher pack. One source for two PDFs:
+    pack.html           the full teacher pack
+    pack.html?student   the student worksheets only (no teacher pages, no answers)
+  Shared styles: ../shared/pack.css. Build with: node ../build-pdf.mjs gear-garage
+  Every number in here comes from the game itself; check-numbers.js re-checks them.
+-->
+<link rel="stylesheet" href="../shared/pack.css">
+<style>
+  /* gear diagrams: a thick dashed ring looks like teeth */
+  .gd { display: block; margin: 1mm auto 2mm; }
+  .gd .g { fill: #f3f5f8; stroke: #151821; stroke-width: 6; stroke-dasharray: 3.2 3.2; }
+  .gd .hub { fill: #151821; }
+  .gd .t { font: 700 11px Helvetica, Arial, sans-serif; fill: #151821; text-anchor: middle; }
+  .gd .s { font: 400 9px Helvetica, Arial, sans-serif; fill: #5a6275; text-anchor: middle; }
+  .gd .arrow { fill: none; stroke: #3f6500; stroke-width: 2; }
+</style>
+</head>
+<body>
+<script>
+  if (location.search.includes("student")) document.body.classList.add("student");
+</script>
+
+<!-- ======================================================= COVER -->
+<section class="page teacher">
+  <div class="cover-band">
+    <div class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</div>
+    <span class="eyebrow" style="color:#c8ff3d">Teacher pack</span>
+    <h1>Gear Garage</h1>
+    <p class="sub">Link gears so a machine turns at the right speed, in the right direction and with enough force: from gear ratios to compound trains and efficiency.</p>
+    <span class="tag">UK Years 8–13</span><span class="tag">Ages 12–18</span><span class="tag">US grades 7–12</span><span class="tag">D&amp;T · Physics</span>
+  </div>
+  <img class="cover-img" src="img/game.png" alt="Gear Garage: a small motor gear driving larger orange gears to lift a load">
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0">Inside this pack</h3>
+      <ol class="small" style="padding-left:4.5mm">
+        <li>Overview: learning outcomes, curriculum links</li>
+        <li>How the game works (teacher background), key words</li>
+        <li>Level-by-level guide with 3-star solutions</li>
+        <li>Lesson 1: Gears, speed and direction (Years 8–9)</li>
+        <li>Lesson 2: Gear trains, torque and power (Years 10–13)</li>
+        <li>Worksheet 1 and Worksheet 2 (photocopiable)</li>
+        <li>Answers and mark scheme</li>
+      </ol>
+    </div>
+    <div class="box soft" style="margin:0">
+      <h3 style="margin-top:0">Play it free</h3>
+      <p><b>dowplay.com/games/gear-garage</b></p>
+      <p class="small">Runs in any browser on Chromebooks, iPads, laptops and phones. No accounts, no ads, nothing to install. Progress is saved only on the device being used.</p>
+      <p class="small muted" style="margin:0">A separate PDF has the worksheets on their own, ready to print for students.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= OVERVIEW -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Gear Garage · Teacher pack</span></div>
+  <span class="eyebrow">1 · Overview</span>
+  <h2>What students learn</h2>
+  <p>Gear Garage turns mechanisms into puzzles. Students place gears on a pegboard to connect a motor to a machine (a wheel, a conveyor, a fan, a winch, a camshaft, a turntable, a garage door, a lift) so that it turns at the right speed, in the right direction and with enough force, within a budget. The gears mesh, jam and stall exactly as real ones would. Its eight levels run from Year 8 to Year 13.</p>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">By the end, students can</h3>
+      <ul style="margin:0">
+        <li>explain why meshing gears turn in <b>opposite directions</b>, and use <b>idlers</b></li>
+        <li>calculate output speeds from the <b>numbers of teeth</b></li>
+        <li>explain the trade between <b>speed and torque</b></li>
+        <li>show that idlers don't change the overall ratio</li>
+        <li>calculate the ratio of a <b>compound gear train</b></li>
+        <li>use <b>v = ω r</b> for a rack and pinion, and <b>P = T ω</b> with efficiency</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">You will need</h3>
+      <ul style="margin:0 0 2mm">
+        <li>One device per pair (any browser)</li>
+        <li>A projector for the starters</li>
+        <li>Worksheet 1 or 2 for each student</li>
+      </ul>
+      <h3>Timing</h3>
+      <p style="margin:0">Each lesson plan fills 60 minutes. The levels also work as a homework or a club activity: each takes 5–15 minutes.</p>
+    </div>
+  </div>
+
+  <h2>Curriculum links</h2>
+  <table>
+    <tr><th style="width:30%">Course</th><th>Content</th><th style="width:16%">Levels</th></tr>
+    <tr><td>KS3 Science (England)</td><td>Forces: the moment as the turning effect of a force; simple machines give a bigger force at the expense of a smaller movement</td><td>3–5</td></tr>
+    <tr><td>KS3 Design &amp; Technology</td><td>How more advanced mechanical systems enable changes in movement and force</td><td>All</td></tr>
+    <tr><td>GCSE Physics / Combined Science</td><td>Moments, levers and gears; work done and power; efficiency</td><td>3–8</td></tr>
+    <tr><td>GCSE Design &amp; Technology</td><td>Mechanical devices: changing the type of motion and the size and direction of forces; gear trains, idlers, compound gears, rack and pinion</td><td>1–7</td></tr>
+    <tr><td>A-level Physics / Engineering</td><td>Rotational motion: torque, angular speed and power (P = T ω); efficiency of transmissions</td><td>7–8</td></tr>
+    <tr><td>US (NGSS)</td><td>MS-ETS1-1, MS-ETS1-2, HS-ETS1-3: designing solutions within criteria and constraints, such as cost and size</td><td>All</td></tr>
+  </table>
+</section>
+
+<!-- ======================================================= HOW THE GAME WORKS -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Gear Garage · Teacher pack</span></div>
+  <span class="eyebrow">2 · Teacher background</span>
+  <h2>How the game works</h2>
+  <div class="box key">
+    <p><b>The pegboard follows real gear geometry:</b></p>
+    <ol style="margin:0">
+      <li>An N-tooth gear has a radius of N ÷ 8 holes, so two gears mesh when their axles are (N₁ + N₂) ÷ 8 holes apart: two 16-tooth gears mesh 4 holes apart.</li>
+      <li>Meshing gears turn in opposite directions. Their teeth move at the same speed, so speed × teeth is the same for both gears.</li>
+      <li>Three gears meshing in a ring <b>jam</b>. The motor <b>stalls</b> if the machine needs more torque than it can give.</li>
+    </ol>
+  </div>
+  <p>A machine's speed counts as right within 1% either way. Torque (turning force) goes up by the same factor the speed goes down.</p>
+
+  <h3>The parts</h3>
+  <table>
+    <tr><th>Part</th><th>Details</th></tr>
+    <tr><td>Gears</td><td>8, 16, 24, 32 and 40 teeth (radius 1, 2, 3, 4 and 5 holes), costing £2, £3, £4, £5 and £6</td></tr>
+    <tr><td>Motor</td><td>Turns at a set speed (rpm) and direction, and can give up to a set torque (N·m)</td></tr>
+    <tr><td>Machines</td><td>Each needs a speed, a direction or a torque (some need two of these)</td></tr>
+    <tr><td>Compound gears</td><td>Levels 6 and 8: two gears stacked on one axle turn together at the same speed</td></tr>
+    <tr><td>Rack</td><td>Level 7: a straight bar of teeth. Holes are 1 cm apart there, so a gear's radius is N ÷ 8 cm</td></tr>
+    <tr><td>Efficiency</td><td>Level 8: each mesh passes on only 95% of the power</td></tr>
+  </table>
+
+  <div class="grid2">
+    <div>
+      <h3>Reading the screen</h3>
+      <p class="small">The gears really turn, with their teeth meshing. Ticking <b>Show the numbers</b> labels every gear with its speed (rpm) and direction, and every machine with what it needs, what it's getting and its torque. The worksheet figures are taken straight from that view.</p>
+      <h3>Stars</h3>
+      <p class="small">1 star for a working machine, 2 for staying within the budget, 3 for matching the cheapest design we know. Students sometimes match it with a different set of gears.</p>
+    </div>
+    <div>
+      <h3>What the model leaves out</h3>
+      <p class="small">Real gears lose a little energy at every mesh (the game only models this on level 8), have a little slack (backlash) between teeth, and need stronger, wider teeth for big torques. In the game, gears never wear or break.</p>
+      <h3>Key words</h3>
+      <p class="small"><b>Mesh</b>: two gears' teeth interlocking. <b>Driver / driven</b>: the gear that pushes, and the gear being pushed. <b>Idler</b>: a gear in between that changes direction but not the overall speed. <b>Torque</b>: turning force (N·m). <b>rpm</b>: revolutions per minute. <b>Compound train</b>: two gears on one axle, so the ratios multiply. <b>Rack and pinion</b>: a gear driving a straight bar of teeth. <b>Efficiency</b>: power out ÷ power in.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= LEVEL GUIDE -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Gear Garage · Teacher pack</span></div>
+  <span class="eyebrow">3 · Level guide</span>
+  <h2>Level by level</h2>
+  <p class="small muted">"3 stars" is the cheapest design our checker found. Keep it to yourself until students have had a go: the fun is in the search.</p>
+
+  <div class="level">
+    <div class="level-top"><span class="num">1</span><h3>First Gear</h3><span class="yrs">Year 8 · Meshing gears turn each other</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Gears that don't quite touch, or that overlap and won't fit: they must be exactly the right distance apart.</dd>
+      <dt>3 stars, £6</dt><dd>Two gears whose teeth add up to 32 (16 + 16, or 8 + 24), since the axles are 4 holes apart. Three 8-tooth gears also cost £6.</dd>
+      <dt>Ask</dt><dd>"Which way does the wheel turn compared with the motor? Why?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">2</span><h3>Same Way Round</h3><span class="yrs">Year 8 · Idler gears change direction</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Two gears (the drum turns the wrong way), or an even number of gears in the chain.</dd>
+      <dt>3 stars, £8</dt><dd>An 8-tooth gear on the motor, a 24-tooth idler, and an 8-tooth gear on the drum.</dd>
+      <dt>Ask</dt><dd>"What would a fourth gear do?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">3</span><h3>Need for Speed</h3><span class="yrs">Years 8–9 · Speeding up with gears</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>A big gear on the fan, which slows it down.</dd>
+      <dt>3 stars, £6</dt><dd>A 24-tooth gear on the motor and an 8-tooth gear on the fan: 20 rpm × 24 ÷ 8 = 60 rpm.</dd>
+      <dt>Ask</dt><dd>"What does the fan give up to go faster?" (Torque: 1.67 N·m instead of the motor's 5.)</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">4</span><h3>Heavy Lifting</h3><span class="yrs">Year 9 · Trading speed for torque</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Gears that keep the speed the same: the 2 N·m motor stalls against the 5 N·m winch.</dd>
+      <dt>3 stars, £7</dt><dd>An 8-tooth gear on the motor and a 32-tooth gear on the winch: 4 times slower (7.5 rpm) and 4 times the torque (8 N·m).</dd>
+      <dt>Ask</dt><dd>"What's the smallest slow-down that would work?" (2.5 times.)</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">5</span><h3>Round the Engine</h3><span class="yrs">Years 9–10 · Idlers don't change the ratio</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>The camshaft turning the wrong way, or a chain that crashes into the engine block.</dd>
+      <dt>3 stars, £15</dt><dd>An 8-tooth gear on the crankshaft, then 24, 16 and 16, and a 16-tooth gear on the camshaft: 40 rpm becomes 20 rpm, clockwise.</dd>
+      <dt>Ask</dt><dd>"Why don't the gears in the middle change the camshaft's speed?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">6</span><h3>Compound Gears</h3><span class="yrs">Years 10–11 · Ratios multiply</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Trying one pair of gears: the biggest single slow-down is 40 ÷ 8 = 5 times.</dd>
+      <dt>3 stars, £12</dt><dd>8 teeth driving 24, then an 8-tooth gear stacked on the 24's axle driving a 24-tooth gear on the turntable: 36 rpm ÷ 9 = 4 rpm, with 45 N·m of torque.</dd>
+      <dt>Ask</dt><dd>"How would you slow it down 15 times?" (8 → 24, then 8 → 40.)</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">7</span><h3>Garage Door</h3><span class="yrs">Years 11–12 · Rack and pinion, v = ω r</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Thinking the gear against the rack decides the speed. In a simple chain, it's the gear on the motor.</dd>
+      <dt>3 stars, £8</dt><dd>A 24-tooth gear (radius 3 cm) on the motor and a second 24-tooth gear against the rack: π rad/s × 3 cm = 9.4 cm/s.</dd>
+      <dt>Ask</dt><dd>"Why doesn't the size of the gear on the rack matter?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">8</span><h3>Every Mesh Counts</h3><span class="yrs">Years 12–13 · Efficiency multiplies</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>A simple train with idlers: every mesh loses 5%, and the motor stalls.</dd>
+      <dt>3 stars, £10</dt><dd>A compound train, 8 → 16 then 8 → 16: four times slower in just two meshes, giving 15 rpm and 3.61 N·m.</dd>
+      <dt>Ask</dt><dd>"What would one more mesh do?" (3.43 N·m: the motor stalls.)</dd>
+    </dl>
+  </div>
+
+  <div class="box soft small" style="margin-top:4mm">
+    <b>A note on "gear ratio".</b> Textbooks usually define the gear ratio as driven teeth ÷ driver teeth (how many times slower the output turns). The game's hints talk about how many times <i>faster</i> the output turns (driver ÷ driven). This pack avoids the ambiguity by writing <b>output speed = input speed × driver teeth ÷ driven teeth</b>. Use whichever convention your course uses.
+  </div>
+</section>
+
+<!-- ======================================================= LESSON 1 -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Gear Garage · Teacher pack</span></div>
+  <span class="eyebrow">4 · Lesson plan · Years 8–9 · 60 minutes</span>
+  <h2>Lesson 1: Gears, speed and direction</h2>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">Objectives</h3>
+      <ul style="margin:0">
+        <li>Predict which way each gear in a chain turns.</li>
+        <li>Work out a gear's speed from the numbers of teeth.</li>
+        <li>Explain how gears trade speed for turning force.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Resources</h3>
+      <ul style="margin:0">
+        <li>Worksheet 1 (one each)</li>
+        <li>Devices, one per pair</li>
+        <li>Gear Garage on the projector</li>
+      </ul>
+    </div>
+  </div>
+  <table class="steps">
+    <tr><th>Time</th><th>Activity</th></tr>
+    <tr><td>Starter<br>10 min</td><td>Open <b>Level 1, First Gear</b>. Ask which way the wheel will turn if one gear on the motor meshes with one on the wheel. Build it and watch: opposite ways. Then <b>Level 2, Same Way Round</b>: "How do we make the drum turn the same way as the motor?" Take ideas before adding an idler.</td></tr>
+    <tr><td>Main 1<br>15 min</td><td><b>Worksheet 1, Part A</b>: directions in a chain, speeding up and slowing down, and how far apart gears must be.</td></tr>
+    <tr><td>Main 2<br>25 min</td><td>Pairs play <b>levels 1–4</b> and fill in the record table (Part B). Before pressing Check, one partner predicts the output's speed and direction.</td></tr>
+    <tr><td>Plenary<br>10 min</td><td><b>Part C</b> together: the Round the Engine figure. Why do the three 16-tooth gears all turn at 20 rpm? Exit ticket: <i>what do you gain and lose when a small gear drives a big one?</i></td></tr>
+  </table>
+  <div class="grid2">
+    <div class="box">
+      <h3 style="margin-top:0">Support</h3>
+      <p style="margin:0">Use the in-game hints. Ask students to count along the chain out loud: "clockwise, anticlockwise, clockwise…"</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Stretch</h3>
+      <p style="margin:0">Tick Show the numbers and predict every gear's speed before checking. Try Level 5, Round the Engine.</p>
+    </div>
+  </div>
+  <div class="box soft">
+    <h3 style="margin-top:0">Misconceptions to listen for</h3>
+    <ul style="margin:0">
+      <li>"A bigger gear is always faster." A big gear driving a small one speeds it up; a small gear driving a big one slows it down.</li>
+      <li>"Idler gears change the speed." Only the first and last gears decide the overall speed in a simple chain.</li>
+      <li>"Faster means stronger." Gears trade one for the other: slower output, more torque.</li>
+    </ul>
+  </div>
+  <p><b>Homework:</b> Worksheet 1, Part D, and get 3 stars on Level 4.</p>
+</section>
+
+<!-- ======================================================= LESSON 2 -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Gear Garage · Teacher pack</span></div>
+  <span class="eyebrow">5 · Lesson plan · Years 10–13 · 60 minutes</span>
+  <h2>Lesson 2: Gear trains, torque and power</h2>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">Objectives</h3>
+      <ul style="margin:0">
+        <li>Calculate the ratios of simple and compound gear trains.</li>
+        <li>Use v = ω r for a rack and pinion.</li>
+        <li>Use P = T ω and efficiency to explain why fewer meshes are better.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Resources</h3>
+      <ul style="margin:0">
+        <li>Worksheet 2 (one each)</li>
+        <li>Devices, one per pair</li>
+        <li>Gear Garage on the projector</li>
+      </ul>
+    </div>
+  </div>
+  <table class="steps">
+    <tr><th>Time</th><th>Activity</th></tr>
+    <tr><td>Starter<br>10 min</td><td>Show <b>Level 6, Compound Gears</b>: "The turntable must turn 9 times slower, but the biggest pair only gives 5 times. What can we do?" Show a gear stacked on another's axle, and how the two slow-downs multiply.</td></tr>
+    <tr><td>Main 1<br>15 min</td><td><b>Worksheet 2, questions 1–2</b>: idlers and compound trains, using the game's numbers.</td></tr>
+    <tr><td>Main 2<br>25 min</td><td>Pairs play <b>levels 5–8</b>. Use questions 3–4 to guide Garage Door and Every Mesh Counts: calculate first, then build.</td></tr>
+    <tr><td>Plenary<br>10 min</td><td>Plan <b>question 5</b> together: designing a gearbox. Finish it as homework.</td></tr>
+  </table>
+  <div class="grid2">
+    <div class="box">
+      <h3 style="margin-top:0">Support</h3>
+      <p style="margin:0">Give students a table to fill in: gear, teeth, speed, direction. In Garage Door, convert rpm to rad/s together first.</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Stretch</h3>
+      <p style="margin:0">Find a design for Every Mesh Counts that isn't compound, and explain why it stalls. Research how a bicycle's gears or a clock's gear train work.</p>
+    </div>
+  </div>
+  <div class="box soft">
+    <h3 style="margin-top:0">Misconceptions to listen for</h3>
+    <ul style="margin:0">
+      <li>"Gears create energy." They trade speed for torque; power out is never more than power in.</li>
+      <li>"The gear on the rack sets the door speed." In a simple chain every gear's teeth move at the same speed.</li>
+      <li>"rpm can go straight into v = ω r." ω must be in radians per second: rpm × 2π ÷ 60.</li>
+    </ul>
+  </div>
+  <p><b>Homework:</b> Worksheet 2, question 5 (6 marks).</p>
+</section>
+
+<!-- ======================================================= WORKSHEET 1 -->
+<section class="page">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Gear Garage · Worksheet 1 · Years 8–9</span></div>
+  <h2>Gears, speed and direction</h2>
+  <div class="ws-head"><span>Name:</span><span>Class:</span><span>Date:</span></div>
+  <div class="box soft keep">
+    Meshing gears turn in <b>opposite directions</b>. &nbsp;
+    <span class="num" style="font-size:11.5pt">output speed = input speed × driver teeth ÷ driven teeth</span><br>
+    A small gear driving a big gear turns it <b>slower</b> but with more <b>torque</b> (turning force).
+  </div>
+
+  <h3>Part A · Gears</h3>
+  <div class="q parts"><p><span class="qn">A1</span>Gear A is on a motor that turns clockwise.</p>
+    <svg class="gd" width="380" height="108" viewBox="0 -6 380 108">
+      <defs><marker id="ah" viewBox="0 0 6 6" refX="3" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L6 3L0 6z" fill="#3f6500"/></marker></defs>
+      <circle class="g" cx="60" cy="52" r="32"/><circle class="hub" cx="60" cy="52" r="4"/>
+      <circle class="g" cx="136" cy="52" r="44"/><circle class="hub" cx="136" cy="52" r="4"/>
+      <circle class="g" cx="224" cy="52" r="44"/><circle class="hub" cx="224" cy="52" r="4"/>
+      <circle class="g" cx="300" cy="52" r="32"/><circle class="hub" cx="300" cy="52" r="4"/>
+      <text class="t" x="60" y="40">A</text><text class="t" x="136" y="40">B</text><text class="t" x="224" y="40">C</text><text class="t" x="300" y="40">D</text>
+      <path class="arrow" d="M40 17.4A40 40 0 0 1 80 17.4" marker-end="url(#ah)"/>
+      <text class="s" x="60" y="100">motor, clockwise</text>
+    </svg>
+    <div class="sub"><p>a) Which way does each of gears B, C and D turn? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) How could you make gear D turn clockwise? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div></div>
+  <div class="q parts"><p><span class="qn">A2</span>A 24-tooth gear on a motor turning at 20 rpm drives an 8-tooth gear.</p>
+    <div class="sub"><p>a) How many times faster does the 8-tooth gear turn? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) What is its speed in rpm? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div></div>
+  <div class="q parts"><p><span class="qn">A3</span>An 8-tooth gear on a motor turning at 30 rpm drives a 32-tooth gear on a winch.</p>
+    <div class="sub"><p>a) What is the winch's speed? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) The motor gives 2 N·m of torque. Ignoring friction, what torque does the winch get? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div></div>
+  <div class="q parts"><p><span class="qn">A4</span>In Gear Garage, two gears mesh when their axles are (teeth of one + teeth of the other) ÷ 8 holes apart. How far apart must these be?</p>
+    <div class="sub"><p>a) two 16-tooth gears &nbsp; b) an 8-tooth and a 24-tooth gear &nbsp; c) an 8-tooth and a 32-tooth gear <span class="marks">[3]</span></p><div class="lines" style="--n:1"></div></div></div>
+
+  <div class="keep">
+  <h3>Part B · Play levels 1 to 4</h3>
+  <p class="small">Before you press <b>Check my gears</b>, predict which way and how fast the machine will turn. Record your best design for each level.</p>
+  <table class="record">
+    <tr><th style="width:9%">Level</th><th style="width:31%">Gears I used</th><th style="width:11%">Cost</th><th style="width:11%">Stars</th><th>What went wrong, and how I fixed it</th></tr>
+    <tr><td>1</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>2</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>3</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>4</td><td></td><td>£</td><td></td><td></td></tr>
+  </table>
+  </div>
+
+  <div class="keep">
+  <h3>Part C · Read the numbers</h3>
+  <p>This is <b>Round the Engine</b>, solved, with <b>Show the numbers</b> ticked. The crankshaft's 8-tooth gear turns at 40 rpm and drives a chain of gears around the engine block to the camshaft. Each gear shows its number of teeth and its speed.</p>
+  <img class="chart-img" src="img/round-the-engine.png" alt="Round the Engine: an 8-tooth gear at 40 rpm drives a 24-tooth gear at 13.3 rpm, then three 16-tooth gears at 20 rpm, ending at the camshaft">
+  </div>
+  <div class="q"><p><span class="qn">C1</span>The 24-tooth gear turns at 13.3 rpm. Show how this is worked out from the crankshaft's speed. <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+  <div class="q"><p><span class="qn">C2</span>The three 16-tooth gears all turn at 20 rpm. Why do they all turn at the same speed? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+  <div class="q"><p><span class="qn">C3</span>The camshaft turns at half the crankshaft's speed. Explain this using just the first and last gears. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+  <div class="q"><p><span class="qn">C4</span>There are five gears in the chain. Does the camshaft turn the same way as the crankshaft? How do you know? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+
+  <h3>Part D · Explain</h3>
+  <div class="q"><p><span class="qn">D1</span>A bicycle has gears. Explain why a low gear makes it easier to ride up a steep hill, and what the rider gives up. <span class="marks">[3]</span></p><div class="lines" style="--n:7"></div></div>
+</section>
+
+<!-- ======================================================= WORKSHEET 2 -->
+<section class="page">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Gear Garage · Worksheet 2 · Years 10–13</span></div>
+  <h2>Gear trains, torque and power</h2>
+  <div class="ws-head"><span>Name:</span><span>Class:</span><span>Date:</span></div>
+  <div class="box soft keep small">
+    Output speed = input speed × driver teeth ÷ driven teeth &nbsp;·&nbsp; torque goes up by the factor the speed goes down<br>
+    ω (rad/s) = rpm × 2π ÷ 60 &nbsp;·&nbsp; v = ω × r &nbsp;·&nbsp; P = T × ω &nbsp;·&nbsp; efficiency = power out ÷ power in<br>
+    In Gear Garage, an N-tooth gear has a radius of N ÷ 8 cm on the Garage Door level.
+  </div>
+
+  <div class="q parts"><p><span class="qn">1</span><b>Idler gears (Round the Engine).</b> An 8-tooth gear on a 40 rpm crankshaft drives, in turn, gears with 24, 16, 16 and 16 teeth. The last 16-tooth gear is on the camshaft.</p>
+    <div class="sub"><p>a) What is the camshaft's speed? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) Show that the 24-tooth gear has no effect on the camshaft's speed. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="keep">
+  <p><span class="qn" style="font-weight:800; margin-right:1.5mm">2</span><b>Compound gears.</b> This is the solved Compound Gears level. The 24-tooth gear in the middle has an 8-tooth gear stacked on the same axle.</p>
+  <img class="chart-img" src="img/compound.png" alt="Compound Gears: an 8-tooth motor gear at 36 rpm drives a 24-tooth gear at 12 rpm; an 8-tooth gear on the same axle drives a 24-tooth turntable gear at 4 rpm with 45 N·m of torque">
+  </div>
+  <div class="q parts">
+    <div class="sub"><p>a) Why does the stacked 8-tooth gear turn at 12 rpm? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) How many times slower than the motor does the turntable turn? Show that the two stages multiply. <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) The motor gives 5 N·m. Ignoring friction, what torque does the turntable get? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>d) Using 8-, 24- and 40-tooth gears, design a compound train that turns 15 times slower. <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div></div>
+
+  <div class="q parts"><p><span class="qn">3</span><b>Rack and pinion (Garage Door).</b> The motor turns at 30 rpm. The door must rise at 9–10 cm/s.</p>
+    <div class="sub"><p>a) Convert 30 rpm to rad/s. <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) A 24-tooth gear on the motor has a radius of 3 cm. How fast do its teeth move? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) Which of the 8-, 16-, 24- and 32-tooth gears on the motor gives a door speed of 9–10 cm/s? Show your working. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+    <div class="sub"><p>d) In a simple chain, why doesn't the size of the gear touching the rack change the door's speed? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="q parts"><p><span class="qn">4</span><b>Efficiency (Every Mesh Counts).</b> The motor gives 1 N·m at 60 rpm. The lift needs 3.6 N·m at 15 rpm or faster. Each mesh passes on 95% of the power.</p>
+    <div class="sub"><p>a) What is the motor's power output? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) How many times slower must the lift turn? What torque would it get with no losses? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) A compound train does this in two meshes. What torque does the lift get? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>d) What would a third mesh do? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="q"><p><span class="qn">5</span><b>Evaluate.</b> A machine needs a 3000 rpm motor turned down to 100 rpm. Evaluate three ways of doing it: a single pair of gears, a simple train with idlers, and a compound train. Consider size, number of meshes, efficiency and direction, and use evidence from Gear Garage. <span class="marks">[6]</span></p>
+    <div class="lines" style="--n:14"></div>
+    <p class="small muted" style="margin-left:5mm">Continue on lined paper if you need more space.</p></div>
+</section>
+
+<!-- ======================================================= ANSWERS -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Gear Garage · Answers</span></div>
+  <span class="eyebrow">7 · Answers</span>
+  <h2>Worksheet 1 answers</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0">Part A</h3>
+      <p class="ans"><b>A1</b>a) B <b>anticlockwise</b>, C <b>clockwise</b>, D <b>anticlockwise</b> (2 marks for all three).<br>b) Add one more gear (an idler) anywhere in the chain, or remove one, so there's an odd number of gears.</p>
+      <p class="ans"><b>A2</b>a) 24 ÷ 8 = <b>3 times</b>.<br>b) 20 × 3 = <b>60 rpm</b>.</p>
+      <p class="ans"><b>A3</b>a) 30 × 8 ÷ 32 = <b>7.5 rpm</b>.<br>b) Four times slower, so four times the torque (1): 2 × 4 = <b>8 N·m</b> (1).</p>
+      <p class="ans"><b>A4</b>a) 32 ÷ 8 = <b>4 holes</b>. b) 32 ÷ 8 = <b>4 holes</b>. c) 40 ÷ 8 = <b>5 holes</b>.</p>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Part C</h3>
+      <p class="ans"><b>C1</b>40 × 8 ÷ 24 (1) = <b>13.3 rpm</b> (1).</p>
+      <p class="ans"><b>C2</b>Gears of the same size meshing together turn at the same speed.</p>
+      <p class="ans"><b>C3</b>Only the first and last gears decide the speed (1): 40 × 8 ÷ 16 = 20 rpm, half the speed (1).</p>
+      <p class="ans"><b>C4</b><b>Yes</b> (1): each mesh reverses the direction, and with five gears (an odd number) the last turns the same way as the first (1).</p>
+      <h3>Part D</h3>
+      <p class="ans"><b>D1</b>In a low gear the pedals turn more times for each turn of the wheel (1), so the wheel turns slower but with more torque (1), making it easier to push up the hill; the rider gives up speed (1).</p>
+    </div>
+  </div>
+  <div class="box soft" style="margin-top:8mm">
+    <h3 style="margin-top:0">More from DowPlay</h3>
+    <p style="margin:0">Free engineering games for ages 12–18: <b>Light It Up</b> (circuits), <b>Bridge Builder</b> (structures) and <b>Grid Manager</b> (energy), each with a free teacher pack. Ideas for new games? Get in touch at <b>dowplay.com/about#contact</b>.</p>
+  </div>
+</section>
+
+<!-- ======================================================= ANSWERS, WORKSHEET 2 -->
+<section class="teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Gear Garage · Answers</span></div>
+  <h2>Worksheet 2 answers</h2>
+  <div class="grid2">
+    <div>
+      <p class="ans"><b>1</b>a) 40 × 8 ÷ 16 = <b>20 rpm</b>.<br>b) Going through the 24: 40 × 8 ÷ 24 = 13.3 rpm, then 13.3 × 24 ÷ 16 = 20 rpm (1). The 24s cancel: 40 × (8 ÷ 24) × (24 ÷ 16) = 40 × 8 ÷ 16 (1).</p>
+      <p class="ans"><b>2</b>a) It's on the same axle as the 24-tooth gear, so they turn together.<br>b) 24 ÷ 8 = 3 at each stage (1); 3 × 3 = <b>9 times</b>: 36 → 12 → 4 rpm (1).<br>c) 5 × 9 = <b>45 N·m</b> (as the game shows).<br>d) 8 → 24 (3 times) (1), then a stacked 8 → 40 (5 times): 3 × 5 = 15 (1).</p>
+      <p class="ans"><b>3</b>a) 30 × 2π ÷ 60 = <b>π ≈ 3.14 rad/s</b>.<br>b) v = 3.14 × 3 = <b>9.4 cm/s</b>.<br>c) Radii 1, 2, 3 and 4 cm give 3.1, 6.3, 9.4 and 12.6 cm/s (1); only the <b>24-tooth gear</b> works (1).<br>d) Meshing teeth move at the same speed (1), so in a simple chain every gear's teeth, and the rack, move at the motor gear's tooth speed (1).</p>
+    </div>
+    <div>
+      <p class="ans"><b>4</b>a) ω = 60 × 2π ÷ 60 = 2π rad/s (1); P = 1 × 2π = <b>6.3 W</b> (1).<br>b) 60 ÷ 15 = <b>4 times</b> (1); 1 × 4 = <b>4 N·m</b> (1).<br>c) 4 × 0.95 × 0.95 (1) = <b>3.61 N·m</b>, just enough (1).<br>d) 4 × 0.95³ = <b>3.43 N·m</b> (1), less than 3.6 N·m, so the motor stalls (1).</p>
+    </div>
+  </div>
+
+  <h2 style="margin-top:6mm">Question 5 mark scheme (6 marks)</h2>
+  <table>
+    <tr><th style="width:18%">Level</th><th>Description</th></tr>
+    <tr><td><b>3</b> (5–6 marks)</td><td>A detailed evaluation of all three options, comparing size, meshes, efficiency and direction, with calculations or evidence from the game. Reaches a justified conclusion (usually a compound train).</td></tr>
+    <tr><td><b>2</b> (3–4 marks)</td><td>Compares at least two options with some evidence. The conclusion is partial or not fully justified.</td></tr>
+    <tr><td><b>1</b> (1–2 marks)</td><td>Simple statements about one or two options, with little comparison.</td></tr>
+    <tr><td>0</td><td>Nothing worthy of credit.</td></tr>
+  </table>
+  <div class="keep">
+  <h3>Indicative content</h3>
+  <div class="grid3">
+    <div class="box">
+      <b>Single pair</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>A 30 times slow-down needs one gear 30 times bigger, e.g. 8 and 240 teeth</li>
+        <li>Very large and heavy</li>
+        <li>Only one mesh, so efficient; output turns the opposite way</li>
+      </ul>
+    </div>
+    <div class="box">
+      <b>Simple train with idlers</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>Idlers don't change the ratio, so it's no smaller (Round the Engine)</li>
+        <li>Each extra mesh wastes energy (Every Mesh Counts)</li>
+        <li>Useful only to bridge a gap or change direction</li>
+      </ul>
+    </div>
+    <div class="box">
+      <b>Compound train</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>Ratios multiply, e.g. 5 × 6 = 30 in two meshes (Compound Gears)</li>
+        <li>Small and efficient: 0.95² ≈ 90%</li>
+        <li>Two meshes, so the output turns the same way as the motor</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+  <p class="small">Credit references to real examples: car gearboxes, clocks, bicycles, and to the extra torque the output gets (30 times, less losses).</p>
+</section>
+
+</body>
+</html>

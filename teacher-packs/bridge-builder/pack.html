@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Bridge Builder · Teacher Pack · DowPlay</title>
+<meta name="pack-title" content="Bridge Builder">
+<!--
+  Bridge Builder teacher pack. One source for two PDFs:
+    pack.html           the full teacher pack
+    pack.html?student   the student worksheets only (no teacher pages, no answers)
+  Shared styles: ../shared/pack.css. Build with: node ../build-pdf.mjs bridge-builder
+  Every number in here comes from the game itself; check-numbers.js re-checks them.
+-->
+<link rel="stylesheet" href="../shared/pack.css">
+<style>
+  /* frame diagrams */
+  .fd { display: block; margin: 0 auto; }
+  .fd .m { fill: none; stroke: #151821; stroke-width: 3; stroke-linecap: round; }
+  .fd .j { fill: #fff; stroke: #151821; stroke-width: 2; }
+  .fd .t { font: 600 10px Helvetica, Arial, sans-serif; fill: #151821; text-anchor: middle; }
+  .fd .load { stroke: #c0392b; stroke-width: 2.5; fill: none; }
+  .fd .ground { fill: #d5dae3; }
+  .chart-img.crop { object-fit: cover; }
+  .frames { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin: 1mm 0 2mm 5mm; text-align: center; font-weight: 700; }
+</style>
+</head>
+<body>
+<script>
+  if (location.search.includes("student")) document.body.classList.add("student");
+</script>
+
+<!-- ======================================================= COVER -->
+<section class="page teacher">
+  <div class="cover-band">
+    <div class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</div>
+    <span class="eyebrow" style="color:#c8ff3d">Teacher pack</span>
+    <h1>Bridge Builder</h1>
+    <p class="sub">Build a truss bridge and drive a truck across: triangles, tension and compression, buckling, bending and cable-stayed bridges.</p>
+    <span class="tag">UK Years 8–13</span><span class="tag">Ages 12–18</span><span class="tag">US grades 7–12</span><span class="tag">D&amp;T · Physics</span>
+  </div>
+  <img class="cover-img" src="img/game.png" alt="Bridge Builder: a green truck crossing a truss bridge, each beam coloured by how hard it is pulled or squashed">
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0">Inside this pack</h3>
+      <ol class="small" style="padding-left:4.5mm">
+        <li>Overview: learning outcomes, curriculum links</li>
+        <li>How the game works (teacher background), key words</li>
+        <li>Level-by-level guide with 3-star solutions</li>
+        <li>Lesson 1: Triangles, tension and compression (Years 8–9)</li>
+        <li>Lesson 2: Forces in structures (Years 10–13)</li>
+        <li>Worksheet 1 and Worksheet 2 (photocopiable)</li>
+        <li>Answers, mark scheme and a paper-bridge practical</li>
+      </ol>
+    </div>
+    <div class="box soft" style="margin:0">
+      <h3 style="margin-top:0">Play it free</h3>
+      <p><b>dowplay.com/games/bridge-builder</b></p>
+      <p class="small">Runs in any browser on Chromebooks, iPads, laptops and phones. No accounts, no ads, nothing to install. Progress is saved only on the device being used.</p>
+      <p class="small muted" style="margin:0">A separate PDF has the worksheets on their own, ready to print for students.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= OVERVIEW -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Bridge Builder · Teacher pack</span></div>
+  <span class="eyebrow">1 · Overview</span>
+  <h2>What students learn</h2>
+  <p>Bridge Builder turns structural engineering into a puzzle. Students build a bridge from road, wood, steel and cables, then drive a car, van, truck, lorry or crane across it. The game works out the force in every beam the way structural engineers do (the direct stiffness method): beams snap when they're pulled too hard, crush or buckle when they're squashed, and bridges without triangles fold up. Its eight levels run from Year 8 to Year 13.</p>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">By the end, students can</h3>
+      <ul style="margin:0">
+        <li>explain why <b>triangles</b> make structures rigid</li>
+        <li>identify <b>tension and compression</b> in a truss</li>
+        <li>choose materials by <b>strength, weight and cost</b></li>
+        <li>explain <b>buckling</b>: long beams are weak when squashed</li>
+        <li>explain why <b>deeper</b> trusses carry bigger loads</li>
+        <li><b>resolve forces</b> in a frame and in a cable-stayed bridge</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">You will need</h3>
+      <ul style="margin:0 0 2mm">
+        <li>One device per pair (any browser)</li>
+        <li>A projector for the starters</li>
+        <li>Worksheet 1 or 2 for each student</li>
+      </ul>
+      <h3>Timing</h3>
+      <p style="margin:0">Each lesson plan fills 60 minutes. The levels also work as a homework or a club activity: each takes 5–15 minutes.</p>
+    </div>
+  </div>
+
+  <h2>Curriculum links</h2>
+  <table>
+    <tr><th style="width:30%">Course</th><th>Content</th><th style="width:16%">Levels</th></tr>
+    <tr><td>KS3 Science (England)</td><td>Forces as pushes or pulls; balanced forces; forces that stretch and squash objects</td><td>1–4</td></tr>
+    <tr><td>KS3 Design &amp; Technology</td><td>Using the properties of materials and the performance of structural elements to achieve functioning solutions</td><td>All</td></tr>
+    <tr><td>GCSE Physics / Combined Science</td><td>Resultant forces; forces and elasticity; moments</td><td>3–8</td></tr>
+    <tr><td>GCSE Design &amp; Technology</td><td>Structures and triangulation; choosing materials by their properties and cost</td><td>1–6</td></tr>
+    <tr><td>A-level Physics / Maths (mechanics)</td><td>Resolving forces; equilibrium; moments; materials: stress, strain and stiffness</td><td>5–8</td></tr>
+    <tr><td>A-level and BTEC Engineering</td><td>Truss analysis; tension, compression and buckling; bending moments</td><td>5–8</td></tr>
+    <tr><td>US (NGSS)</td><td>MS-ETS1-1, MS-ETS1-2, HS-ETS1-3: designing solutions within criteria and constraints, such as cost and safety</td><td>All</td></tr>
+  </table>
+</section>
+
+<!-- ======================================================= HOW THE GAME WORKS -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Bridge Builder · Teacher pack</span></div>
+  <span class="eyebrow">2 · Teacher background</span>
+  <h2>How the game works</h2>
+  <div class="box key">
+    <p><b>The game analyses the bridge like a structural engineer:</b></p>
+    <ol style="margin:0">
+      <li>Beams join points on a grid, and one square is 4 m. Road must cross the gap along the dashed line.</li>
+      <li>As the vehicle drives across, the game works out the force in every beam, including the bridge's own weight.</li>
+      <li>A beam <b>breaks</b> if it's pulled harder than its strength, or squashed harder than it can take before crushing or <b>buckling</b>. A bridge without triangles folds up.</li>
+    </ol>
+  </div>
+
+  <h3>The materials</h3>
+  <table>
+    <tr><th>Material</th><th>Pull (kN)</th><th>Squash (kN)</th><th>Weight (kN per square)</th><th>Cost</th></tr>
+    <tr><td>Road</td><td>200</td><td>200</td><td>4</td><td>£15</td></tr>
+    <tr><td>Wood</td><td>70</td><td>60 (30 diagonal)</td><td>1.5</td><td>£8 (£11 diagonal)</td></tr>
+    <tr><td>Steel</td><td>200</td><td>180 (90 diagonal)</td><td>3</td><td>£16 (£23 diagonal)</td></tr>
+    <tr><td>Cable</td><td>200</td><td>0: goes slack</td><td>0.5</td><td>£5 per square of length</td></tr>
+  </table>
+  <p class="small">Squashed beams buckle at a force that falls with the square of their length: wood buckles at 60 ÷ L² kN and steel at 180 ÷ L² kN, with L in squares. A diagonal is √2 squares long, so it buckles at half the force of a straight beam. Vehicles: car 20 kN, van 30 kN, truck 60 kN, lorry 80 kN, crane 100 kN (10 kN is about 1 tonne).</p>
+
+  <div class="grid2">
+    <div>
+      <h3>Reading the screen</h3>
+      <p class="small">Tick <b>Show forces</b> to colour every beam: <b>blue</b> is pulled (tension), <b>orange</b> is squashed (compression) and <b>red</b> is over 100%, so it would break. Percentages on the hardest-working beams show the worst moment as the vehicle crosses. When it drives, the bending is drawn 40 times bigger so students can see it, and a bridge that fails collapses.</p>
+      <h3>Stars</h3>
+      <p class="small">1 star for getting across, 2 for staying within the budget, 3 for matching the cheapest design our checker found.</p>
+    </div>
+    <div>
+      <h3>What the model leaves out</h3>
+      <p class="small">Joints are pins, so beams carry only pulling or squashing forces (real joints are bolted or welded and carry some bending). The vehicle crosses slowly, so there's no bouncing, wind or vibration, and materials never fatigue. Good discussion points with older students.</p>
+      <h3>Key words</h3>
+      <p class="small"><b>Tension</b>: pulled. <b>Compression</b>: squashed. <b>Truss</b>: a frame of triangles. <b>Buckling</b>: a squashed beam bowing sideways and failing. <b>Span</b>: the gap a bridge crosses. <b>Chord</b>: the top or bottom beams of a truss. <b>Pier</b>: a support in the middle. <b>Bending moment</b>: the turning effect of the load, which the chords resist.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= LEVEL GUIDE -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Bridge Builder · Teacher pack</span></div>
+  <span class="eyebrow">3 · Level guide</span>
+  <h2>Level by level</h2>
+  <p class="small muted">"3 stars" is the cheapest design our checker found. Keep it to yourself until students have had a go: the fun is in the search.</p>
+
+  <div class="level">
+    <div class="level-top"><span class="num">1</span><h3>Mind the Gap</h3><span class="yrs">Year 8 · 8 m gap, car · Triangles are rigid</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Two pieces of road on their own: the joint in the middle can fold, so the bridge wobbles.</dd>
+      <dt>3 stars, £41</dt><dd>Two pieces of road and one wooden diagonal from the anchor bolt on the cliff up to the middle joint, making a triangle.</dd>
+      <dt>Ask</dt><dd>"Why does one diagonal stop the bridge folding?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">2</span><h3>Triangle Power</h3><span class="yrs">Year 8 · 16 m gap, van · Trusses</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Rectangles without diagonals, which fold, and building under the road where boats must pass.</dd>
+      <dt>3 stars, £176</dt><dd>A wooden truss above the road: 13 wooden beams in triangles.</dd>
+      <dt>Ask</dt><dd>"Can you find a beam you could remove without the bridge wobbling?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">3</span><h3>Push and Pull</h3><span class="yrs">Year 9 · 16 m gap, truck · Tension and compression</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>An all-wood truss, which the heavier truck breaks, or steel everywhere, which is over budget.</dd>
+      <dt>3 stars, £192</dt><dd>Steel for the four diagonals, wood for the top beams and the uprights. The wooden top beams are squashed to 89% of their strength and the steel end diagonals to 84%; the uprights are pulled. (Worksheet 1, Part C.)</dd>
+      <dt>Ask</dt><dd>"Which beams are pulled and which are squashed?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">4</span><h3>Low Bridge</h3><span class="yrs">Years 9–10 · 16 m gap, truck · Building under the road</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Building above the road, where the power lines are.</dd>
+      <dt>3 stars, £148</dt><dd>A frame of triangles under the road, bolted to the anchors on the cliff faces: 7 wooden beams and 1 steel.</dd>
+      <dt>Ask</dt><dd>"Which beam works hardest, and why is that one steel?" (It's the strut pushing up from the left cliff, squashed by 84 kN.)</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">5</span><h3>Buckle Up</h3><span class="yrs">Years 10–11 · 24 m gap, lorry · Buckling</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Long beams being squashed: a diagonal buckles at half the force of a straight beam.</dd>
+      <dt>3 stars, £388</dt><dd>A Pratt truss: every diagonal slopes down towards the middle and is pulled, and every upright is squashed. Steel along the top, at the ends and on the outer diagonals; wood in the middle (14 steel, 5 wood). The top beams work at 85%. (Worksheet 2, question 2.)</dd>
+      <dt>Ask</dt><dd>"Why should the long diagonals be the ones that are pulled?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">6</span><h3>Go Deeper</h3><span class="yrs">Years 11–12 · 32 m gap, lorry · Force = moment ÷ depth</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>A shallow truss: the forces in its top and bottom beams are enormous.</dd>
+      <dt>3 stars, £686</dt><dd>A truss two squares (8 m) deep: 23 steel and 18 wooden beams, with the hardest-working beam at 94%.</dd>
+      <dt>Ask</dt><dd>"What happens to the force in the top beams if you double the depth?" (It halves.)</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">7</span><h3>Cable-Stayed</h3><span class="yrs">Years 11–13 · 40 m gorge, lorry · Cables only pull</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Cables at shallow angles, which need huge tension, and expecting cables to push.</dd>
+      <dt>3 stars, £374</dt><dd>Ten pieces of road held up by 9 cables fanning out from bolts near the tops of the two towers. No cable works harder than 36%.</dd>
+      <dt>Ask</dt><dd>"Why do cables at a shallow angle need more tension?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">8</span><h3>Heavy Haul</h3><span class="yrs">Years 12–13 · 40 m river, crane · A support in the middle</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Ignoring the rock in the middle of the river.</dd>
+      <dt>3 stars, £353</dt><dd>A shallow truss under the road, resting on the rock so it becomes two short spans. Cables are the pulled bottom beams; wood and steel uprights push up on the road (6 steel, 5 wood, 10 cables). The hardest-working beams reach 91%.</dd>
+      <dt>Ask</dt><dd>"Why does a support in the middle reduce the forces so much?"</dd>
+    </dl>
+  </div>
+
+  <div class="grid2 keep" style="margin-top:5mm">
+    <div class="box">
+      <h3 style="margin-top:0">When a bridge fails</h3>
+      <p class="small">The game says why, which makes a good discussion starter:</p>
+      <ul class="small" style="margin:0">
+        <li><b>Wobbly!</b> Part of the bridge can fold like a hinge, so it needs more triangles.</li>
+        <li><b>Snap!</b> A beam was pulled harder than it can take (tension).</li>
+        <li><b>Crunch!</b> A beam was crushed (compression).</li>
+        <li><b>Buckled!</b> A squashed beam bent sideways. Longer beams buckle at lower forces.</li>
+      </ul>
+      <p class="small" style="margin:1.5mm 0 0">After a failed run, red rings mark the beams that broke or the joints that wobbled.</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Real bridges to show the class</h3>
+      <ul class="small" style="margin:0">
+        <li><b>Levels 2–3:</b> truss footbridges and railway bridges. Count the triangles.</li>
+        <li><b>Level 4:</b> the Iron Bridge in Shropshire (1779), an arch under the road.</li>
+        <li><b>Level 5:</b> Pratt trusses, used on many railway bridges.</li>
+        <li><b>Levels 6 and 8:</b> the Forth Bridge (1890), deepest over its piers, where the forces are biggest.</li>
+        <li><b>Level 7:</b> the Queensferry Crossing (2017), a cable-stayed bridge across the same estuary.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= LESSON 1 -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Bridge Builder · Teacher pack</span></div>
+  <span class="eyebrow">4 · Lesson plan · Years 8–9 · 60 minutes</span>
+  <h2>Lesson 1: Triangles, tension and compression</h2>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">Objectives</h3>
+      <ul style="margin:0">
+        <li>Explain why triangles make structures rigid.</li>
+        <li>Identify beams in tension and compression.</li>
+        <li>Choose stronger materials where forces are biggest.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Resources</h3>
+      <ul style="margin:0">
+        <li>Worksheet 1 (one each)</li>
+        <li>Devices, one per pair</li>
+        <li>Bridge Builder on the projector</li>
+        <li>Optional: straws or card strips and split pins to build a square and a triangle</li>
+      </ul>
+    </div>
+  </div>
+  <table class="steps">
+    <tr><th>Time</th><th>Activity</th></tr>
+    <tr><td>Starter<br>10 min</td><td>Open <b>Level 1, Mind the Gap</b>. Lay two pieces of road and drive the car: the bridge folds. Ask why, then add one diagonal from an anchor bolt on the cliff to the middle joint and drive again. If you have straws or card strips, let students push a square and a triangle out of shape.</td></tr>
+    <tr><td>Main 1<br>15 min</td><td><b>Worksheet 1, Part A</b>: which frames are rigid, pulled or squashed, vehicle weights and bridge costs.</td></tr>
+    <tr><td>Main 2<br>25 min</td><td>Pairs play <b>levels 1–4</b> with <b>Show forces</b> ticked and fill in the record table (Part B). Before driving, one partner predicts which beam will work hardest.</td></tr>
+    <tr><td>Plenary<br>10 min</td><td><b>Part C</b> together: the Push and Pull forces picture. Why steel on the diagonals and wood elsewhere? Exit ticket: <i>name a structure near school that uses triangles, and say why.</i></td></tr>
+  </table>
+  <div class="grid2">
+    <div class="box">
+      <h3 style="margin-top:0">Support</h3>
+      <p style="margin:0">Use the in-game hints. Ask students to find a square in their bridge and add one diagonal to it.</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Stretch</h3>
+      <p style="margin:0">Find the cheapest working design for Push and Pull (3 stars at £192). Try Level 5, Buckle Up.</p>
+    </div>
+  </div>
+  <div class="box soft">
+    <h3 style="margin-top:0">Misconceptions to listen for</h3>
+    <ul style="margin:0">
+      <li>"More beams always make a stronger bridge." Every beam adds weight and cost; the right beams in the right places matter.</li>
+      <li>"Every beam is squashed by the load." Some are pulled: in a truss, the top is squashed and the bottom is stretched.</li>
+      <li>"Steel is always better." Steel costs twice as much and weighs twice as much as wood.</li>
+    </ul>
+  </div>
+  <p><b>Homework:</b> Worksheet 1, Part D, and get 3 stars on Level 2.</p>
+</section>
+
+<!-- ======================================================= LESSON 2 -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Bridge Builder · Teacher pack</span></div>
+  <span class="eyebrow">5 · Lesson plan · Years 10–13 · 60 minutes</span>
+  <h2>Lesson 2: Forces in structures</h2>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">Objectives</h3>
+      <ul style="margin:0">
+        <li>Resolve forces in a simple frame and in a cable.</li>
+        <li>Explain buckling, and why long beams should be in tension.</li>
+        <li>Explain why deeper trusses and middle supports reduce forces.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Resources</h3>
+      <ul style="margin:0">
+        <li>Worksheet 2 (one each)</li>
+        <li>Devices, one per pair</li>
+        <li>Bridge Builder on the projector</li>
+      </ul>
+    </div>
+  </div>
+  <table class="steps">
+    <tr><th>Time</th><th>Activity</th></tr>
+    <tr><td>Starter<br>10 min</td><td>Show <b>Level 5, Buckle Up</b> with Show forces ticked. Build a truss with the long diagonals squashed and drive: they buckle. Ask why a beam that's 41% longer is only half as strong when squashed. Then flip the diagonals so they're pulled.</td></tr>
+    <tr><td>Main 1<br>15 min</td><td><b>Worksheet 2, questions 1–3</b>: resolving forces in a frame, buckling, and chord forces in a deep truss.</td></tr>
+    <tr><td>Main 2<br>25 min</td><td>Pairs play <b>levels 5–8</b>. Use question 4 to guide Cable-Stayed and question 5 to discuss material choices.</td></tr>
+    <tr><td>Plenary<br>10 min</td><td>Plan <b>question 6</b> together: three ways to carry a crane across a river. Finish it as homework.</td></tr>
+  </table>
+  <div class="grid2">
+    <div class="box">
+      <h3 style="margin-top:0">Support</h3>
+      <p style="margin:0">Draw force triangles for question 1 together. Use the colours in the game: blue pulled, orange squashed.</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Stretch</h3>
+      <p style="margin:0">Go for 3 stars on Go Deeper (£686) or Heavy Haul (£353). Research the Forth Bridge (a cantilever truss) or the Millau Viaduct (cable-stayed).</p>
+    </div>
+  </div>
+  <div class="box soft">
+    <h3 style="margin-top:0">Misconceptions to listen for</h3>
+    <ul style="margin:0">
+      <li>"A cable at a gentler angle is under less strain." The flatter the cable, the more tension it needs to hold the same weight.</li>
+      <li>"Buckling is the same as crushing." Buckling is a sideways bowing that happens well before the material itself crushes.</li>
+      <li>"A longer bridge just needs proportionally more beams." The bending effect grows faster than the span, because a longer bridge is also heavier.</li>
+    </ul>
+  </div>
+  <p><b>Homework:</b> Worksheet 2, question 6 (6 marks).</p>
+</section>
+
+<!-- ======================================================= WORKSHEET 1 -->
+<section class="page">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Bridge Builder · Worksheet 1 · Years 8–9</span></div>
+  <h2>Triangles, tension and compression</h2>
+  <div class="ws-head"><span>Name:</span><span>Class:</span><span>Date:</span></div>
+  <div class="box soft keep">
+    <b>Tension:</b> a beam being pulled (stretched). &nbsp; <b>Compression:</b> a beam being squashed.<br>
+    A triangle can't change shape unless one of its sides changes length. &nbsp; 10 kN is about the weight of 1 tonne.
+  </div>
+
+  <h3>Part A · Structures</h3>
+  <div class="q"><p><span class="qn">A1</span>Each frame is made of beams joined by pins that can turn. Which frames keep their shape when you push sideways on the top? Explain. <span class="marks">[2]</span></p>
+    <div class="frames">
+      <div>
+        <svg class="fd" width="130" height="96" viewBox="0 0 130 96">
+          <rect class="ground" x="10" y="84" width="110" height="8"/>
+          <path class="m" d="M30 84V24H100V84"/>
+          <circle class="j" cx="30" cy="84" r="4"/><circle class="j" cx="100" cy="84" r="4"/><circle class="j" cx="30" cy="24" r="4"/><circle class="j" cx="100" cy="24" r="4"/>
+          <path class="load" d="M6 24H22M16 19l6 5-6 5"/>
+        </svg>(a)</div>
+      <div>
+        <svg class="fd" width="130" height="96" viewBox="0 0 130 96">
+          <rect class="ground" x="10" y="84" width="110" height="8"/>
+          <path class="m" d="M30 84L65 24L100 84Z"/>
+          <circle class="j" cx="30" cy="84" r="4"/><circle class="j" cx="100" cy="84" r="4"/><circle class="j" cx="65" cy="24" r="4"/>
+          <path class="load" d="M41 24H57M51 19l6 5-6 5"/>
+        </svg>(b)</div>
+      <div>
+        <svg class="fd" width="130" height="96" viewBox="0 0 130 96">
+          <rect class="ground" x="10" y="84" width="110" height="8"/>
+          <path class="m" d="M30 84V24H100V84M30 84L100 24"/>
+          <circle class="j" cx="30" cy="84" r="4"/><circle class="j" cx="100" cy="84" r="4"/><circle class="j" cx="30" cy="24" r="4"/><circle class="j" cx="100" cy="24" r="4"/>
+          <path class="load" d="M6 24H22M16 19l6 5-6 5"/>
+        </svg>(c)</div>
+    </div>
+    <div class="lines" style="--n:2"></div></div>
+  <div class="q parts"><p><span class="qn">A2</span>Is each of these being pulled (tension) or squashed (compression)?</p>
+    <div class="sub"><p>a) the rope holding up a swing &nbsp; b) a table leg &nbsp; c) the cables of a suspension bridge &nbsp; d) the top beam of a truss bridge <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+  <div class="q parts"><p><span class="qn">A3</span>Vehicle weights.</p>
+    <div class="sub"><p>a) The lorry weighs 80 kN. About how many tonnes is that? &nbsp; b) The crane weighs 100 kN. How many tonnes? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div></div>
+  <div class="q"><p><span class="qn">A4</span>A bridge uses 4 pieces of road at £15 each, 6 straight wooden beams at £8 each and 4 diagonal wooden beams at £11 each. What does it cost? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+
+  <div class="keep">
+  <h3>Part B · Play levels 1 to 4</h3>
+  <p class="small">Tick <b>Show forces</b>. Before you drive, predict which beam will work hardest. Record your best design for each level.</p>
+  <table class="record">
+    <tr><th style="width:9%">Level</th><th style="width:31%">What I built</th><th style="width:11%">Cost</th><th style="width:11%">Stars</th><th>What went wrong, and how I fixed it</th></tr>
+    <tr><td>1</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>2</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>3</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>4</td><td></td><td>£</td><td></td><td></td></tr>
+  </table>
+  </div>
+
+  <div class="keep">
+  <h3>Part C · Read the forces</h3>
+  <p>This is <b>Push and Pull</b> with <b>Show forces</b> ticked: <b>blue</b> beams are pulled, <b>orange</b> beams are squashed. The percentages show how close the hardest-working beams come to their limit as the truck crosses. The four diagonal beams are steel; the top beams and the uprights are wood.</p>
+  <img class="chart-img crop" style="height:57mm; object-position:50% 83%" src="img/push-and-pull.png" alt="Push and Pull: a truss bridge with the top beams squashed at 89% and the end diagonals squashed at 84%, while the truck waits to cross">
+  </div>
+  <div class="q"><p><span class="qn">C1</span>Are the beams along the top pulled or squashed? And the upright beams? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+  <div class="q"><p><span class="qn">C2</span>The top beams show 89%. What does that mean? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+  <div class="q"><p><span class="qn">C3</span>The steel end diagonals are squashed with a force of about 76 kN. A wooden diagonal can only take 30 kN of squashing. Why is steel used there? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+  <div class="q"><p><span class="qn">C4</span>Steel costs twice as much as wood. Why not make every beam steel? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+
+  <h3>Part D · Explain</h3>
+  <div class="q"><p><span class="qn">D1</span>Triangles are used in cranes, roof trusses, electricity pylons and bicycle frames. Explain why engineers use them. <span class="marks">[3]</span></p><div class="lines" style="--n:7"></div></div>
+</section>
+
+<!-- ======================================================= WORKSHEET 2 -->
+<section class="page">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Bridge Builder · Worksheet 2 · Years 10–13</span></div>
+  <h2>Forces in structures</h2>
+  <div class="ws-head"><span>Name:</span><span>Class:</span><span>Date:</span></div>
+  <div class="box soft keep small">
+    Force F at angle θ to the horizontal: horizontal part F cos θ, vertical part F sin θ. &nbsp; sin 45° = cos 45° ≈ 0.707<br>
+    Buckling: a squashed beam's strength is proportional to 1 ÷ length².<br>
+    Load W at the middle of a span L: biggest bending moment M = W L ÷ 4. &nbsp; Force in each chord ≈ M ÷ depth.<br>
+    Wood: pulls 70 kN, squashes 60 kN (30 kN diagonal). &nbsp; Steel: pulls 200 kN, squashes 180 kN (90 kN diagonal).
+  </div>
+
+  <div class="q parts"><p><span class="qn">1</span><b>Resolving forces.</b> Two beams at 45° meet at the top and are tied together at the bottom. A load of 60 kN pushes down on the top joint. Ignore the beams' own weight.</p>
+    <svg class="fd" width="230" height="122" viewBox="0 0 230 122">
+      <path class="m" d="M35 104L115 34L195 104H35"/>
+      <circle class="j" cx="35" cy="104" r="4.5"/><circle class="j" cx="195" cy="104" r="4.5"/><circle class="j" cx="115" cy="34" r="4.5"/>
+      <path class="load" d="M115 4V27M110 21l5 6 5-6"/>
+      <text class="t" x="124" y="16" style="text-anchor:start">60 kN</text>
+      <text class="t" x="62" y="98">45°</text><text class="t" x="168" y="98">45°</text>
+      <text class="t" x="115" y="118">tie</text>
+    </svg>
+    <div class="sub"><p>a) Each sloping beam carries half the load vertically. Show that the force in each sloping beam is about 42 kN. Is it pulled or squashed? <span class="marks">[3]</span></p><div class="lines" style="--n:2"></div></div>
+    <div class="sub"><p>b) What is the force in the tie at the bottom? Is it pulled or squashed? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) The sloping beams are diagonals in Bridge Builder. Should they be wood or steel? Should the tie be wood or steel? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="keep">
+  <p><span class="qn" style="font-weight:800; margin-right:1.5mm">2</span><b>Buckling (Buckle Up).</b> This Pratt truss carries an 80 kN lorry. Blue beams are pulled; orange beams are squashed.</p>
+  <img class="chart-img crop" style="height:53mm; object-position:50% 84%" src="img/buckle-up.png" alt="Buckle Up: a Pratt truss whose long diagonals are pulled (blue) and whose short uprights and top beams are squashed (orange), with the top beams at 85%">
+  <div class="q parts">
+    <div class="sub"><p>a) A straight wooden beam (1 square long) buckles at 60 kN. A diagonal is √2 squares long. Show that it buckles at 30 kN. <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) At what force would a wooden beam 2 squares long buckle? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) In this truss the long diagonals are pulled and the short uprights are squashed. Explain why that is a good design. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+  </div>
+
+  <div class="q parts"><p><span class="qn">3</span><b>Go Deeper.</b> An 80 kN lorry stands in the middle of a 32 m span. Ignore the bridge's own weight.</p>
+    <div class="sub"><p>a) Calculate the biggest bending moment. <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) Calculate the force in the top chord if the truss is 4 m deep, and if it is 8 m deep. <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) For each depth, could straight wooden beams carry the top chord force? Could steel? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+    <div class="sub"><p>d) Explain why long bridges are built deeper in the middle. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="q parts"><p><span class="qn">4</span><b>Cable-Stayed.</b> A straight cable runs from a tower top down to the road and holds up 20 kN of the road's weight.</p>
+    <div class="sub"><p>a) Calculate the tension in the cable if it is at 45° to the road, at 30°, and at 15°. <span class="marks">[3]</span></p><div class="lines" style="--n:2"></div></div>
+    <div class="sub"><p>b) Use your answers to explain why cable-stayed bridges have tall towers. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="q parts"><p><span class="qn">5</span><b>Materials and cost.</b> Wood pulls 70 kN for £8 a square; steel pulls 200 kN for £16.</p>
+    <div class="sub"><p>a) Which gives more pulling strength per pound? Show your working. <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) The cheapest designs still use plenty of wood. Suggest two reasons why. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="q"><p><span class="qn">6</span><b>Evaluate.</b> A 100 kN crane must cross a 40 m river. Evaluate three designs: a deep truss, a cable-stayed bridge, and a bridge with a support in the middle of the river. Use evidence from Bridge Builder. <span class="marks">[6]</span></p>
+    <div class="lines" style="--n:14"></div>
+    <p class="small muted" style="margin-left:5mm">Continue on lined paper if you need more space.</p></div>
+</section>
+
+<!-- ======================================================= ANSWERS -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Bridge Builder · Answers</span></div>
+  <span class="eyebrow">7 · Answers</span>
+  <h2>Worksheet 1 answers</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0">Part A</h3>
+      <p class="ans"><b>A1</b><b>(b) and (c)</b> (1). A triangle can't change shape without a beam changing length; the square in (a) folds at its pins, but the diagonal in (c) splits it into triangles (1).</p>
+      <p class="ans"><b>A2</b>a) tension b) compression c) tension d) compression (2 marks for all four, 1 for two or three).</p>
+      <p class="ans"><b>A3</b>a) about <b>8 tonnes</b> b) about <b>10 tonnes</b>.</p>
+      <p class="ans"><b>A4</b>4 × 15 + 6 × 8 + 4 × 11 = 60 + 48 + 44 (1) = <b>£152</b> (1).</p>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Part C</h3>
+      <p class="ans"><b>C1</b>The top beams are <b>squashed</b> (orange) (1); the uprights are <b>pulled</b> (blue) (1).</p>
+      <p class="ans"><b>C2</b>At the worst moment, they carry 89% of the force that would make them fail.</p>
+      <p class="ans"><b>C3</b>76 kN is far more than a wooden diagonal's 30 kN, so wood would buckle (1); a steel diagonal can take 90 kN (1).</p>
+      <p class="ans"><b>C4</b>It would cost much more (1); steel is also twice as heavy, adding to the load (1). Wood is strong enough for the beams with smaller forces.</p>
+      <h3>Part D</h3>
+      <p class="ans"><b>D1</b>A triangle can't change shape unless a side stretches or squashes (1), so it stays rigid without heavy, stiff joints (1); triangles let a light frame of thin beams carry big loads, saving material, weight and cost (1).</p>
+    </div>
+  </div>
+  <div class="box soft" style="margin-top:8mm">
+    <h3 style="margin-top:0">More from DowPlay</h3>
+    <p style="margin:0">Free engineering games for ages 12–18: <b>Light It Up</b> (circuits), <b>Gear Garage</b> (gears and machines) and <b>Grid Manager</b> (energy), each with a free teacher pack. Ideas for new games? Get in touch at <b>dowplay.com/about#contact</b>.</p>
+  </div>
+</section>
+
+<!-- ======================================================= ANSWERS, WORKSHEET 2 -->
+<section class="teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Bridge Builder · Answers</span></div>
+  <h2>Worksheet 2 answers</h2>
+  <div class="grid2">
+    <div>
+      <p class="ans"><b>1</b>a) Each beam supports 30 kN vertically (1): F sin 45° = 30, so F = 30 ÷ 0.707 (1) = <b>42.4 kN</b>, <b>squashed</b> (1).<br>b) Horizontal part of each beam's force: 42.4 × cos 45° = <b>30 kN</b> (1); the tie stops the feet spreading, so it's <b>pulled</b> (1).<br>c) The sloping beams need <b>steel</b>: 42 kN is more than a wooden diagonal's 30 kN but less than steel's 90 kN (1). The tie can be <b>wood</b>: 30 kN is less than wood's 70 kN pulling strength (1).</p>
+      <p class="ans"><b>2</b>a) Strength is proportional to 1 ÷ L²: 60 ÷ (√2)² (1) = 60 ÷ 2 = <b>30 kN</b> (1).<br>b) 60 ÷ 2² = <b>15 kN</b>.<br>c) Long beams are weak when squashed but not when pulled, so the long diagonals are put in tension (1) and the short uprights, which resist buckling better, take the compression (1).</p>
+      <p class="ans"><b>3</b>a) M = 80 × 32 ÷ 4 = <b>640 kN m</b>.<br>b) 640 ÷ 4 = <b>160 kN</b>; 640 ÷ 8 = <b>80 kN</b>.<br>c) Wood: no at either depth (more than 60 kN) (1). Steel: yes at both (less than 180 kN) (1).<br>d) Chord force = moment ÷ depth, so a deeper truss has smaller forces (1), needing lighter, cheaper beams where the moment is biggest (1).</p>
+    </div>
+    <div>
+      <p class="ans"><b>4</b>a) T = 20 ÷ sin θ: 45° → <b>28.3 kN</b>; 30° → <b>40 kN</b>; 15° → <b>77.3 kN</b>.<br>b) Flatter cables need much more tension for the same weight (1); tall towers make the cables steeper, so they need less tension and can be thinner and cheaper (1).</p>
+      <p class="ans"><b>5</b>a) Wood 70 ÷ 8 = 8.75 kN per £; steel 200 ÷ 16 = 12.5 kN per £ (1): <b>steel</b> (1).<br>b) Many beams carry small forces, and a wooden beam that's strong enough costs half as much (1); wood is half the weight (1.5 kN against 3 kN per square), so it adds less load to the bridge (1).</p>
+    </div>
+  </div>
+
+  <h2 style="margin-top:6mm">Question 6 mark scheme (6 marks)</h2>
+  <table>
+    <tr><th style="width:18%">Level</th><th>Description</th></tr>
+    <tr><td><b>3</b> (5–6 marks)</td><td>A detailed evaluation of all three designs, comparing forces, materials and cost, with calculations or evidence from the game. Reaches a justified conclusion.</td></tr>
+    <tr><td><b>2</b> (3–4 marks)</td><td>Compares at least two designs with some evidence. The conclusion is partial or not fully justified.</td></tr>
+    <tr><td><b>1</b> (1–2 marks)</td><td>Simple statements about one or two designs, with little comparison.</td></tr>
+    <tr><td>0</td><td>Nothing worthy of credit.</td></tr>
+  </table>
+  <div class="keep">
+  <h3>Indicative content</h3>
+  <div class="grid3">
+    <div class="box">
+      <b>Deep truss</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>The bending effect grows with the span, so a 40 m span needs a deep, heavy truss</li>
+        <li>Depth cuts chord forces (Go Deeper: 8 m deep, £686 for 32 m)</li>
+        <li>Lots of steel: expensive and heavy</li>
+      </ul>
+    </div>
+    <div class="box">
+      <b>Cable-stayed</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>Cables are light and strong, but only pull (Cable-Stayed: £374)</li>
+        <li>Needs tall towers so the cables are steep</li>
+        <li>The road between the cables is squashed</li>
+      </ul>
+    </div>
+    <div class="box">
+      <b>Support in the middle</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>Halving the span cuts the bending effect enormously</li>
+        <li>Lighter, cheaper beams (Heavy Haul: £353 using the rock)</li>
+        <li>Needs foundations in the river; can block boats</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+  <p class="small">Credit references to real bridges (the Forth Bridge, the Millau Viaduct, the Humber Bridge) and to factors the game leaves out, such as wind, vibration and fatigue.</p>
+
+  <div class="box soft keep" style="margin-top:8mm">
+    <h3 style="margin-top:0">Practical follow-up: the paper bridge challenge</h3>
+    <p class="small">A one-lesson D&amp;T or science practical that tests the same ideas with real materials.</p>
+    <ol class="small" style="margin:0; padding-left:4.5mm">
+      <li>Groups get paper straws (or rolled-up newspaper), masking tape and a 30 cm gap between two desks.</li>
+      <li>Set prices, for example £10 a straw and £2 for each 10 cm of tape, and a budget of £200.</li>
+      <li>Hang a paper cup from the middle of the bridge and add coins or washers until it fails. Record the load and the cost.</li>
+      <li>Score each bridge as load ÷ cost. Which designs used triangles? Did they fail by snapping, crushing or buckling?</li>
+      <li>Photograph the failure and label which straws were pulled and which were squashed.</li>
+    </ol>
+  </div>
+</section>
+
+</body>
+</html>

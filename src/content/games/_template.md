@@ -12,6 +12,7 @@ category: electricity                   # topic: electricity, mechanics, structu
 tags: [tag-one, tag-two]                # extra search words, e.g. [series circuits, ohms law]
 years: [8, 13]                          # UK school years the levels cover (US grades and ages are worked out from this)
 levels: 8
+# saveKey: myGame.v1                    # localStorage key the game saves { stars, last } under (shows progress)
 learn:                                  # what students learn, short phrases (shown on the page and to Google)
   - First key idea
   - Second key idea

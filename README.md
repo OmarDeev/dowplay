@@ -16,7 +16,19 @@ Built with [Astro](https://astro.build) as a fully static site: every page is pl
 | `/privacypolicy` | Privacy policy (needed for store listings) | `src/pages/privacypolicy.md` (plain Markdown, edit the text directly) |
 | `/play/<slug>/` | The raw game files, loaded inside the game page | `public/play/<slug>/` |
 
-`sitemap-index.xml`, `robots.txt`, canonical URLs, Open Graph images and schema.org data (Organization, VideoGame + LearningResource, BreadcrumbList, MobileApplication) are all generated automatically.
+`sitemap-index.xml`, `robots.txt`, canonical URLs, Open Graph images and schema.org data (Organization, VideoGame + LearningResource, BreadcrumbList, FAQPage, MobileApplication) are all generated automatically.
+
+## Project layout
+
+Everything for the site, the games and the teacher packs is in this one repository:
+
+| Folder | What's in it |
+| --- | --- |
+| `src/` | The website (pages, components, styles, game and app pages in `src/content/`) |
+| `public/play/<game>/` | The games themselves: plain HTML, CSS and JavaScript, served as they are |
+| `games/<game>/` | Each game's notes and level checker (see `games/README.md`) |
+| `teacher-packs/<game>/` | The teacher pack sources, which build the PDFs in `public/teacher-packs/` (see `teacher-packs/README.md`) |
+| `public/teacher-packs/` | The teacher pack PDFs that visitors download |
 
 ## First-time setup
 
@@ -47,19 +59,16 @@ Free teacher packs (lesson plans, worksheets, answers) are PDFs in `public/teach
 one, add a `teacherPack` block to the game's markdown file (see `_template.md`): it then appears as a
 "Free teacher pack" box on the game page and in the list and table on `/teachers`.
 
-Every game has a pack. They are built from source folders in the workspace's `teacher-packs/` folder
-(one per game, each with `pack.html` and `check-numbers.js`; see its README). After rebuilding a pack
-there, copy its two PDFs here with lowercase names, for example `bridge-builder-teacher-pack.pdf` and
-`bridge-builder-student-worksheets.pdf`, and update `pages` in the game's `teacherPack` block if the
-page count changed.
-
-The pictures of each pack's first page (shown next to the download buttons) live in
-`src/assets/packs/`. Remake them after rebuilding a pack (macOS):
+Every game has a pack, built from `teacher-packs/<game>/pack.html` (see `teacher-packs/README.md`):
 
 ```bash
-sips -s format png --resampleWidth 900 public/teacher-packs/bridge-builder-teacher-pack.pdf --out src/assets/packs/bridge-builder-cover.png
-sips -s format png --resampleWidth 900 public/teacher-packs/bridge-builder-student-worksheets.pdf --out src/assets/packs/bridge-builder-worksheet.png
+npm run packs -- bridge-builder   # rebuild one pack (or leave out the name for all)
+npm run check:packs               # check every number in the packs against the games
 ```
+
+Rebuilding writes the two PDFs into `public/teacher-packs/`, the pictures of their first pages
+(shown next to the download buttons) into `src/assets/packs/`, and the page count into the game's
+`teacherPack` block.
 
 ## Design
 
@@ -69,15 +78,16 @@ the game cards.
 
 ## Update a game
 
-The four engineering games (Light It Up, Gear Garage, Bridge Builder, Grid Manager) are
-developed in their own folders, each with a `README.md` and a `check-levels.js` level checker.
-After changing a game there, copy only the files the browser needs into `public/play/`:
+The four engineering games (Light It Up, Gear Garage, Bridge Builder, Grid Manager) are edited
+in place in `public/play/<game>/`. Their notes and level checkers are in `games/<game>/`:
 
 ```bash
-rsync -a --delete --exclude README.md --exclude check-levels.js --exclude .DS_Store "path/to/grid-manager/" public/play/grid-manager/
+node games/grid-manager/check-levels.cjs   # check one game's levels can all be solved
+npm run check:levels                       # all four
 ```
 
-Players keep their progress: each game saves it in the browser under its own key.
+Players keep their progress: each game saves it in the browser under its own key, and the game
+page shows a returning player where they got to.
 
 ## Add a mobile app to the portfolio
 
@@ -91,6 +101,9 @@ npm run dev        # local dev server at http://localhost:4321
 npm run build      # build to ./dist
 npm run preview    # build + serve with Cloudflare's runtime at http://localhost:8787
 npm run check      # type-check
+npm run packs      # rebuild the teacher pack PDFs
+npm run check:packs   # check the numbers in the teacher packs
+npm run check:levels  # check every game level can be solved
 ```
 
 Requires Node 22.12+.

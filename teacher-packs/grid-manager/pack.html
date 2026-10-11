@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Grid Manager · Teacher Pack · DowPlay</title>
+<meta name="pack-title" content="Grid Manager">
+<!--
+  Grid Manager teacher pack. One source for two PDFs:
+    pack.html           the full teacher pack
+    pack.html?student   the student worksheets only (no teacher pages, no answers)
+  Shared styles: ../shared/pack.css. Build with: node ../build-pdf.mjs grid-manager
+  Every number in here comes from the game itself; check-numbers.js re-checks them.
+-->
+<link rel="stylesheet" href="../shared/pack.css">
+</head>
+<body>
+<script>
+  if (location.search.includes("student")) document.body.classList.add("student");
+</script>
+
+<!-- ======================================================= COVER -->
+<section class="page teacher">
+  <div class="cover-band">
+    <div class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</div>
+    <span class="eyebrow" style="color:#c8ff3d">Teacher pack</span>
+    <h1>Grid Manager</h1>
+    <p class="sub">Keep a town powered every hour of the day with solar, wind and storage, for as little money and CO₂ as possible.</p>
+    <span class="tag">UK Years 9–13</span><span class="tag">Ages 13–18</span><span class="tag">US grades 8–12</span><span class="tag">Physics · Geography · D&amp;T</span>
+  </div>
+  <img class="cover-img" src="img/game.png" alt="Grid Manager: a town map with wind turbines, solar farms and batteries, above a chart of power through the day">
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0">Inside this pack</h3>
+      <ol class="small" style="padding-left:4.5mm">
+        <li>Overview: learning outcomes, curriculum links, key words</li>
+        <li>How the game works (teacher background)</li>
+        <li>Level-by-level guide with 3-star solutions</li>
+        <li>Lesson 1: Keeping the lights on (Years 9–10)</li>
+        <li>Lesson 2: Designing a low-carbon grid (Years 11–13)</li>
+        <li>Worksheet 1 and Worksheet 2 (photocopiable)</li>
+        <li>Answers and mark scheme</li>
+      </ol>
+    </div>
+    <div class="box soft" style="margin:0">
+      <h3 style="margin-top:0">Play it free</h3>
+      <p><b>dowplay.com/games/grid-manager</b></p>
+      <p class="small">Runs in any browser on Chromebooks, iPads, laptops and phones. No accounts, no ads, nothing to install. Progress is saved only on the device being used.</p>
+      <p class="small muted" style="margin:0">A separate PDF has the worksheets on their own, ready to print for students.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= OVERVIEW -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Grid Manager · Teacher pack</span></div>
+  <span class="eyebrow">1 · Overview</span>
+  <h2>What students learn</h2>
+  <p>Grid Manager turns the job of a power-grid engineer into a puzzle. Students build solar farms, wind turbines, batteries, pumped hydro and gas plants on a town map, and a chart shows, hour by hour, whether supply meets demand. Its eight levels run from Year 9 to Year 13.</p>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">By the end, students can</h3>
+      <ul style="margin:0">
+        <li>explain why electricity supply must meet demand <b>every hour</b>, not just on average</li>
+        <li>use <b>E = P × t</b> to work in MW and MWh</li>
+        <li>explain how storage moves energy from when it's made to when it's needed, and why it needs enough <b>power</b> and enough <b>energy</b></li>
+        <li>compare sources by reliability, cost and <b>capacity factor</b></li>
+        <li>evaluate trade-offs between cost, reliability and <b>CO₂ emissions</b></li>
+        <li>explain demand-side response and long-duration storage</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">You will need</h3>
+      <ul style="margin:0 0 2mm">
+        <li>One device per pair (any browser)</li>
+        <li>A projector for the starters</li>
+        <li>Worksheet 1 or 2 for each student</li>
+      </ul>
+      <h3>Timing</h3>
+      <p style="margin:0">Each lesson plan fills 60 minutes. The levels also work as a homework or a club activity: each takes 5–15 minutes.</p>
+    </div>
+  </div>
+
+  <h2>Curriculum links</h2>
+  <table>
+    <tr><th style="width:30%">Course</th><th>Content</th><th style="width:16%">Levels</th></tr>
+    <tr><td>KS3 Science (England)</td><td>Energy: fuels and energy resources; comparing power ratings (W, kW) and amounts of energy transferred (J, kJ, kWh); energy costs</td><td>1–4</td></tr>
+    <tr><td>GCSE Physics / Combined Science</td><td>National and global energy resources: renewable and non-renewable, reliability and environmental impact; power as the rate of energy transfer (E = P t); efficiency</td><td>All</td></tr>
+    <tr><td>GCSE Design &amp; Technology</td><td>Energy generation and storage: renewable energy, batteries and other storage systems</td><td>2–8</td></tr>
+    <tr><td>GCSE Geography</td><td>Resource management (energy): supply, demand, energy security and sustainable energy</td><td>5–8</td></tr>
+    <tr><td>A-level and post-16</td><td>Efficiency and energy transfers (Physics); energy security (Geography, Environmental Science); energy storage and demand-side response (Engineering)</td><td>6–8</td></tr>
+    <tr><td>US (NGSS)</td><td>MS-ETS1-1, MS-ETS1-2: criteria, constraints and evaluating competing designs. HS-ETS1-3: evaluating solutions using prioritised criteria and trade-offs. HS-ESS3-4: technological solutions that reduce human impacts</td><td>All</td></tr>
+  </table>
+
+</section>
+
+<!-- ======================================================= HOW THE GAME WORKS -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Grid Manager · Teacher pack</span></div>
+  <span class="eyebrow">2 · Teacher background</span>
+  <h2>How the game works</h2>
+  <div class="box key">
+    <p><b>Every hour, the game does this:</b></p>
+    <ol style="margin:0">
+      <li>Solar farms and wind turbines make what the weather allows.</li>
+      <li>If that's more than the town needs, the spare charges the batteries (then pumped hydro). Anything left over is <b>wasted</b>.</li>
+      <li>If it's less, the batteries help as much as they can (then pumped hydro), gas plants fill the rest, and anything still missing is a <b>blackout</b>.</li>
+    </ol>
+  </div>
+  <p>The level's days repeat, so batteries start each day with whatever they had left at the end of it. That stops a design from "borrowing" energy it never made.</p>
+
+  <h3>The machines</h3>
+  <table>
+    <tr><th>Machine</th><th>Power</th><th>Stores</th><th>Cost per day</th><th>Notes</th></tr>
+    <tr><td>Solar farm</td><td>up to 4 MW</td><td>–</td><td>£30</td><td>Follows the sun; clouds cut it; nothing at night</td></tr>
+    <tr><td>Wind turbine</td><td>up to 3 MW</td><td>–</td><td>£40</td><td>Day or night, whenever the wind blows</td></tr>
+    <tr><td>Battery</td><td>2 MW in or out</td><td>8 MWh</td><td>£30</td><td>Keeps 90% of what goes in</td></tr>
+    <tr><td>Pumped hydro</td><td>4 MW in or out</td><td>60 MWh</td><td>£60</td><td>Keeps 75%; only on hill lakes</td></tr>
+    <tr><td>Gas plant</td><td>up to 4 MW</td><td>–</td><td>£10 + £2 per MWh</td><td>Releases 0.4 t of CO₂ per MWh</td></tr>
+  </table>
+  <p class="small muted">Costs are per day: each machine's share of paying for it and running it. They are game numbers chosen to make the trade-offs clear, not real prices.</p>
+
+  <div class="grid2">
+    <div>
+      <h3>Where you build matters</h3>
+      <table class="small">
+        <tr><th>Square</th><th>Sun</th><th>Wind</th></tr>
+        <tr><td>Field</td><td>100%</td><td>50%</td></tr>
+        <tr><td>Hilltop</td><td>100%</td><td>100%</td></tr>
+        <tr><td>Valley</td><td>60%</td><td>30%</td></tr>
+        <tr><td>Sea (wind only)</td><td>–</td><td>140%</td></tr>
+        <tr><td>Industrial yard</td><td colspan="2">Batteries and gas only</td></tr>
+        <tr><td>Hill lake</td><td colspan="2">Pumped hydro only</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Reading the chart</h3>
+      <p class="small" style="margin-bottom:1.5mm">Below the black <b>demand</b> line: where the town's power came from. Above it: spare power.</p>
+      <div class="small" style="display:grid; gap:1mm">
+        <span><i class="sw demand"></i>Demand: what the town needs</span>
+        <span><i class="sw solar"></i>Solar &nbsp; <i class="sw wind"></i>Wind &nbsp; <i class="sw store"></i>From storage &nbsp; <i class="sw gas"></i>Gas</span>
+        <span><i class="sw short"></i>Blackout: power missing</span>
+        <span><i class="sw charge"></i>Charging storage &nbsp; <i class="sw waste"></i>Wasted</span>
+        <span><i class="sw night"></i>Night (no sun)</span>
+      </div>
+      <p class="small" style="margin-top:2mm">The strip underneath shows how full the batteries are. Students can tap or hover over any hour to see its numbers, and the map shows that moment: sun, turbines, battery levels and the houses' lights.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================================================= STARS, LIMITS, KEY WORDS -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Grid Manager · Teacher pack</span></div>
+  <span class="eyebrow">2 · Teacher background (continued)</span>
+
+  <h2>Stars</h2>
+  <p>1 star for keeping the lights on (and under the CO₂ limit), 2 for staying within the budget, 3 for matching the cheapest design found by our level checker. Students sometimes match it with a different mix; very occasionally they beat it.</p>
+
+  <h2 style="margin-top:6mm">What the model leaves out</h2>
+  <p>Real grids also trade power with neighbouring regions and countries, use forecasts that can be wrong, and are planned in minutes rather than whole hours. In the game, storage is always used before gas (a simple rule real grid controllers improve on), and every day of a level repeats. These make good discussion points with older students.</p>
+
+  <h2 style="margin-top:6mm">Key words</h2>
+  <table>
+    <tr><td style="width:17%"><b>Demand</b></td><td style="width:33%">How much power the town needs at a given moment (MW).</td><td style="width:19%"><b>Capacity factor</b></td><td>Energy a machine actually makes ÷ the most it could make running flat out.</td></tr>
+    <tr><td><b>Power (MW)</b></td><td>How fast energy is supplied. 1 megawatt = 1 million joules every second.</td><td><b>Efficiency</b></td><td>The share of energy you get back out. Batteries keep 90%; pumped hydro 75%.</td></tr>
+    <tr><td><b>Energy (MWh)</b></td><td>Power × time. 1 MW for 1 hour = 1 MWh.</td><td><b>Dispatchable</b></td><td>Can be switched on whenever needed, like a gas plant. Sun and wind are not.</td></tr>
+    <tr><td><b>Blackout</b></td><td>An hour when supply can't meet demand.</td><td><b>Demand-side response</b></td><td>Moving when electricity is used, to times when it is plentiful.</td></tr>
+    <tr><td><b>Storage</b></td><td>Batteries or pumped hydro: fill up with spare energy, give it back later.</td><td><b>Long-duration storage</b></td><td>Storage that can cover days, not just hours.</td></tr>
+  </table>
+</section>
+
+<!-- ======================================================= LEVEL GUIDE -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Grid Manager · Teacher pack</span></div>
+  <span class="eyebrow">3 · Level guide</span>
+  <h2>Level by level</h2>
+  <p class="small muted">"3 stars" is the cheapest design our checker found. Keep it to yourself until students have had a go: the fun is in the search.</p>
+
+  <div class="level">
+    <div class="level-top"><span class="num">1</span><h3>Sunny School</h3><span class="yrs">Year 9 · Supply must meet demand every hour</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Building for midday. Two farms look plenty at noon but fail at 8 am, when the sun is low and each farm makes only 2.1 MW.</dd>
+      <dt>3 stars, £90</dt><dd>3 solar farms on fields (two fields and one valley also works).</dd>
+      <dt>Ask</dt><dd>"Why does 8 am, not midday, decide how many farms you need?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">2</span><h3>After Dark</h3><span class="yrs">Year 9 · Storage moves energy from day to night</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Plenty of solar but too few batteries: energy wasted at midday, blackout at night (Worksheet 1, Part C).</dd>
+      <dt>3 stars, £300</dt><dd>4 solar farms and 6 batteries (5 and 5 costs the same).</dd>
+      <dt>Ask</dt><dd>"Your batteries are full by lunchtime. What does that tell you?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">3</span><h3>Windy Hill</h3><span class="yrs">Years 9–10 · Mixing sources; where you build</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Turbines in fields (half the wind of a hilltop), or ignoring wind because it costs more.</dd>
+      <dt>3 stars, £230</dt><dd>2 wind turbines on hilltops, 3 solar farms, 2 batteries.</dd>
+      <dt>Ask</dt><dd>"The same town cost £300 in After Dark. Why is it cheaper with wind?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">4</span><h3>Evening Rush</h3><span class="yrs">Year 10 · Battery power (MW) vs energy (MWh)</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Enough stored energy but too few batteries to give 14 MW at 6 pm. The game says the batteries "still have energy" during the blackout.</dd>
+      <dt>3 stars, £370</dt><dd>7 batteries, with 4 solar farms and 1 wind turbine (or 4 wind turbines).</dd>
+      <dt>Ask</dt><dd>"Which limit did your design hit first, power or energy? How can you tell from the chart?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">5</span><h3>Grey Skies</h3><span class="yrs">Years 10–11 · Designing for the worst day</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>A grid that works on sunny Monday but not grey Tuesday, when each solar farm makes about a quarter as much.</dd>
+      <dt>3 stars, £390</dt><dd>3 wind turbines on hilltops, 3 solar farms, 6 batteries (3–6 solar farms with 6–3 batteries all cost the same).</dd>
+      <dt>Ask</dt><dd>"Which machines earn their keep on Tuesday?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">6</span><h3>Backup Plan</h3><span class="yrs">Years 11–12 · Gas backup and CO₂ limits</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Gas running all evening (over the 4 t limit), or no gas at all and more batteries than needed.</dd>
+      <dt>3 stars, £409</dt><dd>6 wind turbines, 5 batteries and 1 gas plant that burns 4.7 MWh (1.9 t CO₂). With no CO₂ limit the cheapest grid costs £317 but releases 33.5 t; with no gas at all it costs £420.</dd>
+      <dt>Ask</dt><dd>"Is a 29% higher bill worth a 94% cut in CO₂? Who should pay?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">7</span><h3>Smart Timing</h3><span class="yrs">Year 12 · Demand-side response</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Leaving the jobs in the evening, or moving them into the night when only a light wind blows.</dd>
+      <dt>3 stars, £280</dt><dd>Move the pumps, buses and oven into the morning and middle of the day; 4 solar farms, 1 wind turbine, 4 batteries. Without moving the jobs, the cheapest grid costs £390.</dd>
+      <dt>Ask</dt><dd>"What would make a real factory move its oven to midday?"</dd>
+    </dl>
+  </div>
+  <div class="level">
+    <div class="level-top"><span class="num">8</span><h3>Still Week</h3><span class="yrs">Years 12–13 · Long-duration storage</span></div>
+    <dl>
+      <dt>Watch for</dt><dd>Batteries only (very expensive), turbines on land when the sea is windier, and forgetting pumped hydro gives out only 4 MW.</dd>
+      <dt>3 stars, £366</dt><dd>5 wind turbines at sea, 2 pumped hydro, 1 battery, 1 gas plant (3.3 t CO₂ over three days). Without pumped hydro the cheapest grid costs £696.</dd>
+      <dt>Ask</dt><dd>"What if Tuesday's calm lasted two days? What would you change?"</dd>
+    </dl>
+  </div>
+</section>
+
+<!-- ======================================================= LESSON 1 -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Grid Manager · Teacher pack</span></div>
+  <span class="eyebrow">4 · Lesson plan · Years 9–10 · 60 minutes</span>
+  <h2>Lesson 1: Keeping the lights on</h2>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">Objectives</h3>
+      <ul style="margin:0">
+        <li>Explain why supply must meet demand every hour.</li>
+        <li>Calculate energy using E = P × t, in MWh.</li>
+        <li>Explain how batteries store energy for later, and why they need enough power <i>and</i> enough energy.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Resources</h3>
+      <ul style="margin:0">
+        <li>Worksheet 1 (one each)</li>
+        <li>Devices, one per pair</li>
+        <li>Grid Manager on the projector</li>
+      </ul>
+    </div>
+  </div>
+  <table class="steps">
+    <tr><th>Time</th><th>Activity</th></tr>
+    <tr><td>Starter<br>10 min</td><td>Open <b>Level 1, Sunny School</b> on the board. "The school needs 5 MW at 8 am. A solar farm makes up to 4 MW. How many farms?" Most say two. Build two on fields and point at the chart: there's a blackout at 8 am, because in the early morning each farm makes only 2.1 MW. Add a third. Ask: <i>why does the worst hour decide the design?</i></td></tr>
+    <tr><td>Main 1<br>15 min</td><td><b>Worksheet 1, Part A</b>: power and energy calculations. Model question A1 first (4 MW × 3 h = 12 MWh). Go through A3 and A4 together: A4 is the key idea, a battery's <i>power</i> limit.</td></tr>
+    <tr><td>Main 2<br>25 min</td><td>Pairs play <b>levels 1–4</b> and fill in the record table (Part B). Before each Run, one partner predicts what will happen. Circulate and ask: "Is your problem not enough energy, or not enough power?"</td></tr>
+    <tr><td>Plenary<br>10 min</td><td><b>Part C</b> together: read the After Dark chart. Big question: "This design wastes 57 MWh and is still 17 MWh short. More solar, or more batteries?" Exit ticket: <i>explain the difference between MW and MWh in one sentence.</i></td></tr>
+  </table>
+  <div class="grid2">
+    <div class="box">
+      <h3 style="margin-top:0">Support</h3>
+      <p style="margin:0">Start with levels 1–2 and use the in-game hints. Give the battery count for After Dark (6) and ask students to work out the solar.</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Stretch</h3>
+      <p style="margin:0">Calculate the batteries needed before building. Try Level 5, Grey Skies. Go for 3 stars on Windy Hill (£230).</p>
+    </div>
+  </div>
+  <div class="box soft">
+    <h3 style="margin-top:0">Misconceptions to listen for</h3>
+    <ul style="margin:0">
+      <li>"Power and energy are the same thing." The battery power limit in Evening Rush separates them.</li>
+      <li>"More solar always helps." Not when the batteries are already full; then it's just wasted.</li>
+      <li>"Batteries make electricity." They only move energy in time, and lose 10% doing it.</li>
+    </ul>
+  </div>
+  <p><b>Homework:</b> Worksheet 1, Part D, and get 3 stars on Level 3.</p>
+</section>
+
+<!-- ======================================================= LESSON 2 -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Grid Manager · Teacher pack</span></div>
+  <span class="eyebrow">5 · Lesson plan · Years 11–13 · 60 minutes</span>
+  <h2>Lesson 2: Designing a low-carbon grid</h2>
+  <div class="grid2">
+    <div class="box key">
+      <h3 style="margin-top:0">Objectives</h3>
+      <ul style="margin:0">
+        <li>Calculate capacity factor, efficiency and cost per MWh.</li>
+        <li>Evaluate trade-offs between cost, reliability and CO₂.</li>
+        <li>Explain demand-side response and long-duration storage.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Resources</h3>
+      <ul style="margin:0">
+        <li>Worksheet 2 (one each)</li>
+        <li>Devices, one per pair or small group</li>
+        <li>Grid Manager on the projector</li>
+      </ul>
+    </div>
+  </div>
+  <table class="steps">
+    <tr><th>Time</th><th>Activity</th></tr>
+    <tr><td>Starter<br>10 min</td><td>Show <b>Level 6, Backup Plan</b>. Reveal two designs: the cheapest grid with <i>no</i> CO₂ limit costs <b>£317</b> a day and releases <b>33.5 t</b> of CO₂; the cheapest that meets the 4 t limit costs <b>£409</b> and releases <b>1.9 t</b>. Ask: "Is 29% more cost worth 94% less CO₂? Who pays, and who benefits?"</td></tr>
+    <tr><td>Main 1<br>15 min</td><td><b>Worksheet 2, questions 1–4</b>: capacity factor, cost per MWh, CO₂ and storage efficiency. Pairs check each other's working.</td></tr>
+    <tr><td>Main 2<br>25 min</td><td>Groups take one of <b>levels 6, 7 or 8</b>. Each finds its cheapest design, then reports to the class: its cost, its CO₂, and one thing that surprised them. Use questions 5–6 to guide Smart Timing and Still Week groups.</td></tr>
+    <tr><td>Plenary<br>10 min</td><td>Plan <b>question 7</b> together: list evidence for and against batteries, pumped hydro, demand-side response and gas backup. Finish it as homework.</td></tr>
+  </table>
+  <div class="grid2">
+    <div class="box">
+      <h3 style="margin-top:0">Support</h3>
+      <p style="margin:0">Work through Q1 together. Give groups Smart Timing (Level 7) first: moving the jobs is visual and quick to understand.</p>
+    </div>
+    <div class="box">
+      <h3 style="margin-top:0">Stretch</h3>
+      <p style="margin:0">Compare the game's assumptions with a real grid: interconnectors, forecasts, minute-by-minute balancing. Look up the current carbon intensity of your country's grid and discuss what drives it.</p>
+    </div>
+  </div>
+  <div class="box soft">
+    <h3 style="margin-top:0">Discussion prompts</h3>
+    <ul style="margin:0">
+      <li>Why might a country keep some gas plants even if it aims for net zero?</li>
+      <li>Smart Timing's flexible jobs are about a fifth of the town's demand. What in a real home could be flexible?</li>
+      <li>Pumped hydro needs hills and lakes. What other long-duration storage could a flat country use?</li>
+    </ul>
+  </div>
+  <p><b>Homework:</b> Worksheet 2, question 7 (6 marks).</p>
+</section>
+
+<!-- ======================================================= WORKSHEET 1 (page 1) -->
+<section class="page">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Grid Manager · Worksheet 1 · Years 9–10</span></div>
+  <h2>Keeping the lights on</h2>
+  <div class="ws-head"><span>Name:</span><span>Class:</span><span>Date:</span></div>
+  <div class="box soft keep">
+    <b>Power</b> is how fast energy is supplied, in megawatts (MW). <b>Energy</b> is power × time, in megawatt-hours (MWh).<br>
+    <span class="num" style="font-size:12pt">energy (MWh) = power (MW) × time (hours)</span> &nbsp;&nbsp; e.g. 2 MW for 3 hours = 6 MWh
+  </div>
+
+  <h3>Part A · Power and energy</h3>
+  <div class="q"><p><span class="qn">A1</span>A solar farm makes 4 MW in full sun. How much energy does it make in 3 hours of full sun? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+  <div class="q parts"><p><span class="qn">A2</span>On a sunny summer day one solar farm makes 40.8 MWh. The town uses 120 MWh in a day.</p>
+    <div class="sub"><p>a) How many solar farms make at least as much energy as the town uses in a day? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) Explain why these solar farms on their own would still leave the town in the dark at night. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+  <div class="q parts"><p><span class="qn">A3</span>From 8 pm to 6 am the town uses 40 MWh. Each battery stores 8 MWh.</p>
+    <div class="sub"><p>a) What is the smallest number of batteries that could store 40 MWh? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) Batteries keep 90% of the energy that goes into them. How much solar energy must go in to get 40 MWh out? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div></div>
+  <div class="q parts"><p><span class="qn">A4</span>In <b>Evening Rush</b>, the town needs 14 MW at 6 pm. The sun has set and the wind turbine gives only 0.15 MW. Each battery can give out at most 2 MW.</p>
+    <div class="sub"><p>a) What is the fewest batteries that can give out the rest, all at once? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) How much energy can that many batteries store altogether? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) The 6 pm hour needs only 13.85 MWh from the batteries. So why do you need this many? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+
+  <div class="keep">
+  <h3>Part B · Play levels 1 to 4</h3>
+  <p class="small">Before you press <b>Run the day</b>, predict what will happen. Record your best design for each level.</p>
+  <table class="record">
+    <tr><th style="width:9%">Level</th><th style="width:31%">What I built</th><th style="width:11%">Cost</th><th style="width:11%">Stars</th><th>What went wrong, and how I fixed it</th></tr>
+    <tr><td>1</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>2</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>3</td><td></td><td>£</td><td></td><td></td></tr>
+    <tr><td>4</td><td></td><td>£</td><td></td><td></td></tr>
+  </table>
+  </div>
+
+  <div class="keep">
+  <h3>Part C · Read the chart</h3>
+  <p>This chart is from <b>After Dark</b>, with <b>4 solar farms and 3 batteries</b>. Below the black line is where the town's power came from; above it is spare solar power. The strip underneath shows how full the batteries are. The day repeats, so the night on the left of the chart (midnight to 6 am) follows on from the evening on the right.</p>
+  <img class="chart-img" src="img/after-dark-chart.png" alt="Chart of one day in After Dark with 4 solar farms and 3 batteries">
+  <div class="legend">
+    <span><i class="sw demand"></i>Town's demand</span>
+    <span><i class="sw solar"></i>Solar</span>
+    <span><i class="sw store"></i>From batteries</span>
+    <span><i class="sw short"></i>Blackout</span>
+    <span><i class="sw charge"></i>Charging batteries</span>
+    <span><i class="sw waste"></i>Wasted</span>
+    <span><i class="sw night"></i>Night</span>
+  </div>
+  </div>
+  <div class="q"><p><span class="qn">C1</span>At what time do the batteries start charging? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+  <div class="q"><p><span class="qn">C2</span>At what time are the batteries full? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+  <div class="q"><p><span class="qn">C3</span>From 09:00, some solar power is wasted (grey) even though the batteries are not full yet. Why? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+  <div class="q"><p><span class="qn">C4</span>When does the blackout start, and when does it end? <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+  <div class="q"><p><span class="qn">C5</span>This design wastes 57 MWh of solar energy but is still 17 MWh short. Should you add more solar farms or more batteries? Explain your answer. <span class="marks">[3]</span></p><div class="lines" style="--n:3"></div></div>
+
+  <h3>Part D · Explain</h3>
+  <div class="q"><p><span class="qn">D1</span>Wind turbines cost more than solar farms (£40 a day against £30). Yet the cheapest design for <b>Windy Hill</b> uses two wind turbines and costs less than the cheapest design for the same town in <b>After Dark</b> (£230 against £300). Explain why. <span class="marks">[4]</span></p><div class="lines" style="--n:9"></div></div>
+</section>
+
+<!-- ======================================================= WORKSHEET 2 (page 1) -->
+<section class="page">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Grid Manager · Worksheet 2 · Years 11–13</span></div>
+  <h2>Designing a low-carbon grid</h2>
+  <div class="ws-head"><span>Name:</span><span>Class:</span><span>Date:</span></div>
+  <div class="box soft keep small">
+    <b>Capacity factor</b> = energy produced ÷ (rated power × time). &nbsp; <b>Efficiency</b> = energy out ÷ energy in.<br>
+    Batteries: 2 MW, 8 MWh, keep 90%, £30 a day. &nbsp; Pumped hydro: 4 MW, 60 MWh, keeps 75%, £60 a day.<br>
+    Gas plant: up to 4 MW, £10 a day plus £2 per MWh of gas, releases 0.4 t of CO₂ per MWh.
+  </div>
+
+  <div class="q parts"><p><span class="qn">1</span><b>Capacity factor.</b></p>
+    <div class="sub"><p>a) On Windy Hill's breezy day, a 3 MW turbine on a hilltop produces 30 MWh in 24 hours. Calculate its capacity factor. <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) The same turbine in a field produces 15 MWh. Calculate its capacity factor, and suggest why engineers measure the wind before choosing a site. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+    <div class="sub"><p>c) In Grey Skies, a 4 MW solar farm produces 33.9 MWh on sunny Monday and 8.9 MWh on grey Tuesday. Calculate both capacity factors. <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div></div>
+  <div class="q parts"><p><span class="qn">2</span><b>Cost per MWh.</b> A solar farm costs £30 a day.</p>
+    <div class="sub"><p>a) Work out its cost per MWh on Monday and on Tuesday (use 1c). <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) A battery costs £30 a day and can deliver at most 8 MWh in a day. What is the lowest cost per MWh it adds to energy that is stored? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) Use your answers to explain why the cheapest Grey Skies design puts wind turbines on all three hilltops. <span class="marks">[3]</span></p><div class="lines" style="--n:3"></div></div></div>
+  <div class="q parts"><p><span class="qn">3</span><b>CO₂ in Backup Plan.</b> The CO₂ limit is 4 t for the day.</p>
+    <div class="sub"><p>a) What is the most energy that may come from gas? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) With no CO₂ limit, the cheapest design (3 wind turbines and 3 gas plants) costs £317 a day and burns 83.7 MWh of gas. How much CO₂ does it release? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) With the limit, the cheapest design costs £409 and releases 1.9 t. By what percentage does the limit raise the cost, and by what percentage does it cut CO₂? <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div>
+    <div class="sub"><p>d) Work out the extra cost per tonne of CO₂ avoided. <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div></div>
+
+  <div class="q parts"><p><span class="qn">4</span><b>Storage.</b></p>
+    <div class="sub"><p>a) Pumped hydro keeps 75% of the energy pumped in. To deliver 45 MWh, how much energy must go in? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) How much would have to go into batteries to deliver the same 45 MWh? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) Work out the cost per MWh of storage capacity for pumped hydro and for batteries. <span class="marks">[2]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>d) The cheapest Still Week design still includes one battery and one gas plant. The town's demand peaks at 12 MW. Suggest why. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+  <div class="q parts"><p><span class="qn">5</span><b>Demand-side response (Smart Timing).</b></p>
+    <div class="sub"><p>a) Bus charging needs 4 MW for 3 hours. How much energy is that? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) If the buses charge from 19:00 to 22:00, after sunset, all of that energy must come out of batteries. How much solar energy has to go into the batteries, and how many 8 MWh batteries are needed to store the 12 MWh the buses use? <span class="marks">[3]</span></p><div class="lines" style="--n:2"></div></div>
+    <div class="sub"><p>c) The three flexible jobs use 32 MWh, about a fifth of the town's 150 MWh. Moving them into the morning and midday cuts the cheapest design from £390 to £280 a day. Suggest two real ways to get people or businesses to move when they use electricity. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+  <div class="q parts"><p><span class="qn">6</span><b>A still, grey week (Still Week).</b> The town needs 171 MWh every day. In the cheapest design, five turbines at sea make 34.7 MWh on still Tuesday, and there are no solar farms.</p>
+    <div class="sub"><p>a) How much energy must come from storage and gas on Tuesday? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>b) The CO₂ limit (4 t) allows 10 MWh of gas over all three days. At least how much must come from storage on Tuesday? <span class="marks">[1]</span></p><div class="lines" style="--n:1"></div></div>
+    <div class="sub"><p>c) Without pumped hydro, the cheapest design needs 16 batteries and costs £696 a day, against £366 with it. Explain why long-duration storage matters for a renewable grid. <span class="marks">[2]</span></p><div class="lines" style="--n:2"></div></div></div>
+  <div class="q"><p><span class="qn">7</span><b>Evaluate.</b> A town wants to run on renewable energy with almost no CO₂. Evaluate the ways of keeping the lights on when the wind and sun are weak: batteries, pumped hydro, demand-side response and gas backup. Use evidence from Grid Manager. <span class="marks">[6]</span></p>
+    <div class="lines" style="--n:17"></div>
+    <p class="small muted" style="margin-left:5mm">Continue on lined paper if you need more space.</p></div>
+</section>
+
+<!-- ======================================================= ANSWERS -->
+<section class="page teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Grid Manager · Answers</span></div>
+  <span class="eyebrow">7 · Answers</span>
+  <h2>Worksheet 1 answers</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0">Part A</h3>
+      <p class="ans"><b>A1</b>4 MW × 3 h = <b>12 MWh</b>.</p>
+      <p class="ans"><b>A2</b>a) 120 ÷ 40.8 = 2.94, so <b>3 solar farms</b>.<br>b) Solar farms make nothing when the sun is down (1); the energy has to be stored when it's made, to use at night (1).</p>
+      <p class="ans"><b>A3</b>a) 40 ÷ 8 = <b>5 batteries</b>.<br>b) 40 ÷ 0.9 = <b>44.4 MWh</b> (1 for dividing by 0.9, 1 for the answer).</p>
+      <p class="ans"><b>A4</b>a) 14 − 0.15 = 13.85 MW; 13.85 ÷ 2 = 6.9, so <b>7 batteries</b> (1 for working, 1 for rounding up).<br>b) 7 × 8 = <b>56 MWh</b>.<br>c) Each battery can only give out 2 MW, however full it is (1). The limit at 6 pm is power, how fast energy can be delivered, not how much is stored (1).</p>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Part C</h3>
+      <p class="ans"><b>C1</b><b>06:00</b> (6 am), when the sun starts to make more than the town needs.</p>
+      <p class="ans"><b>C2</b>By <b>13:00</b> (they finish filling between 12:00 and 13:00).</p>
+      <p class="ans"><b>C3</b>Three batteries can only take in 6 MW together, 2 MW each (1); the extra solar power has nowhere to go, so it's wasted (1).</p>
+      <p class="ans"><b>C4</b>Starts at <b>23:00</b>, when the batteries run empty (1); ends at <b>06:00</b> when the sun comes up, about 7 hours later (1).</p>
+      <p class="ans"><b>C5</b><b>More batteries</b> (1). The batteries are already full by 13:00, so extra solar energy would be wasted too (1). More batteries can store the spare midday energy for the night (1). The cheapest working design uses 4 solar farms and 6 batteries.</p>
+      <h3>Part D</h3>
+      <p class="ans"><b>D1</b>Any four: wind blows at night, when solar makes nothing; energy used as it's made doesn't need storing; storage is expensive (£30 a day per 8 MWh) and loses 10%; so the design needs far fewer batteries (2 instead of 6); hilltops give turbines twice the output of fields.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ======================================================= ANSWERS, WORKSHEET 2 -->
+<section class="teacher">
+  <div class="head"><span class="brand"><svg class="mark" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#c8ff3d"/><path d="M12 9.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L13.5 8.64A1 1 0 0 0 12 9.5Z" fill="#0b0d17"/></svg>DowPlay</span><span>Grid Manager · Answers</span></div>
+  <h2>Worksheet 2 answers</h2>
+  <div class="grid2">
+    <div>
+      <p class="ans"><b>1</b>a) 30 ÷ (3 × 24) = 30 ÷ 72 = <b>41.7%</b>.<br>b) 15 ÷ 72 = <b>20.8%</b>. The same machine makes half as much energy on a poor site, so the site decides whether it pays for itself.<br>c) Monday 33.9 ÷ 96 = <b>35.3%</b>; Tuesday 8.9 ÷ 96 = <b>9.3%</b>.</p>
+      <p class="ans"><b>2</b>a) Monday £30 ÷ 33.9 = <b>£0.88</b> per MWh; Tuesday £30 ÷ 8.9 = <b>£3.37</b> per MWh.<br>b) £30 ÷ 8 = <b>£3.75</b> per MWh (more once the 10% loss is counted).<br>c) Wind keeps working on grey Tuesday and at night (1); solar on a grey day costs nearly as much per MWh as storing energy (1); every MWh of wind used directly avoids storage costs and losses (1).</p>
+      <p class="ans"><b>3</b>a) 4 ÷ 0.4 = <b>10 MWh</b>.<br>b) 83.7 × 0.4 = <b>33.5 t</b>.<br>c) Cost (409 − 317) ÷ 317 = <b>+29%</b>; CO₂ (33.5 − 1.9) ÷ 33.5 = <b>−94%</b>.<br>d) £92 ÷ 31.6 t = about <b>£2.90</b> per tonne avoided (in game money).</p>
+    </div>
+    <div>
+      <p class="ans"><b>4</b>a) 45 ÷ 0.75 = <b>60 MWh</b>.<br>b) 45 ÷ 0.9 = <b>50 MWh</b>.<br>c) Pumped hydro £60 ÷ 60 MWh = <b>£1.00</b> per MWh; batteries £30 ÷ 8 MWh = <b>£3.75</b> per MWh.<br>d) Two pumped hydro plants give out only 8 MW (1), so at the 12 MW evening peak the battery and gas plant supply the extra <i>power</i> (1).</p>
+      <p class="ans"><b>5</b>a) 4 × 3 = <b>12 MWh</b>.<br>b) 12 ÷ 0.9 = <b>13.3 MWh</b> in (2); 12 ÷ 8 = 1.5, so <b>2 batteries</b> (1).<br>c) Any two: cheaper electricity at midday (time-of-use tariffs); smart chargers and timers; paying businesses to shift demand; automatic control of heat pumps or water heaters.</p>
+      <p class="ans"><b>6</b>a) 171 − 34.7 = <b>136.3 MWh</b>.<br>b) 136.3 − 10 = <b>126.3 MWh</b> (in the game's design, 128 MWh came from storage and 8.4 MWh from gas).<br>c) Still, grey spells last days (1); batteries are sized for hours and are expensive per MWh, while pumped hydro stores days of energy cheaply (1).</p>
+    </div>
+  </div>
+  <h2 style="margin-top:6mm">Question 7 mark scheme (6 marks)</h2>
+  <table>
+    <tr><th style="width:18%">Level</th><th>Description</th></tr>
+    <tr><td><b>3</b> (5–6 marks)</td><td>A detailed evaluation of at least three options, comparing cost, reliability and CO₂, with numerical evidence from the game. Reaches a justified conclusion, for example that a mix is needed.</td></tr>
+    <tr><td><b>2</b> (3–4 marks)</td><td>Compares at least two options with some evidence. The conclusion is partial or not fully justified.</td></tr>
+    <tr><td><b>1</b> (1–2 marks)</td><td>Simple statements about one or two options, with little comparison or evidence.</td></tr>
+    <tr><td>0</td><td>Nothing worthy of credit.</td></tr>
+  </table>
+  <h3>Indicative content</h3>
+  <div class="grid2">
+    <div class="box">
+      <b>Batteries</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>Efficient (keep 90%) and quick to respond</li>
+        <li>Good for hours and peaks (Evening Rush)</li>
+        <li>Expensive per MWh stored (£3.75), so poor for days</li>
+      </ul>
+    </div>
+    <div class="box">
+      <b>Pumped hydro</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>Cheap per MWh stored (£1); covers days (Still Week)</li>
+        <li>Loses 25%; limited power (4 MW each)</li>
+        <li>Needs suitable hills and lakes</li>
+      </ul>
+    </div>
+    <div class="box">
+      <b>Demand-side response</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>Cheapest: no machines and no losses (Smart Timing: £390 → £280)</li>
+        <li>Only works for flexible demand (about a fifth there)</li>
+        <li>Needs people and businesses to change habits or tariffs</li>
+      </ul>
+    </div>
+    <div class="box">
+      <b>Gas backup</b>
+      <ul class="small" style="margin:1mm 0 0">
+        <li>Dispatchable: works whatever the weather; cheap to build</li>
+        <li>Fuel costs and 0.4 t CO₂ per MWh (Backup Plan: 33.5 t without a limit)</li>
+        <li>A little gas for the worst hours can be the cheapest way to stay reliable</li>
+      </ul>
+    </div>
+  </div>
+  <p class="small">Credit references to real-world factors: interconnectors to other countries, forecasting, other long-duration storage (hydrogen, compressed air), and who pays the extra cost.</p>
+
+  <div class="box soft" style="margin-top:6mm">
+    <h3 style="margin-top:0">More from DowPlay</h3>
+    <p style="margin:0">Free engineering games for ages 12–18: <b>Light It Up</b> (circuits), <b>Gear Garage</b> (gears and machines) and <b>Bridge Builder</b> (structures), each with a free teacher pack. Ideas for new games? Get in touch at <b>dowplay.com/about#contact</b>.</p>
+  </div>
+</section>
+
+</body>
+</html>
